@@ -1,0 +1,65 @@
+div.modal-container
+{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+div.modal-content
+{
+  width: 400px;
+  background-color: white;
+  font-family: sans-serif;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+div.modal-content h3
+{
+  padding: 0 0 10px 10px;
+  border-bottom: solid rgb(240, 240, 240) 1px;
+}
+
+div.modal-content p
+{
+  font-size: 13px;
+  line-height: 1.3em;
+  padding: 0 10px;
+}
+
+div.modal-content-buttons
+{
+  border-top: solid rgb(240, 240, 240) 1px;
+  padding: 10px;
+}
+
+div.modal-content-buttons input
+{
+  float: right;
+  margin-left: 5px;
+  padding: 7px 10px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+div.modal-content-buttons input:first-child
+{
+  background-color: #00B2DC;
+}
+
+div.modal-content-buttons input:nth-child(2)
+{
+  background-color: gray;
+}
+
+div.modal-content-buttons div.clearer
+{
+  clear: both;
+}
