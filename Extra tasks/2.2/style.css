@@ -1,0 +1,91 @@
+*
+{
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  transition-duration: 0.5s;
+}
+
+body
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #EFF1F4;
+  height: 100vh;
+}
+
+main
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 520px;
+  width: 600px;
+}
+
+section
+{
+  background-color: white;
+  border-radius: 5px;
+  height: 250px;
+  width: 100%;
+  position: relative;
+}
+
+section span.special
+{
+  color: white;
+  padding: 3px 8px;
+  font-size: 12px;
+  border-radius: 9px;
+  position: absolute;
+  top: -9px;
+  left: 10px;
+}
+
+section:first-child span.special
+{
+  background-color: #36BF66;
+}
+
+section:nth-child(2) span.special
+{
+  background-color: #B385F2;
+}
+
+div.choose
+{
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: solid #EFF1F4 1px;
+  padding-top: 20px;
+}
+
+div.choose div.price
+{
+  font-size: 18px;
+  font-weight: 900;
+}
+
+div.choose input
+{
+  width: 80%;
+  padding: 10px 0;
+  border-radius: 5px;
+  border: none;
+  background-color: #F26430;
+  color: white;
+  margin-top: 10px;
+}
+
+div.choose p
+{
+  text-align: center;
+  color: red;
+  font-size: 12px;
+  width: 80%;
+}
