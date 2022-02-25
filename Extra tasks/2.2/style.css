@@ -21,7 +21,7 @@ main
   justify-content: space-between;
   align-items: center;
   height: 520px;
-  width: 600px;
+  width: 650px;
 }
 
 main section
@@ -214,9 +214,99 @@ div.departure-info > div:not(.time), div.arrival-info > div:not(.time)
   color: rgb(200, 200, 200);
   font-size: 12px;
   font-weight: 300;
+  margin-top: 3px;
+}
+
+div.arrival-info > div
+{
+  margin-left: auto;
 }
 
 div.flight-diagram
 {
   width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+div.flight-diagram > div
+{
+  width: 100%;
+}
+
+div.flight-diagram div.duration-and-icons
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color: rgb(200, 200, 200);
+}
+
+div.flight-diagram div.duration-and-icons span
+{
+  font-size: 12px;
+  font-weight: 300;
+}
+
+div.flight-diagram div.diagram-and-airports
+{
+  display: flex;
+  flex-direction: row;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+{
+  width: 10%;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+{
+  width: 50%;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+{
+  width: 40%;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage:not(first-of-type):not(last-of-type)
+{
+  align-items: center;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage:last-of-type > span
+{
+  margin-left: auto;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage div.diagram-fragment
+{
+  width: 100%;
+  border: solid rgb(220, 220, 220) 1px;
+  margin-top: 2px;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage:nth-child(odd) div.diagram-fragment
+{
+  border-width: 3px;
+  border-radius: 3px;
+  margin-top: 0;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage span.airport-name
+{
+  font-size: 10px;
+  font-weight: 900;
+  margin-top: 10px;
+  color: #3D8CFE;
 }
