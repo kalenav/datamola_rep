@@ -115,6 +115,11 @@ div.info > div:not(:last-child)
 
 div.info > div:last-child
 {
+  padding-top: 10px;
+}
+
+div.info > div:last-child
+{
   border-top: solid lightgray 1px;
 }
 
@@ -184,7 +189,7 @@ div.info > div:not(.info-header)
   height: 35%;
 }
 
-div.that-way
+div.that-way, div.this-way
 {
   display: flex;
   flex-direction: row;
@@ -192,7 +197,7 @@ div.that-way
   align-items: center;
 }
 
-div.that-way > div
+div.that-way > div, div.this-way > div
 {
   height: 100%;
 }
@@ -264,24 +269,74 @@ div.flight-diagram div.diagram-and-airports div.stage
   justify-content: space-between;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
 {
   width: 10%;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
 {
   width: 50%;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
 {
   width: 40%;
+}
+
+section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+{
+  width: 50%;
+}
+
+section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+{
+  width: 40%;
+}
+
+section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+{
+  width: 10%;
+}
+
+section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+{
+  width: 25%;
+}
+
+section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+{
+  width: 20%;
+}
+
+section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+{
+  width: 55%;
+}
+
+section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+{
+  width: 60%;
+}
+
+section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+{
+  width: 20%;
+}
+
+section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+{
+  width: 20%;
 }
 
 div.flight-diagram div.diagram-and-airports div.stage:not(first-of-type):not(last-of-type)
 {
   align-items: center;
+}
+
+div.flight-diagram div.diagram-and-airports div.stage:first-of-type > span
+{
+  margin-right: auto;
 }
 
 div.flight-diagram div.diagram-and-airports div.stage:last-of-type > span
