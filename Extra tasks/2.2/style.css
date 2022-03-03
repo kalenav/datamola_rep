@@ -133,6 +133,8 @@ div.info-header
 div.info-header div.logos
 {
   float: left;
+  display: flex;
+  flex-direction: row;
 }
 
 div.info-header div.logos i
