@@ -30,6 +30,7 @@ header {
     height: 70px;
     display: flex;
     flex-direction: row-reverse;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -193,4 +194,8 @@ div.footer-info p {
         left: 15px;
         padding: 5px;
     }
+}
+
+header i {
+    margin-left: 30px;
 }
