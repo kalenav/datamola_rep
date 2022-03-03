@@ -4,6 +4,16 @@
     --lightgray: #F2F2F2;
     --lightgray-2: #C0C0C0;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+body > * {
+    width: 100%;
+}
   
 header {
     background-color: var(--lightgray);
