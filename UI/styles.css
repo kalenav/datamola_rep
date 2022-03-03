@@ -108,6 +108,10 @@ div.tweet {
     width: 60%;
 }
 
+div.tweet:hover {
+    cursor: pointer;
+}
+
 div.tweet > p {
     margin: 0.3rem 0;
 }
