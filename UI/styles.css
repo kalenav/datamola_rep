@@ -5,6 +5,15 @@
     --lightgray-2: #C0C0C0;
 }
 
+* {
+    font-family: 'Lato', sans-serif;
+    transition-duration: 0.5s;
+}
+
+html {
+    font-size: 12px;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -17,4 +26,29 @@ body > * {
   
 header {
     background-color: var(--lightgray);
+    height: 70px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 5px;
+    padding: 0 16px;
+    height: 37px;
+}
+
+button:hover {
+    background-color: black;
+    cursor: pointer;
+}
+
+header button {
+    margin-right: 30px;
 }
