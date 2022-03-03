@@ -8,6 +8,7 @@
 * {
     font-family: 'Lato', sans-serif;
     transition-duration: 0.5s;
+    font-weight: 400;
 }
 
 html {
@@ -52,3 +53,31 @@ button:hover {
 header button {
     margin-right: 30px;
 }
+
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+main > * {
+    width: 100%;
+}
+
+section.new-tweet {
+    display: flex;
+    flex-direction: column;
+}
+
+section.new-tweet p {
+    font-size: 1.5rem;
+    margin-left: 200px;
+}
+
+section.new-tweet input {
+    font-weight: 300;
+    padding: 10px;
+    width: 80%;
+    margin: 0 auto;
+    border: solid var(--lightgray-2) 1px;
+}
+
