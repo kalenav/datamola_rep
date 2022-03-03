@@ -57,6 +57,7 @@ header button {
 main {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 main > * {
@@ -84,11 +85,20 @@ section.new-tweet input {
 section.tweets {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 20px 0;
 }
 
-section.tweets > * {
-    width: 100%;
+section.tweets > *:not(button) {
+    width: 60%;
     padding: 1rem 0;
+}
+
+button.filters-button {
+    position: absolute;
+    left: 10%;
+    top: calc(1.3rem + 20px);
 }
 
 div.tweet {
@@ -96,7 +106,6 @@ div.tweet {
     flex-direction: column;
     border-bottom: solid var(--lightgray-2) 1px;
     width: 60%;
-    margin: 0 auto;
 }
 
 div.tweet > p {
