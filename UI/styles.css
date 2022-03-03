@@ -65,22 +65,23 @@ main > * {
     width: 100%;
 }
 
-section.new-tweet {
+section.new-tweet, section.new-comment {
     display: flex;
     flex-direction: column;
 }
 
-section.new-tweet p {
+section.new-tweet p, section.new-comment p {
     font-size: 1.2rem;
     margin-left: 15%;
 }
 
-section.new-tweet input {
+section.new-tweet input, section.new-comment input {
     font-weight: 300;
     padding: 10px;
     width: 80%;
     margin: 0 auto;
     border: solid var(--lightgray-2) 1px;
+    border-radius: 2px;
 }
 
 section.tweets {
@@ -216,6 +217,8 @@ section.comments {
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
+    min-height: 300px;
+    max-height: 800px;
 }
 
 div.comment {
@@ -223,4 +226,8 @@ div.comment {
     border-bottom: solid var(--lightgray-2) 1px;
     padding-bottom: 1rem;
     margin-bottom: 1rem;
+}
+
+section.new-comment {
+    margin-bottom: 2rem;
 }
