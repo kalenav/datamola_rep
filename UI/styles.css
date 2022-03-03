@@ -69,7 +69,7 @@ section.new-tweet {
 }
 
 section.new-tweet p {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-left: 200px;
 }
 
@@ -79,5 +79,27 @@ section.new-tweet input {
     width: 80%;
     margin: 0 auto;
     border: solid var(--lightgray-2) 1px;
+}
+
+section.tweets {
+    display: flex;
+    flex-direction: column;
+}
+
+section.tweets > * {
+    width: 100%;
+}
+
+div.tweet {
+    display: flex;
+    flex-direction: column;
+}
+
+p.author-info {
+    color: var(--secondary-color);
+}
+
+p.tweet-text {
+    font-size: 1.5rem;
 }
 
