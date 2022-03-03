@@ -338,7 +338,7 @@ section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports 
   width: 20%;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:not(first-of-type):not(last-of-type)
+div.flight-diagram div.diagram-and-airports d div.stage:not(first-of-type):not(last-of-type)
 {
   align-items: center;
 }
