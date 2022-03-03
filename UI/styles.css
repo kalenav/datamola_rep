@@ -113,7 +113,7 @@ div.tweet:hover {
     cursor: pointer;
 }
 
-div.tweet > p {
+div.tweet > p, div.comment > p {
     margin: 0.3rem 0;
 }
 
@@ -121,7 +121,7 @@ p.author-info {
     color: var(--secondary-color);
 }
 
-p.tweet-text {
+p.tweet-text, p.comment-text {
     font-size: 1.5rem;
 }
 
@@ -129,7 +129,7 @@ p.tweet-text span.hashtag {
     color: var(--primary-color);
 }
 
-p.tweet-text span.hashtag:hover {
+span.hashtag:hover {
     cursor: pointer;
     text-decoration: underline;
 }
@@ -207,4 +207,19 @@ section.tweet p.author-info {
 section.tweet p.tweet-text {
     margin: 0.3rem 5%;
     line-height: 1.5em;
+    padding-bottom: 10px;
+    border-bottom: solid var(--lightgray-2) 1px;
+}
+
+section.comments {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.comment {
+    width: 60%;
+    border-bottom: solid var(--lightgray-2) 1px;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
 }
