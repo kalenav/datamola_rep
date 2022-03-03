@@ -160,7 +160,9 @@ div.footer-info {
 }
 
 div.footer-info p {
-    margin-left: 3%;
+    margin: 0.2rem 10px;
+    width: 200px;
+    text-align: center;
 }
 
 @media all and (max-width: 800px) {
@@ -180,12 +182,6 @@ div.footer-info p {
 
     div.footer-info {
         flex-direction: column;
-    }
-
-    div.footer-info p {
-        margin: 0.2rem 0;
-        width: 200px;
-        text-align: center;
     }
 }
 
