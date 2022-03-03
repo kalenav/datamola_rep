@@ -161,3 +161,36 @@ div.footer-info {
 div.footer-info p {
     margin-left: 3%;
 }
+
+@media all and (max-width: 800px) {
+    button.filters-button {
+        left: 5%;
+    }
+
+    footer {
+        flex-direction: column;
+        height: 126px;
+        padding: 10px 0;
+    }
+
+    footer > p, div.footer-info {
+        margin: 0;
+    }
+
+    div.footer-info {
+        flex-direction: column;
+    }
+
+    div.footer-info p {
+        margin: 0.2rem 0;
+        width: 200px;
+        text-align: center;
+    }
+}
+
+@media all and (max-width: 500px) {
+    button.filters-button {
+        left: 15px;
+        padding: 5px;
+    }
+}
