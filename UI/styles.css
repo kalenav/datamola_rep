@@ -195,3 +195,16 @@ div.footer-info p {
 header i {
     margin-left: 30px;
 }
+
+section.tweet {
+    padding: 10px 0;
+}
+
+section.tweet p.author-info {
+    margin: 0.3rem 10%;
+}
+
+section.tweet p.tweet-text {
+    margin: 0.3rem 5%;
+    line-height: 1.5em;
+}
