@@ -132,3 +132,9 @@ p.tweet-text span.hashtag:hover {
     cursor: pointer;
     text-decoration: underline;
 }
+
+button.load-more {
+    position: absolute;
+    bottom: -3rem;
+    left: 20%;
+}
