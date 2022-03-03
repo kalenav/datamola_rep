@@ -71,7 +71,7 @@ section.new-tweet {
 
 section.new-tweet p {
     font-size: 1.2rem;
-    margin-left: 200px;
+    margin-left: 15%;
 }
 
 section.new-tweet input {
@@ -133,8 +133,31 @@ p.tweet-text span.hashtag:hover {
     text-decoration: underline;
 }
 
-button.load-more {
-    position: absolute;
-    bottom: -3rem;
-    left: 20%;
+footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+footer > p {
+    margin-left: 22%;
+    font-family: 'Gugi';
+    font-size: 4rem;
+}
+
+div.footer-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 22%;
+    width: 30%;
+}
+
+div.footer-info p {
+    margin-left: 3%;
 }
