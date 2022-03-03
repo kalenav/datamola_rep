@@ -217,7 +217,6 @@ section.comments {
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
-    min-height: 300px;
     max-height: 800px;
 }
 
@@ -230,4 +229,11 @@ div.comment {
 
 section.new-comment {
     margin-bottom: 2rem;
+}
+
+@media all and (max-width: 800px) {
+    section.comments {
+        overflow-y: auto;
+        max-height: none;
+    }
 }
