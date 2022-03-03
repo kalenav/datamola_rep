@@ -398,24 +398,27 @@ p.revealable
   color: white;
   text-align: center;
   position: absolute;
-  top: -50px;
+  top: -40px;
   opacity: 0;
   pointer-events: none;
   transition-duration: 0.2s;
   font-weight: 100;
   font-size: 12px;
+  padding: 10px;
+  border-radius: 5px;
+
 }
 
 p.revealable.small
 {
   width: 100px;
-  right: calc(50% - 50px);
+  left: calc(50% - 60px);
 }
 
 p.revealable.large
 {
   width: 150px;
-  right: calc(50% - 75px);
+  right: calc(50% - 85px);
 }
 
 div.revealable-text-container
@@ -426,27 +429,50 @@ div.revealable-text-container
   position: relative;
 }
 
-@keyframes icon-hover-text-reveal
+@keyframes icon-hover-text-reveal-one-line
 {
   0%
   {
     opacity: 0;
-    top: -50px;
   }
   50%
   {
     opacity: 1;
-    top: -70px;
+    top: -60px;
   }
   100%
   {
-    top: -65px;
+    top: -55px;
   }
 }
 
-div.revealable-text-container i:hover + p.revealable, div.revealable-text-container button:hover + p.revealable
+@keyframes icon-hover-text-reveal-four-line
 {
-  animation: icon-hover-text-reveal 0.6s;
+  0%
+  {
+    opacity: 0;
+  }
+  50%
+  {
+    opacity: 1;
+    top: calc(-60px - 3em - 10px);
+  }
+  100%
+  {
+    top: calc(-55px - 3em - 10px);
+  }
+}
+
+div.revealable-text-container:hover p.revealable.one-line
+{
+  animation: icon-hover-text-reveal-one-line 0.6s;
   opacity: 1;
-  top: -65px;
+  top: -55px;
+}
+
+div.revealable-text-container:hover p.revealable.four-line
+{
+  animation: icon-hover-text-reveal-four-line 0.6s;
+  opacity: 1;
+  top: calc(-55px - 3em - 10px);
 }
