@@ -1,0 +1,10 @@
+:root {
+    --primary-color: #00B2DC;
+    --secondary-color: #464646;
+    --lightgray: #F2F2F2;
+    --lightgray-2: #C0C0C0;
+}
+  
+header {
+    background-color: var(--lightgray);
+}
