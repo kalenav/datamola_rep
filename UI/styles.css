@@ -111,3 +111,11 @@ p.tweet-text {
     font-size: 1.5rem;
 }
 
+p.tweet-text span.hashtag {
+    color: var(--primary-color);
+}
+
+p.tweet-text span.hashtag:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
