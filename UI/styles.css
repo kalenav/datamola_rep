@@ -88,11 +88,19 @@ section.tweets {
 
 section.tweets > * {
     width: 100%;
+    padding: 1rem 0;
 }
 
 div.tweet {
     display: flex;
     flex-direction: column;
+    border-bottom: solid var(--lightgray-2) 1px;
+    width: 60%;
+    margin: 0 auto;
+}
+
+div.tweet > p {
+    margin: 0.3rem 0;
 }
 
 p.author-info {
