@@ -312,10 +312,7 @@ const tweets = [
 
     function validateTweet(tw) {
         if(
-            (tw.id !== "" && !tw.id) 
-            || (tw.text !== "" && !tw.text) || tw.text.length > 280 
-            || !tw.createdAt
-            || !tw.author
+            !validateComment(tw)
             || !tw.comments
             || !tw.comments.every((comment) => 
                 (comment.id || comment.id === "")
@@ -354,5 +351,13 @@ const tweets = [
         return true;
     }
 
-    
+    function validateComment(com) {
+        if(
+            (com.id !== "" && !com.id) 
+            || (com.text !== "" && !com.text) || com.text.length > 280 
+            || !com.createdAt
+            || !com.author
+        ) return false;
+        return true;
+    }
 })();
