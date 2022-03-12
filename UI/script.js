@@ -339,4 +339,11 @@ const tweets = [
         }
         else return false;
     }
+
+    function editTweet(id, text) {
+        const tweet = getTweet(id);
+        if(tweet.author !== user || !validateTweet(tweet)) return false;
+        tweet.text = text;
+        return true;
+    }
 })();
