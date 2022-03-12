@@ -342,8 +342,17 @@ const tweets = [
 
     function editTweet(id, text) {
         const tweet = getTweet(id);
-        if(tweet.author !== user || !validateTweet(tweet)) return false;
+        if(tweet.author !== user || !validateTweet(tweet)) return false; // по формулировке задания проверка на валидность идёт перед изменением твита, как ни странно
         tweet.text = text;
         return true;
     }
+
+    function removeTweet(id) {
+        const tweet = getTweet(id);
+        if(tweet.author !== user) return false;
+        tweets = tweets.filter((tweet) => tweet.id !== id);
+        return true;
+    }
+
+    
 })();
