@@ -309,4 +309,20 @@ const tweets = [
     function getTweet(id) {
         return tweets.find((tweet) => tweet.id === id);
     }
+
+    function validateTweet(tw) {
+        if(
+            (tw.id !== "" && !tw.id) 
+            || (tw.text !== "" && !tw.text) || tw.text.length > 280 
+            || !tw.createdAt
+            || !tw.author
+            || !tw.comments
+            || !tw.comments.every((comment) => 
+                (comment.id || comment.id === "")
+                && ((comment.text || comment.text === "") && comment.text.length <= 280)
+                && (comment.createdAt)
+                && comment.author)
+        ) return false;
+        return true;
+    }
 })();
