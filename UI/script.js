@@ -290,7 +290,7 @@ const tweets = [
     }
 ]
 
-(function () {
+var module = (function () {
 
     let user;
 
@@ -376,5 +376,16 @@ const tweets = [
     function changeUser(usr) {
         user = usr;
     }
-    
+
+    return {
+        getTweets,
+        getTweet,
+        validateTweet,
+        addTweet,
+        editTweet,
+        removeTweet,
+        validateComment,
+        addComment,
+        changeUser
+    }
 })();
