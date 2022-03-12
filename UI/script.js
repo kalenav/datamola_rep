@@ -306,4 +306,7 @@ const tweets = [
         return result.slice(skip, skip + top);
     }
 
+    function getTweet(id) {
+        return tweets.find((tweet) => tweet.id === id);
+    }
 })();
