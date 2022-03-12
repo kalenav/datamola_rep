@@ -360,4 +360,18 @@ const tweets = [
         ) return false;
         return true;
     }
+
+    function addComment(id, text) {
+        const tweet = getTweet(id);
+        if(!tweet) return false;
+        const newComment = {};
+        newComment.id = "c" + String(tweets.reduce(((r, tweet) => {
+            const currOldestComment = tweet.comments[tweet.comments.length - 1];
+            let currOldestCommentNumber = Number(currOldestComment.id.slice(0, currOldestComment.id.length - 1));
+            return currOldestCommentNumber > r ? currOldestCommentNumber : r;
+        }), 0) + 1);
+        return true;
+    }
+
+    
 })();
