@@ -46,7 +46,7 @@ const tweets = [
         author: "Felicia",
         comments: [
             {
-                id: "42",
+                id: "c42",
                 text: "Thanks for the insipiration! I will do my best not to let you down.",
                 createdAt: new Date("2022-03-12T19:25:25"),
                 author: "Konstantin"
@@ -61,7 +61,7 @@ const tweets = [
         author: "George",
         comments: [
             {
-                id: "43",
+                id: "c43",
                 text: "And I took that personally. Sheesh. You didn't even #try talking to me to think that it would be difficult. Oh well.",
                 createdAt: new Date("2022-03-12T19:30:50"),
                 author: "Konstantin"
@@ -92,7 +92,7 @@ const tweets = [
         author: "Miranda",
         comments: [
             {
-                id: "44",
+                id: "c44",
                 text: "FYI, there is a comment section under each tweet. Oh well. A friend of mine will continue my thought in the text tweet.",
                 createdAt: new Date("2022-03-12T19:34:24"),
                 author: "Leonard"
@@ -131,14 +131,14 @@ const tweets = [
         author: "Quentin",
         comments: [
             {
-                id: "45",
+                id: "c45",
                 text: "Come on now. He needs to have comments or his mentors won't be happy. Did you even read the homework task? Duh.",
                 createdAt: new Date("2022-03-12T19:37:03"),
                 author: "Leonard"
             },
 
             {
-                id: "46",
+                id: "c46",
                 text: "Oh, right, right, sorry. And some comments too.",
                 createdAt: new Date("2022-03-12T19:37:30"),
                 author: "Quentin"
@@ -169,7 +169,7 @@ const tweets = [
         author: "Timothy",
         comments: [
             {
-                id: "47",
+                id: "c47",
                 text: "No.",
                 createdAt: new Date("2022-03-12T19:39:10"),
                 author: "Anonymous"
@@ -184,42 +184,42 @@ const tweets = [
         author: "Ulrich",
         comments: [ 
             {
-                id: "48",
+                id: "c48",
                 text: "Do acquaintances count?",
                 createdAt: new Date("2022-03-12T19:39:55"),
                 author: "Victoria"
             },
 
             {
-                id: "49",
+                id: "c49",
                 text: "Think later, you have the next letter! Quick, make a tweet before someone ruins it!",
                 createdAt: new Date("2022-03-12T19:40:12"),
                 author: "Ulrich"
             },
 
             {
-                id: "50",
+                id: "c50",
                 text: "Oh god... I'm late, aren't I?",
                 createdAt: new Date("2022-03-12T19:44:42"),
                 author: "Victoria"
             },
 
             {
-                id: "51",
+                id: "c51",
                 text: "No you aren't! Yet!",
                 createdAt: new Date("2022-03-12T19:44:50"),
                 author: "Ulrich"
             },
 
             {
-                id: "52",
+                id: "c52",
                 text: "You sure? I'm pretty certain someone has already posted a tweet.",
                 createdAt: new Date("2022-03-12T19:45:13"),
                 author: "Victoria"
             },
 
             {
-                id: "53",
+                id: "c53",
                 text: "JUST POST THE DAMN TWEET!",
                 createdAt: new Date("2022-03-12T19:45:20"),
                 author: "Ulrich"
@@ -234,7 +234,7 @@ const tweets = [
         author: "Victoria",
         comments: [
             {
-                id: "54",
+                id: "c54",
                 text: "Could you have waited a little longer?",
                 createdAt: new Date("2022-03-12T19:45:53"),
                 author: "Ulrich"
@@ -265,7 +265,7 @@ const tweets = [
         author: "Yana",
         comments: [
             {
-                id: "55",
+                id: "c55",
                 text: "I'm more concerned by the fact that it takes him more than a day to get a cup of tea...",
                 createdAt: new Date("2022-03-13T21:28:03"),
                 author: "Leonard"
@@ -324,5 +324,19 @@ const tweets = [
                 && comment.author)
         ) return false;
         return true;
+    }
+
+    function addTweet(text) {
+        const newTweet = {};
+        newTweet.id = String(Number(tweets[tweets.length - 1].id) + 1);
+        newTweet.text = text;
+        newTweet.date = new Date();
+        newTweet.author = user;
+        newTweet.comments = [];
+        if(validateTweet(newTweet)) {
+            tweets.push(newTweet);
+            return true;
+        }
+        else return false;
     }
 })();
