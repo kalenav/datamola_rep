@@ -305,6 +305,7 @@ var module = (function () {
             if(filterConfig.hashtags) result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => tweet.text.includes(`#${hashtag}`)));
             if(filterConfig.text || filterConfig.text === "") result = result.filter((tweet) => tweet.text.includes(filterConfig.text));
         }
+        result.sort((tweet1, tweet2) => tweet1.createdAt > tweet2.createdAt ? 1 : -1);
         return result.slice(skip, skip + top);
     }
 
