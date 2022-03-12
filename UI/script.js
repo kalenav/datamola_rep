@@ -373,5 +373,8 @@ const tweets = [
         return true;
     }
 
+    function changeUser(usr) {
+        user = usr;
+    }
     
 })();
