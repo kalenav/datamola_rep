@@ -325,6 +325,7 @@ var module = (function () {
         if(
             !validateComment(tw)
             || !tw.comments
+            || !(tw.comments instanceof Array)
             || !tw.comments.every((comment) => 
                 (comment.id || comment.id === "")
                 && ((comment.text || comment.text === "") && comment.text.length <= 280)
@@ -394,8 +395,6 @@ var module = (function () {
         let expecting;
         let actual;
 
-        debugger;
-
         console.log("test 1: getTweets()");
         expecting = tweets.slice(14, 24).reverse();
         actual = getTweets();
@@ -405,7 +404,7 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
         console.log("test 2: getTweets(0, 10)");
         expecting = tweets.slice(14, 24).reverse();
@@ -416,7 +415,7 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
         console.log("test 3: getTweets(10, 10)");
         expecting = tweets.slice(4, 14).reverse();
@@ -427,9 +426,9 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
-        console.log("4: getTweets(0, 10, {author: 'e'})")
+        console.log("test 4: getTweets(0, 10, {author: 'e'})")
         expecting = [tweets[22], tweets[20], tweets[19], tweets[14], tweets[13], tweets[10], tweets[8], tweets[6], tweets[5], tweets[3], tweets[2], tweets[0]];
         actual = getTweets(0, 10, {author: "e"});
         if(actual.every((v, i) => actual[i] === expecting[i])) {
@@ -438,7 +437,7 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
         console.log("test 5: getTweets(3, 5, {hashtags: ['tweet']})");
         expecting = [tweets[18], tweets[6]];
@@ -449,9 +448,9 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
-        console.log("6: getTweet('13')");
+        console.log("test 6: getTweet('13')");
         expecting = tweets[12];
         actual = getTweet("13");
         if(expecting === actual) {
@@ -460,7 +459,7 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
         console.log("7: getTweet('not an actual id')");
         expecting = undefined;
@@ -471,7 +470,7 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
         console.log("test 8: validateTweet({id: '1', text: 'hi there', createdAt: new Date(), author: 'someone', comments: []}");
         if(validateTweet({id: "1", text: "hi there", createdAt: new Date(), author: "someone", comments: []})) {
@@ -480,7 +479,7 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
 
         console.log("test 9: validateTweet(tweets[4])");
         if(validateTweet(tweets[4])) {
@@ -489,7 +488,61 @@ var module = (function () {
         }
         else console.log("FAILED");
 
-        console.log("\n----\n");
+        console.log("");
+
+        console.log("test 10: validateTweet({id: 'id', text: '', createdAt: new Date(), author: 'e', comments: []})");
+        if(validateTweet({id: 'id', text: '', createdAt: new Date(), author: 'e', comments: []})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 11: validateTweet({id: '', text: 'text', createdAt: new Date(), author: 'a beeper perhaps', comments: []})")
+        if(validateTweet({id: '', text: 'text', createdAt: new Date(), author: 'a beeper perhaps', comments: []})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 12: validateTweet({id: '123', text: 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', createdAt: new Date(), author: 'some very wordy fella', comments: []}");
+        if(!validateTweet({id: '123', text: 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', createdAt: new Date(), author: 'some very wordy fella', comments: []})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 13: validateTweet({id: '42', text: 'i always say morning instead of good morning', createdAt: undefined, author: 'some very shady fella', comments: []})");
+        if(!validateTweet({id: '42', text: 'i always say morning instead of good morning', createdAt: undefined, author: 'some very shady fella', comments: []})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 14: validateTweet({id: '256', text: 'who am I?', createdAt: new Date(), author: '', comments: []})");
+        if(!validateTweet({id: '256', text: 'who am I?', createdAt: new Date(), author: '', comments: []})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 15: validateTweet({id: '512', text: 'alrighty then', createdAt: new Date(), author: 'some very agreeable fella', comments: {}})");
+        if(!validateTweet({id: '512', text: 'alrighty then', createdAt: new Date(), author: 'some very agreeable fella', comments: {}})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
     }
 
     return {
