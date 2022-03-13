@@ -18,7 +18,7 @@ const tweets = [
     {
         id: "3",
         text: "Text with a #hashtag here",
-        createdAt: new Date("2022-03-05T20:20:00"),
+        createdAt: new Date("2022-03-10T20:20:00"),
         author: "Charlie",
         comments: []
     },
@@ -26,7 +26,7 @@ const tweets = [
     {
         id: "4",
         text: "Another #text with a #hashtag here",
-        createdAt: new Date("2022-02-01T10:00:00"),
+        createdAt: new Date("2022-03-11T12:03:05"),
         author: "Daniel",
         comments: []
     },
@@ -34,7 +34,7 @@ const tweets = [
     {
         id: "5",
         text: "Text is what this is",
-        createdAt: new Date("2021-03-09T09:05:01"),
+        createdAt: new Date("2022-03-11T13:05:01"),
         author: "Ethan",
         comments: []
     },
@@ -88,7 +88,7 @@ const tweets = [
     {
         id: "10",
         text: "Yeah, I am, what is it?",
-        createdAt: new Date("2022-03-09T19:33:50"),
+        createdAt: new Date("2022-03-12T19:33:50"),
         author: "Miranda",
         comments: [
             {
@@ -297,7 +297,7 @@ var module = (function () {
     function getTweets(skip, top, filterConfig) {
         skip = skip ?? 0;
         top = top ?? 10;
-        let result = tweets;
+        let result = tweets.slice();
         if(filterConfig) {
             if(filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
             if(filterConfig.dateFrom) result = result.filter((tweet) => tweet.createdAt >= filterConfig.dateFrom);
@@ -394,8 +394,10 @@ var module = (function () {
         let expecting;
         let actual;
 
+        debugger;
+
         // тест 1: getTweets()
-        expecting = tweets.slice(14, 25).reverse();
+        expecting = tweets.slice(14, 24).reverse();
         actual = getTweets();
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
@@ -404,7 +406,7 @@ var module = (function () {
         else console.log("test 1: FAILED")
 
         // тест 2: getTweets(0, 10)
-        expecting = tweets.slice(14, 25).reverse();
+        expecting = tweets.slice(14, 24).reverse();
         actual = getTweets(0, 10);
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
@@ -413,7 +415,7 @@ var module = (function () {
         else console.log("test 2: FAILED");
 
         // тест 3: getTweets(10, 10)
-        expecting = tweets.slice(4, 15).reverse();
+        expecting = tweets.slice(4, 14).reverse();
         actual = getTweets(10, 10);
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
@@ -449,6 +451,7 @@ var module = (function () {
         removeTweet,
         validateComment,
         addComment,
-        changeUser
+        changeUser,
+        tests
     }
 })();
