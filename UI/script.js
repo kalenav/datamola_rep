@@ -347,8 +347,13 @@ var module = (function () {
 
     function editTweet(id, text) {
         const tweet = getTweet(id);
-        if(tweet.author !== user || !validateTweet(tweet)) return false; // по формулировке задания проверка на валидность идёт перед изменением твита, как ни странно
+        let snapshot = tweet.text;
         tweet.text = text;
+        if(tweet.author !== user || !validateTweet(tweet)) 
+        {
+            tweet.text = snapshot;
+            return false;
+        }
         return true;
     }
 
@@ -541,8 +546,6 @@ var module = (function () {
 
         console.log("");
 
-        debugger;
-
         console.log("test 16: addTweet(\"i'm a text!\")");
         addTweet("i'm a text!");
         actual = tweets[tweets.length - 1];
@@ -556,6 +559,32 @@ var module = (function () {
             console.log("passed");
         }
         else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 17: editTweet('25', \"i'm still a text, but different!\")")
+        editTweet('25', "i'm still a text, but different!");
+        if(tweets[tweets.length - 1].text === "i'm still a text, but different!") {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        user = "OTHER_USER";
+        console.log("test 18: editTweet('25', \"i'm yet another text!\") (current user is not the author)");
+        editTweet('25', "i'm yet another text!");
+        if(tweets[tweets.length - 1].text === "i'm still a text, but different!") {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+        user = "TEST_USER";
+
+        console.log("");
+
+        console.log("test 19: ")
     }
 
     return {
