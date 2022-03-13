@@ -302,10 +302,18 @@ var module = (function () {
             if(filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
             if(filterConfig.dateFrom) result = result.filter((tweet) => tweet.createdAt >= filterConfig.dateFrom);
             if(filterConfig.dateTo) result = result.filter((tweet) => tweet.createdAt <= filterConfig.dateTo);
-            if(filterConfig.hashtags) result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => tweet.text.includes(`#${hashtag}`)));
+            if(filterConfig.hashtags) result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => {
+                let hashtagStart = tweet.text.indexOf(hashtag);
+                if(hashtagStart === -1) return false; // хэштег не был найден
+                let hashtagEnd = hashtagStart + hashtag.length - 1;
+                if(hashtagEnd === tweet.text.length - 1) return true; // хэштегом заканчивается текст твита
+                let nextCharCode = tweet.text.charCodeAt(hashtagEnd + 1);
+                if((nextCharCode >= 65 && nextCharCode <= 122) || (nextCharCode >= 1040 && nextCharCode <= 1103)) return false; // после хэштега идёт буквенный символ, т.е. хэштег продолжается
+                return true;
+            }));
             if(filterConfig.text || filterConfig.text === "") result = result.filter((tweet) => tweet.text.includes(filterConfig.text));
         }
-        result.sort((tweet1, tweet2) => tweet1.createdAt > tweet2.createdAt ? 1 : -1);
+        result.sort((tweet1, tweet2) => tweet1.createdAt > tweet2.createdAt ? -1 : 1);
         return result.slice(skip, skip + top);
     }
 
@@ -378,6 +386,58 @@ var module = (function () {
 
     function changeUser(usr) {
         user = usr;
+    }
+
+    function tests() {
+        let testsPassed = 0;
+
+        let expecting;
+        let actual;
+
+        // тест 1: getTweets()
+        expecting = tweets.slice(14, 25).reverse();
+        actual = getTweets();
+        if(actual.every((v, i) => actual[i] === expecting[i])) {
+            testsPassed++;
+            console.log("test 1: passed");
+        }
+        else console.log("test 1: FAILED")
+
+        // тест 2: getTweets(0, 10)
+        expecting = tweets.slice(14, 25).reverse();
+        actual = getTweets(0, 10);
+        if(actual.every((v, i) => actual[i] === expecting[i])) {
+            testsPassed++;
+            console.log("test 2: passed");
+        }
+        else console.log("test 2: FAILED");
+
+        // тест 3: getTweets(10, 10)
+        expecting = tweets.slice(4, 15).reverse();
+        actual = getTweets(10, 10);
+        if(actual.every((v, i) => actual[i] === expecting[i])) {
+            testsPassed++;
+            console.log("test 3: passed");
+        }
+        else console.log("test 3: FAILED");
+
+        // тест 4: getTweets(0, 10, {author: "e"})
+        expecting = [tweets[22], tweets[20], tweets[19], tweets[14], tweets[13], tweets[10], tweets[8], tweets[6], tweets[5], tweets[3], tweets[2], tweets[0]];
+        actual = getTweets(0, 10, {author: "e"});
+        if(actual.every((v, i) => actual[i] === expecting[i])) {
+            testsPassed++;
+            console.log("test 4: passed");
+        }
+        else console.log("test 4: FAILED");
+
+        // тест 5: getTweets(3, 5, {hashtags: ["tweet"]})
+        expecting = [tweets[18], tweets[6]];
+        actual = getTweets(3, 5, {hashtags: ["tweet"]});
+        if(actual.every((v, i) => actual[i] === expecting[i])) {
+            testsPassed++;
+            console.log("test 5: passed");
+        }
+        else console.log("test 5: FAILED");
     }
 
     return {
