@@ -396,50 +396,100 @@ var module = (function () {
 
         debugger;
 
-        // тест 1: getTweets()
+        console.log("test 1: getTweets()");
         expecting = tweets.slice(14, 24).reverse();
         actual = getTweets();
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
-            console.log("test 1: passed");
+            console.log("passed");
         }
-        else console.log("test 1: FAILED")
+        else console.log("FAILED");
 
-        // тест 2: getTweets(0, 10)
+        console.log("\n----\n");
+
+        console.log("test 2: getTweets(0, 10)");
         expecting = tweets.slice(14, 24).reverse();
         actual = getTweets(0, 10);
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
-            console.log("test 2: passed");
+            console.log("passed");
         }
-        else console.log("test 2: FAILED");
+        else console.log("FAILED");
 
-        // тест 3: getTweets(10, 10)
+        console.log("\n----\n");
+
+        console.log("test 3: getTweets(10, 10)");
         expecting = tweets.slice(4, 14).reverse();
         actual = getTweets(10, 10);
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
-            console.log("test 3: passed");
+            console.log("passed");
         }
-        else console.log("test 3: FAILED");
+        else console.log("FAILED");
 
-        // тест 4: getTweets(0, 10, {author: "e"})
+        console.log("\n----\n");
+
+        console.log("4: getTweets(0, 10, {author: 'e'})")
         expecting = [tweets[22], tweets[20], tweets[19], tweets[14], tweets[13], tweets[10], tweets[8], tweets[6], tweets[5], tweets[3], tweets[2], tweets[0]];
         actual = getTweets(0, 10, {author: "e"});
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
-            console.log("test 4: passed");
+            console.log("passed");
         }
-        else console.log("test 4: FAILED");
+        else console.log("FAILED");
 
-        // тест 5: getTweets(3, 5, {hashtags: ["tweet"]})
+        console.log("\n----\n");
+
+        console.log("test 5: getTweets(3, 5, {hashtags: ['tweet']})");
         expecting = [tweets[18], tweets[6]];
         actual = getTweets(3, 5, {hashtags: ["tweet"]});
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
-            console.log("test 5: passed");
+            console.log("passed");
         }
-        else console.log("test 5: FAILED");
+        else console.log("FAILED");
+
+        console.log("\n----\n");
+
+        console.log("6: getTweet('13')");
+        expecting = tweets[12];
+        actual = getTweet("13");
+        if(expecting === actual) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("\n----\n");
+
+        console.log("7: getTweet('not an actual id')");
+        expecting = undefined;
+        actual = getTweet("not an actual id");
+        if(expecting === actual) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("\n----\n");
+
+        console.log("test 8: validateTweet({id: '1', text: 'hi there', createdAt: new Date(), author: 'someone', comments: []}");
+        if(validateTweet({id: "1", text: "hi there", createdAt: new Date(), author: "someone", comments: []})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("\n----\n");
+
+        console.log("test 9: validateTweet(tweets[4])");
+        if(validateTweet(tweets[4])) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("\n----\n");
     }
 
     return {
