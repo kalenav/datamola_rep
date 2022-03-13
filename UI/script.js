@@ -382,8 +382,9 @@ var module = (function () {
         if(!tweet) return false;
         const newComment = {};
         newComment.id = "c" + String(tweets.reduce(((r, tw) => {
+            if(tw.comments.length === 0) return r > 1 ? r : 1;
             const currOldestComment = tw.comments[tw.comments.length - 1];
-            let currOldestCommentNumber = Number(currOldestComment.id.slice(0, currOldestComment.id.length - 1));
+            let currOldestCommentNumber = Number(currOldestComment.id.slice(1, currOldestComment.id.length));
             return currOldestCommentNumber > r ? currOldestCommentNumber : r;
         }), 0) + 1);
         newComment.text = text;
@@ -645,7 +646,21 @@ var module = (function () {
 
         console.log("");
 
-        console.log("test 25: ")
+        debugger;
+        console.log("test 25: addComment('2', 'what a great tweet!')");
+        if(addComment('2', 'what a great tweet!')) {
+            const comment = tweets[1].comments[0];
+            if(comment.id === "c56"
+            && comment.text === "what a great tweet!"
+            && comment.createdAt
+            && comment.author === "TEST_USER") {
+                testsPassed++;
+                console.log("passed");
+            }
+            else console.log("FAILED");
+        }
+
+        console.log("");
     
     }
 
