@@ -359,7 +359,7 @@ var module = (function () {
 
     function removeTweet(id) {
         const tweet = getTweet(id);
-        if(tweet.author !== user) return false;
+        if(tweet === undefined || tweet.author !== user) return false;
         tweets = tweets.filter((tweet) => tweet.id !== id);
         return true;
     }
@@ -562,7 +562,7 @@ var module = (function () {
 
         console.log("");
 
-        console.log("test 17: editTweet('25', \"i'm still a text, but different!\")")
+        console.log("test 17: editTweet('25', \"i'm still a text, but different!\") (current user is the author)")
         editTweet('25', "i'm still a text, but different!");
         if(tweets[tweets.length - 1].text === "i'm still a text, but different!") {
             testsPassed++;
@@ -584,7 +584,26 @@ var module = (function () {
 
         console.log("");
 
-        console.log("test 19: ")
+        console.log("test 19: editTweet('25', \"this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols\")");
+        if(!editTweet('25', "this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols")) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 20: removeTweet('25') (user is the author)");
+        if(removeTweet('25')) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log()
+        
     }
 
     return {
