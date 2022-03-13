@@ -335,7 +335,7 @@ var module = (function () {
         const newTweet = {};
         newTweet.id = String(Number(tweets[tweets.length - 1].id) + 1);
         newTweet.text = text;
-        newTweet.date = new Date();
+        newTweet.createdAt = new Date();
         newTweet.author = user;
         newTweet.comments = [];
         if(validateTweet(newTweet)) {
@@ -388,6 +388,7 @@ var module = (function () {
     function tests() {
         let testsPassed = 0;
 
+        user = "TEST_USER";
         let expecting;
         let actual;
 
@@ -539,6 +540,22 @@ var module = (function () {
         else console.log("FAILED");
 
         console.log("");
+
+        debugger;
+
+        console.log("test 16: addTweet(\"i'm a text!\")");
+        addTweet("i'm a text!");
+        actual = tweets[tweets.length - 1];
+        if(actual.id === "25"
+        && actual.text === "i'm a text!"
+        && actual.date
+        && actual.author === "TEST_USER"
+        && actual.comments instanceof Array
+        && actual.comments.length === 0) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
     }
 
     return {
