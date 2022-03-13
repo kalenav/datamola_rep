@@ -359,7 +359,7 @@ var module = (function () {
 
     function removeTweet(id) {
         let tweetIndex = 0;
-        for(; tweetIndex < tweets.length; tweetIndex++) {
+        for(; tweetIndex < tweets.length; tweetIndex++) { // не исползоьвал getTweet, потому что нужен индекс, чтобы использовать splice
             if(tweets[tweetIndex].id === id) break;
         }
         if(tweetIndex === tweets.length || tweets[tweetIndex].author !== user) return false;
@@ -381,11 +381,15 @@ var module = (function () {
         const tweet = getTweet(id);
         if(!tweet) return false;
         const newComment = {};
-        newComment.id = "c" + String(tweets.reduce(((r, tweet) => {
-            const currOldestComment = tweet.comments[tweet.comments.length - 1];
+        newComment.id = "c" + String(tweets.reduce(((r, tw) => {
+            const currOldestComment = tw.comments[tw.comments.length - 1];
             let currOldestCommentNumber = Number(currOldestComment.id.slice(0, currOldestComment.id.length - 1));
             return currOldestCommentNumber > r ? currOldestCommentNumber : r;
         }), 0) + 1);
+        newComment.text = text;
+        newComment.createdAt = new Date();
+        newComment.author = user;
+        tweet.comments.push(newComment);
         return true;
     }
 
@@ -623,8 +627,26 @@ var module = (function () {
 
         console.log("");
 
+        console.log("test 23: validateComment({id: 'c1024', text: 'some text', createdAt: new Date(), author: 'some very unoriginal fella'})");
+        if(validateComment({id: 'c1024', text: 'some text', createdAt: new Date(), author: 'some very unoriginal fella'})) {
+            testsPassed++;
+            console.log("passed");
+        }    
+        else console.log("FAILED");
 
-        
+        console.log("");
+
+        console.log("test 24: validateComment({id: '', text: '', createdAt: new Date(), author: 'some empty fella'})");
+        if(validateComment({id: '', text: '', createdAt: new Date(), author: 'some empty fella'})) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 25: ")
+    
     }
 
     return {
