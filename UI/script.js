@@ -548,7 +548,7 @@ var module = (function () {
         actual = tweets[tweets.length - 1];
         if(actual.id === "25"
         && actual.text === "i'm a text!"
-        && actual.date
+        && actual.createdAt
         && actual.author === "TEST_USER"
         && actual.comments instanceof Array
         && actual.comments.length === 0) {
