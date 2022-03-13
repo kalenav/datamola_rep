@@ -15,7 +15,6 @@ function greatestProfit(array) {
 
     const allPossibleAuxiliaryArrays = [new Array(array.length).fill(0)];
     let auxiliary = new Array(array.length).fill(0);
-    let arrSnapshot;
 
     function insertPairs(leftBound) {
         if(leftBound >= auxiliary.length - 2) {
@@ -24,11 +23,10 @@ function greatestProfit(array) {
         }
         for(let currOnePosition = leftBound + 1; currOnePosition < auxiliary.length - 1; currOnePosition++) {
             auxiliary[currOnePosition] = 1;
-            arrSnapshot = auxiliary.slice();
             for(let currTwoPosition = currOnePosition + 1; currTwoPosition < auxiliary.length; currTwoPosition++) {
                 auxiliary[currTwoPosition] = 2;
                 insertPairs(currTwoPosition);
-                auxiliary = arrSnapshot.slice();
+                auxiliary[currTwoPosition] = 0;
             }
             for(let i = currOnePosition; i < auxiliary.length; i++) auxiliary[i] = 0;
         }
@@ -43,20 +41,3 @@ function greatestProfit(array) {
 
 // greatestProfit(arr1);
 // greatestProfit(arr2);
-
-function f(length) {
-    const arrs = [new Array(length).fill(0)];
-    let aux = new Array(length).fill(0);
-    let snapshot;
-    for(let i = 0; i < length; i++) {
-        aux[i] = 1;
-        snapshot = aux.slice();
-        for(let j = i + 1; j < length; j++) {
-            aux[j] = 2;
-            arrs.push(aux);
-            aux = snapshot.slice();
-        }
-        aux.fill(0);
-    }
-    return arrs;
-}
