@@ -1,5 +1,6 @@
 const arr1 = [7, 1, 5, 3, 6, 4];
 const arr2 = [1, 2, 3, 4, 5];
+const arr3 = [7, 6, 4, 3, 1];
 
 function greatestProfit(array) {
     // создаётся вспомогательный массив, который будет заполняться цифрами 0, 1 и 2 
@@ -71,5 +72,6 @@ function greatestProfit(array) {
     }, 0);
 }
 
-greatestProfit(arr1);
-greatestProfit(arr2);
+console.log(greatestProfit(arr1));
+console.log(greatestProfit(arr2));
+console.log(greatestProfit(arr3));
