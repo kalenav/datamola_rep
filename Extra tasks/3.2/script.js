@@ -41,7 +41,8 @@ function greatestProfit(array) {
             auxiliary[currOnePosition] = 1;
             for(let currTwoPosition = currOnePosition + 1; currTwoPosition < auxiliary.length; currTwoPosition++) {
                 auxiliary[currTwoPosition] = 2; // положили по нужным индексам 1 и 2,..
-                insertPairs(currTwoPosition);   // и вызвали функцию от "подмассива"
+                allPossibleAuxiliaryArrays.push(auxiliary.slice()); // ...запомнили массив, в котором текущая пара 1 и 2 - последняя...
+                insertPairs(currTwoPosition);   // ...и вызвали функцию от "подмассива"
 
                 // после того, как строка выше выполнилась, т.е. для текущего
                 // уровня вложенности и текущего расположения цифр 1 и 2
