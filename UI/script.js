@@ -358,9 +358,12 @@ var module = (function () {
     }
 
     function removeTweet(id) {
-        const tweet = getTweet(id);
-        if(tweet === undefined || tweet.author !== user) return false;
-        tweets = tweets.filter((tweet) => tweet.id !== id);
+        let tweetIndex = 0;
+        for(; tweetIndex < tweets.length; tweetIndex++) {
+            if(tweets[tweetIndex].id === id) break;
+        }
+        if(tweetIndex === tweets.length || tweets[tweetIndex].author !== user) return false;
+        tweets.splice(tweetIndex, 1);
         return true;
     }
 
@@ -602,7 +605,25 @@ var module = (function () {
 
         console.log("");
 
-        console.log()
+        console.log("test 21: removeTweet('15') (user is not he author)");
+        if(!removeTweet('15')) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+        console.log("test 22: removeTweet('not an actual id')");
+        if(!removeTweet('not an actual id')) {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+
+
         
     }
 
