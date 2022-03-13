@@ -326,11 +326,7 @@ var module = (function () {
             !validateComment(tw)
             || !tw.comments
             || !(tw.comments instanceof Array)
-            || !tw.comments.every((comment) => 
-                (comment.id || comment.id === "")
-                && ((comment.text || comment.text === "") && comment.text.length <= 280)
-                && (comment.createdAt)
-                && comment.author)
+            || !tw.comments.every((comment) => validateComment(comment))
         ) return false;
         return true;
     }
