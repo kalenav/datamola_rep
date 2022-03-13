@@ -646,7 +646,6 @@ var module = (function () {
 
         console.log("");
 
-        debugger;
         console.log("test 25: addComment('2', 'what a great tweet!')");
         if(addComment('2', 'what a great tweet!')) {
             const comment = tweets[1].comments[0];
@@ -661,7 +660,20 @@ var module = (function () {
         }
 
         console.log("");
-    
+
+        console.log("test 26: changeUser('OTHER_USER')");
+        changeUser('OTHER_USER');
+        if(user === "OTHER_USER") {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+
+        console.log("");
+        console.log("==========================================");
+        console.log("");
+
+        console.log(`${testsPassed}/26 tests passed`);
     }
 
     return {
