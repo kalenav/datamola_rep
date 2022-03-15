@@ -59,7 +59,7 @@ section
   flex-direction: row;
 }
 
-span.special
+.special
 {
   color: var(--special-span-text-color);
   padding: 3px 8px;
@@ -70,17 +70,17 @@ span.special
   left: 10px;
 }
 
-section:first-child span.special
+section:first-child .special
 {
   background-color: var(--first-special-span-background-color);
 }
 
-section:nth-child(2) span.special
+section:nth-child(2) .special
 {
   background-color: var(--second-special-span-background-color);
 }
 
-div.choose
+.choose
 {
   width: 30%;
   height: 100%;
@@ -92,13 +92,13 @@ div.choose
   padding-top: 20px;
 }
 
-div.price
+.price
 {
   font-size: 18px;
   font-weight: 900;
 }
 
-div.choose input
+.choose input
 {
   width: 80%;
   padding: 10px 0;
@@ -110,7 +110,7 @@ div.choose input
   transition-duration: 0s;
 }
 
-div.choose p
+.choose p
 {
   text-align: center;
   color: var(--div-choose-text-color);
@@ -118,7 +118,7 @@ div.choose p
   width: 80%;
 }
 
-div.info
+.info
 {
   display: flex;
   flex-direction: column;
@@ -127,24 +127,24 @@ div.info
   padding: 20px;
 }
 
-div.info > div
+.info > div
 {
   width: 100%;
 }
 
-div.info > div:not(:last-child)
+.info > div:not(:last-child)
 {
   box-sizing: border-box;
   margin-bottom: 10px;
 }
 
-div.info > div:last-child
+.info > div:last-child
 {
   padding-top: 10px;
   border-top: solid var(--flight-info-bottom-div-top-border-color) 1px;
 }
 
-div.info-header
+.info-header
 {
   width: 100%;
   height: 30%;
@@ -153,26 +153,26 @@ div.info-header
   justify-content: space-between;
 }
 
-div.logos
+.logos
 {
   display: flex;
   flex-direction: row;
   margin-right: auto;
 }
 
-div.logos i
+.logos i
 {
   margin-right: 10px;
 }
 
-div.additional-info
+.additional-info
 {
   float: right;
   display: flex;
   flex-direction: row;
 }
 
-div.additional-info i
+.additional-info i
 {
   width: 16px;
   margin-top: 3px;
@@ -181,29 +181,29 @@ div.additional-info i
   color: var(--additional-flight-info-icon-color);
 }
 
-div.revealable-text-container:first-of-type i
+.revealable-text-container:first-of-type i
 {
   padding: 5px 4px 5px 6px;
 }
 
-div.revealable-text-container:nth-of-type(2) i
+.revealable-text-container:nth-of-type(2) i
 {
   padding: 5px 3px 5px 7px;
 }
 
-div.revealable-text-container:nth-of-type(3) i
+.revealable-text-container:nth-of-type(3) i
 {
   padding: 5px 4px 5px 6px;
 }
 
-div.buttons
+.buttons
 {
   margin-left: 5px;
   display: flex;
   flex-direction: row;
 }
 
-div.buttons button
+.buttons button
 {
   color: var(--additional-flight-info-button-color);
   background: none;
@@ -215,12 +215,12 @@ div.buttons button
   transition-duration: 0s;
 }
 
-div.info > div:not(.info-header)
+.info > div:not(.info-header)
 {
   height: 35%;
 }
 
-div.that-way, div.this-way
+.that-way, .this-way
 {
   display: flex;
   flex-direction: row;
@@ -228,24 +228,24 @@ div.that-way, div.this-way
   align-items: center;
 }
 
-div.that-way > div, div.this-way > div
+.that-way > div, .this-way > div
 {
   height: 100%;
 }
 
-div.departure-info, div.arrival-info
+.departure-info, .arrival-info
 {
   display: flex;
   flex-direction: column;
   width: 25%;
 }
 
-div.time, div.time
+.time, .time
 {
   font-size: 24px;
 }
 
-div.departure-info > div:not(.time), div.arrival-info > div:not(.time)
+.departure-info > div:not(.time), .arrival-info > div:not(.time)
 {
   color: var(--flight-info-city-and-date-text-color);
   font-size: 12px;
@@ -253,12 +253,12 @@ div.departure-info > div:not(.time), div.arrival-info > div:not(.time)
   margin-top: 3px;
 }
 
-div.arrival-info > div
+.arrival-info > div
 {
   margin-left: auto;
 }
 
-div.flight-diagram
+.flight-diagram
 {
   width: 50%;
   display: flex;
@@ -267,12 +267,12 @@ div.flight-diagram
   align-items: center;
 }
 
-div.flight-diagram > div
+.flight-diagram > div
 {
   width: 100%;
 }
 
-div.duration-and-icons
+.duration-and-icons
 {
   display: flex;
   flex-direction: row;
@@ -281,115 +281,115 @@ div.duration-and-icons
   color: var(--flight-info-city-and-date-text-color);
 }
 
-div.duration-and-icons span
+.duration-and-icons span
 {
   font-size: 12px;
   font-weight: 300;
 }
 
-div.diagram-and-airports
+.diagram-and-airports
 {
   display: flex;
   flex-direction: row;
 }
 
-div.stage
+.stage
 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-section:nth-of-type(1) div.stage:nth-of-type(1)
+section:nth-of-type(1) .stage:nth-of-type(1)
 {
   width: 10%;
 }
 
-section:nth-of-type(1) div.stage:nth-of-type(2)
+section:nth-of-type(1) .stage:nth-of-type(2)
 {
   width: 50%;
 }
 
-section:nth-of-type(1) div.stage:nth-of-type(3)
+section:nth-of-type(1) .stage:nth-of-type(3)
 {
   width: 40%;
 }
 
-section:nth-of-type(1) div.stage:nth-of-type(1)
+section:nth-of-type(1) .stage:nth-of-type(1)
 {
   width: 50%;
 }
 
-section:nth-of-type(1) div.stage:nth-of-type(2)
+section:nth-of-type(1) .stage:nth-of-type(2)
 {
   width: 40%;
 }
 
-section:nth-of-type(1) div.stage:nth-of-type(3)
+section:nth-of-type(1) .stage:nth-of-type(3)
 {
   width: 10%;
 }
 
-section:nth-of-type(2) div.stage:nth-of-type(1)
+section:nth-of-type(2) .stage:nth-of-type(1)
 {
   width: 25%;
 }
 
-section:nth-of-type(2) div.stage:nth-of-type(2)
+section:nth-of-type(2) .stage:nth-of-type(2)
 {
   width: 20%;
 }
 
-section:nth-of-type(2) div.stage:nth-of-type(3)
+section:nth-of-type(2) .stage:nth-of-type(3)
 {
   width: 55%;
 }
 
-section:nth-of-type(2) div.stage:nth-of-type(1)
+section:nth-of-type(2) .stage:nth-of-type(1)
 {
   width: 60%;
 }
 
-section:nth-of-type(2) div.stage:nth-of-type(2)
+section:nth-of-type(2) .stage:nth-of-type(2)
 {
   width: 20%;
 }
 
-section:nth-of-type(2) div.stage:nth-of-type(3)
+section:nth-of-type(2) .stage:nth-of-type(3)
 {
   width: 20%;
 }
 
-div.stage:not(first-of-type):not(last-of-type)
+.stage:not(first-of-type):not(last-of-type)
 {
   align-items: center;
 }
 
-div.stage:first-of-type > span
+.stage:first-of-type > span
 {
   margin-right: auto;
 }
 
-div.stage:last-of-type > span
+.stage:last-of-type > span
 {
   margin-left: auto;
 }
 
-div.diagram-fragment
+.diagram-fragment
 {
   width: 100%;
   border: solid var(--flight-info-diagram-fragment-color) 1px;
   margin-top: 2px;
 }
 
-div.stage:nth-child(odd) div.diagram-fragment
+.stage:nth-child(odd) .diagram-fragment
 {
   border-width: 3px;
   border-radius: 3px;
   margin-top: 0;
 }
 
-span.airport-name
+.airport-name
 {
   font-size: 10px;
   font-weight: 900;
@@ -403,20 +403,20 @@ section:hover
   box-shadow: 0 1px 10px var(--section-hover-shadow-color);
 }
 
-div.choose input:hover
+.choose input:hover
 {
   cursor: inherit;
   color: rgb(220, 220, 220);
   background-color: var(--div-choose-button-hover-color);
 }
 
-div.buttons button:hover
+.buttons button:hover
 {
   cursor: inherit;
   color: var(--div-buttons-hover-color);
 }
 
-p.revealable
+.revealable
 {
   background-color: var(--revealable-text-background-color);
   color: var(--revealable-text-color);
@@ -433,19 +433,19 @@ p.revealable
 
 }
 
-p.revealable.small
+.revealable.small
 {
   width: 100px;
   left: calc(50% - 60px);
 }
 
-p.revealable.large
+.revealable.large
 {
   width: 150px;
   right: calc(50% - 85px);
 }
 
-div.revealable-text-container
+.revealable-text-container
 {
   display: flex;
   flex-direction: column;
@@ -487,14 +487,14 @@ div.revealable-text-container
   }
 }
 
-div.revealable-text-container:hover p.revealable.one-line
+.revealable-text-container:hover .revealable.one-line
 {
   animation: icon-hover-text-reveal-one-line 0.6s;
   opacity: 1;
   top: -55px;
 }
 
-div.revealable-text-container:hover p.revealable.four-line
+.revealable-text-container:hover .revealable.four-line
 {
   animation: icon-hover-text-reveal-four-line 0.6s;
   opacity: 1;
