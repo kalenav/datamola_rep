@@ -148,13 +148,16 @@ div.info-header
 {
   width: 100%;
   height: 30%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 div.logos
 {
-  float: left;
   display: flex;
   flex-direction: row;
+  margin-right: auto;
 }
 
 div.logos i
@@ -195,7 +198,6 @@ div.revealable-text-container:nth-of-type(3) i
 
 div.buttons
 {
-  float: right;
   margin-left: 5px;
   display: flex;
   flex-direction: row;
