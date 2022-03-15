@@ -1,3 +1,14 @@
+:root {
+  --first-special-span-background-color: #36BF66;
+  --second-special-span-background-color: #B385F2;
+  --main-lightgray: #EFF1F4;
+  --section-background-color: white;
+  --special-span-text-color: white;
+  --div-choose-button-color: #F26430;
+  --div-choose-button-text-color: white;
+  --div-choose-text-color: red;
+}
+
 *
 {
   font-family: 'Roboto', sans-serif;
@@ -10,7 +21,7 @@ body
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #EFF1F4;
+  background-color: var(--main-lightgray);
   height: 100vh;
 }
 
@@ -24,9 +35,9 @@ main
   width: 650px;
 }
 
-main section
+section
 {
-  background-color: white;
+  background-color: var(--section-background-color);
   border-radius: 5px;
   height: 250px;
   width: 100%;
@@ -35,9 +46,9 @@ main section
   flex-direction: row;
 }
 
-section span.special
+span.special
 {
-  color: white;
+  color: var(--special-span-text-color);
   padding: 3px 8px;
   font-size: 12px;
   border-radius: 9px;
@@ -48,12 +59,12 @@ section span.special
 
 section:first-child span.special
 {
-  background-color: #36BF66;
+  background-color: var(--first-special-span-background-color);
 }
 
 section:nth-child(2) span.special
 {
-  background-color: #B385F2;
+  background-color: var(--second-special-span-background-color);
 }
 
 div.choose
@@ -64,11 +75,11 @@ div.choose
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  border-right: solid #EFF1F4 1px;
+  border-right: solid var(--main-lightgray) 1px;
   padding-top: 20px;
 }
 
-div.choose div.price
+div.price
 {
   font-size: 18px;
   font-weight: 900;
@@ -80,8 +91,8 @@ div.choose input
   padding: 10px 0;
   border-radius: 5px;
   border: none;
-  background-color: #F26430;
-  color: white;
+  background-color: var(--div-choose-button-color);
+  color: var(--div-choose-button-text-color);
   margin-top: 10px;
   transition-duration: 0s;
 }
@@ -89,7 +100,7 @@ div.choose input
 div.choose p
 {
   text-align: center;
-  color: red;
+  color: var(--div-choose-text-color);
   font-size: 12px;
   width: 80%;
 }
@@ -117,10 +128,6 @@ div.info > div:not(:last-child)
 div.info > div:last-child
 {
   padding-top: 10px;
-}
-
-div.info > div:last-child
-{
   border-top: solid lightgray 1px;
 }
 
@@ -130,26 +137,26 @@ div.info-header
   height: 30%;
 }
 
-div.info-header div.logos
+div.logos
 {
   float: left;
   display: flex;
   flex-direction: row;
 }
 
-div.info-header div.logos i
+div.logos i
 {
   margin-right: 10px;
 }
 
-div.info-header div.additional-info
+div.additional-info
 {
   float: right;
   display: flex;
   flex-direction: row;
 }
 
-div.info-header div.additional-info i
+div.additional-info i
 {
   width: 16px;
   margin-top: 3px;
@@ -158,22 +165,22 @@ div.info-header div.additional-info i
   color: red;
 }
 
-div.info-header div.additional-info div.revealable-text-container:first-of-type i
+div.revealable-text-container:first-of-type i
 {
   padding: 5px 4px 5px 6px;
 }
 
-div.info-header div.additional-info div.revealable-text-container:nth-of-type(2) i
+div.revealable-text-container:nth-of-type(2) i
 {
   padding: 5px 3px 5px 7px;
 }
 
-div.info-header div.additional-info div.revealable-text-container:nth-of-type(3) i
+div.revealable-text-container:nth-of-type(3) i
 {
   padding: 5px 4px 5px 6px;
 }
 
-div.info-header div.buttons
+div.buttons
 {
   float: right;
   margin-left: 5px;
@@ -181,7 +188,7 @@ div.info-header div.buttons
   flex-direction: row;
 }
 
-div.info-header div.buttons button
+div.buttons button
 {
   color: gray;
   background: none;
@@ -218,7 +225,7 @@ div.departure-info, div.arrival-info
   width: 25%;
 }
 
-div.departure-info div.time, div.arrival-info div.time
+div.time, div.time
 {
   font-size: 24px;
 }
@@ -250,7 +257,7 @@ div.flight-diagram > div
   width: 100%;
 }
 
-div.flight-diagram div.duration-and-icons
+div.duration-and-icons
 {
   display: flex;
   flex-direction: row;
@@ -259,115 +266,115 @@ div.flight-diagram div.duration-and-icons
   color: rgb(200, 200, 200);
 }
 
-div.flight-diagram div.duration-and-icons span
+div.duration-and-icons span
 {
   font-size: 12px;
   font-weight: 300;
 }
 
-div.flight-diagram div.diagram-and-airports
+div.diagram-and-airports
 {
   display: flex;
   flex-direction: row;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage
+div.stage
 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(1) div.stage:nth-of-type(1)
 {
   width: 10%;
 }
 
-section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(1) div.stage:nth-of-type(2)
 {
   width: 50%;
 }
 
-section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(1) div.stage:nth-of-type(3)
 {
   width: 40%;
 }
 
-section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(1) div.stage:nth-of-type(1)
 {
   width: 50%;
 }
 
-section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(1) div.stage:nth-of-type(2)
 {
   width: 40%;
 }
 
-section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(1) div.stage:nth-of-type(3)
 {
   width: 10%;
 }
 
-section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(2) div.stage:nth-of-type(1)
 {
   width: 25%;
 }
 
-section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(2) div.stage:nth-of-type(2)
 {
   width: 20%;
 }
 
-section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(2) div.stage:nth-of-type(3)
 {
   width: 55%;
 }
 
-section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(2) div.stage:nth-of-type(1)
 {
   width: 60%;
 }
 
-section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(2) div.stage:nth-of-type(2)
 {
   width: 20%;
 }
 
-section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(2) div.stage:nth-of-type(3)
 {
   width: 20%;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:not(first-of-type):not(last-of-type)
+div.stage:not(first-of-type):not(last-of-type)
 {
   align-items: center;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:first-of-type > span
+div.stage:first-of-type > span
 {
   margin-right: auto;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:last-of-type > span
+div.stage:last-of-type > span
 {
   margin-left: auto;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage div.diagram-fragment
+div.diagram-fragment
 {
   width: 100%;
   border: solid rgb(220, 220, 220) 1px;
   margin-top: 2px;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:nth-child(odd) div.diagram-fragment
+div.stage:nth-child(odd) div.diagram-fragment
 {
   border-width: 3px;
   border-radius: 3px;
   margin-top: 0;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage span.airport-name
+span.airport-name
 {
   font-size: 10px;
   font-weight: 900;
@@ -388,7 +395,7 @@ div.choose input:hover
   background-color: #E15320;
 }
 
-div.info-header div.buttons button:hover
+div.buttons button:hover
 {
   cursor: inherit;
   color: rgb(0, 70, 255);
