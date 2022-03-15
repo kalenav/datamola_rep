@@ -1,3 +1,27 @@
+:root {
+  --first-special-span-background-color: #36BF66;
+  --second-special-span-background-color: #B385F2;
+  --main-lightgray: #EFF1F4;
+  --section-background-color: white;
+  --special-span-text-color: white;
+  --div-choose-button-color: #F26430;
+  --div-choose-button-text-color: white;
+  --div-choose-text-color: red;
+  --flight-info-bottom-div-top-border-color: lightgray;
+  --additional-flight-info-icon-color: red;
+  --additional-flight-info-icon-shadow-color: gray;
+  --additional-flight-info-button-color: gray;
+  --flight-info-city-and-date-text-color: rgb(200, 200, 200);
+  --flight-info-diagram-fragment-color: rgb(220, 220, 220);
+  --flight-info-airport-name-color: #3D8CFE;
+  --revealable-text-background-color: black;
+  --revealable-text-color: white;
+
+  --section-hover-shadow-color: lightgray;
+  --div-choose-button-hover-color: #E15320;
+  --div-buttons-hover-color: rgb(0, 70, 255);
+}
+
 *
 {
   font-family: 'Roboto', sans-serif;
@@ -10,7 +34,7 @@ body
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #EFF1F4;
+  background-color: var(--main-lightgray);
   height: 100vh;
 }
 
@@ -24,9 +48,9 @@ main
   width: 650px;
 }
 
-main section
+section
 {
-  background-color: white;
+  background-color: var(--section-background-color);
   border-radius: 5px;
   height: 250px;
   width: 100%;
@@ -35,9 +59,9 @@ main section
   flex-direction: row;
 }
 
-section span.special
+.special
 {
-  color: white;
+  color: var(--special-span-text-color);
   padding: 3px 8px;
   font-size: 12px;
   border-radius: 9px;
@@ -46,17 +70,17 @@ section span.special
   left: 10px;
 }
 
-section:first-child span.special
+section:first-child .special
 {
-  background-color: #36BF66;
+  background-color: var(--first-special-span-background-color);
 }
 
-section:nth-child(2) span.special
+section:nth-child(2) .special
 {
-  background-color: #B385F2;
+  background-color: var(--second-special-span-background-color);
 }
 
-div.choose
+.choose
 {
   width: 30%;
   height: 100%;
@@ -64,37 +88,37 @@ div.choose
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  border-right: solid #EFF1F4 1px;
+  border-right: solid var(--main-lightgray) 1px;
   padding-top: 20px;
 }
 
-div.choose div.price
+.price
 {
   font-size: 18px;
   font-weight: 900;
 }
 
-div.choose input
+.choose input
 {
   width: 80%;
   padding: 10px 0;
   border-radius: 5px;
   border: none;
-  background-color: #F26430;
-  color: white;
+  background-color: var(--div-choose-button-color);
+  color: var(--div-choose-button-text-color);
   margin-top: 10px;
   transition-duration: 0s;
 }
 
-div.choose p
+.choose p
 {
   text-align: center;
-  color: red;
+  color: var(--div-choose-text-color);
   font-size: 12px;
   width: 80%;
 }
 
-div.info
+.info
 {
   display: flex;
   flex-direction: column;
@@ -103,87 +127,85 @@ div.info
   padding: 20px;
 }
 
-div.info > div
+.info > div
 {
   width: 100%;
 }
 
-div.info > div:not(:last-child)
+.info > div:not(:last-child)
 {
   box-sizing: border-box;
   margin-bottom: 10px;
 }
 
-div.info > div:last-child
+.info > div:last-child
 {
   padding-top: 10px;
+  border-top: solid var(--flight-info-bottom-div-top-border-color) 1px;
 }
 
-div.info > div:last-child
-{
-  border-top: solid lightgray 1px;
-}
-
-div.info-header
+.info-header
 {
   width: 100%;
   height: 30%;
-}
-
-div.info-header div.logos
-{
-  float: left;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
-div.info-header div.logos i
+.logos
+{
+  display: flex;
+  flex-direction: row;
+  margin-right: auto;
+}
+
+.logos i
 {
   margin-right: 10px;
 }
 
-div.info-header div.additional-info
+.additional-info
 {
   float: right;
   display: flex;
   flex-direction: row;
 }
 
-div.info-header div.additional-info i
+.additional-info i
 {
   width: 16px;
   margin-top: 3px;
-  box-shadow: 0 1px 3px gray;
+  box-shadow: 0 1px 3px var(--additional-flight-info-icon-shadow-color);
   border-radius: 50%;
-  color: red;
+  color: var(--additional-flight-info-icon-color);
 }
 
-div.info-header div.additional-info div.revealable-text-container:first-of-type i
+.revealable-text-container:first-of-type i
 {
   padding: 5px 4px 5px 6px;
 }
 
-div.info-header div.additional-info div.revealable-text-container:nth-of-type(2) i
+.revealable-text-container:nth-of-type(2) i
 {
   padding: 5px 3px 5px 7px;
 }
 
-div.info-header div.additional-info div.revealable-text-container:nth-of-type(3) i
+.revealable-text-container:nth-of-type(3) i
 {
   padding: 5px 4px 5px 6px;
 }
 
-div.info-header div.buttons
+.buttons
 {
-  float: right;
   margin-left: 5px;
   display: flex;
   flex-direction: row;
 }
 
-div.info-header div.buttons button
+.buttons button
 {
-  color: gray;
+  color: var(--additional-flight-info-button-color);
   background: none;
   border: none;
   width: 24px;
@@ -193,12 +215,12 @@ div.info-header div.buttons button
   transition-duration: 0s;
 }
 
-div.info > div:not(.info-header)
+.info > div:not(.info-header)
 {
   height: 35%;
 }
 
-div.that-way, div.this-way
+.that-way, .this-way
 {
   display: flex;
   flex-direction: row;
@@ -206,37 +228,37 @@ div.that-way, div.this-way
   align-items: center;
 }
 
-div.that-way > div, div.this-way > div
+.that-way > div, .this-way > div
 {
   height: 100%;
 }
 
-div.departure-info, div.arrival-info
+.departure-info, .arrival-info
 {
   display: flex;
   flex-direction: column;
   width: 25%;
 }
 
-div.departure-info div.time, div.arrival-info div.time
+.time, .time
 {
   font-size: 24px;
 }
 
-div.departure-info > div:not(.time), div.arrival-info > div:not(.time)
+.departure-info > div:not(.time), .arrival-info > div:not(.time)
 {
-  color: rgb(200, 200, 200);
+  color: var(--flight-info-city-and-date-text-color);
   font-size: 12px;
   font-weight: 300;
   margin-top: 3px;
 }
 
-div.arrival-info > div
+.arrival-info > div
 {
   margin-left: auto;
 }
 
-div.flight-diagram
+.flight-diagram
 {
   width: 50%;
   display: flex;
@@ -245,159 +267,159 @@ div.flight-diagram
   align-items: center;
 }
 
-div.flight-diagram > div
+.flight-diagram > div
 {
   width: 100%;
 }
 
-div.flight-diagram div.duration-and-icons
+.duration-and-icons
 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  color: rgb(200, 200, 200);
+  color: var(--flight-info-city-and-date-text-color);
 }
 
-div.flight-diagram div.duration-and-icons span
+.duration-and-icons span
 {
   font-size: 12px;
   font-weight: 300;
 }
 
-div.flight-diagram div.diagram-and-airports
+.diagram-and-airports
 {
   display: flex;
   flex-direction: row;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage
+.stage
 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(1) .stage:nth-of-type(1)
 {
   width: 10%;
 }
 
-section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(1) .stage:nth-of-type(2)
 {
   width: 50%;
 }
 
-section:nth-of-type(1) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(1) .stage:nth-of-type(3)
 {
   width: 40%;
 }
 
-section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(1) .stage:nth-of-type(1)
 {
   width: 50%;
 }
 
-section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(1) .stage:nth-of-type(2)
 {
   width: 40%;
 }
 
-section:nth-of-type(1) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(1) .stage:nth-of-type(3)
 {
   width: 10%;
 }
 
-section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(2) .stage:nth-of-type(1)
 {
   width: 25%;
 }
 
-section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(2) .stage:nth-of-type(2)
 {
   width: 20%;
 }
 
-section:nth-of-type(2) div.that-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(2) .stage:nth-of-type(3)
 {
   width: 55%;
 }
 
-section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(1)
+section:nth-of-type(2) .stage:nth-of-type(1)
 {
   width: 60%;
 }
 
-section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(2)
+section:nth-of-type(2) .stage:nth-of-type(2)
 {
   width: 20%;
 }
 
-section:nth-of-type(2) div.this-way div.flight-diagram div.diagram-and-airports div.stage:nth-of-type(3)
+section:nth-of-type(2) .stage:nth-of-type(3)
 {
   width: 20%;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:not(first-of-type):not(last-of-type)
+.stage:not(first-of-type):not(last-of-type)
 {
   align-items: center;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:first-of-type > span
+.stage:first-of-type > span
 {
   margin-right: auto;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:last-of-type > span
+.stage:last-of-type > span
 {
   margin-left: auto;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage div.diagram-fragment
+.diagram-fragment
 {
   width: 100%;
-  border: solid rgb(220, 220, 220) 1px;
+  border: solid var(--flight-info-diagram-fragment-color) 1px;
   margin-top: 2px;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage:nth-child(odd) div.diagram-fragment
+.stage:nth-child(odd) .diagram-fragment
 {
   border-width: 3px;
   border-radius: 3px;
   margin-top: 0;
 }
 
-div.flight-diagram div.diagram-and-airports div.stage span.airport-name
+.airport-name
 {
   font-size: 10px;
   font-weight: 900;
   margin-top: 10px;
-  color: #3D8CFE;
+  color: var(--flight-info-airport-name-color);
 }
 
 section:hover
 {
   cursor: pointer;
-  box-shadow: 0 1px 10px lightgray;
+  box-shadow: 0 1px 10px var(--section-hover-shadow-color);
 }
 
-div.choose input:hover
+.choose input:hover
 {
   cursor: inherit;
   color: rgb(220, 220, 220);
-  background-color: #E15320;
+  background-color: var(--div-choose-button-hover-color);
 }
 
-div.info-header div.buttons button:hover
+.buttons button:hover
 {
   cursor: inherit;
-  color: rgb(0, 70, 255);
+  color: var(--div-buttons-hover-color);
 }
 
-p.revealable
+.revealable
 {
-  background-color: black;
-  color: white;
+  background-color: var(--revealable-text-background-color);
+  color: var(--revealable-text-color);
   text-align: center;
   position: absolute;
   top: -40px;
@@ -411,19 +433,19 @@ p.revealable
 
 }
 
-p.revealable.small
+.revealable.small
 {
   width: 100px;
   left: calc(50% - 60px);
 }
 
-p.revealable.large
+.revealable.large
 {
   width: 150px;
   right: calc(50% - 85px);
 }
 
-div.revealable-text-container
+.revealable-text-container
 {
   display: flex;
   flex-direction: column;
@@ -465,14 +487,14 @@ div.revealable-text-container
   }
 }
 
-div.revealable-text-container:hover p.revealable.one-line
+.revealable-text-container:hover .revealable.one-line
 {
   animation: icon-hover-text-reveal-one-line 0.6s;
   opacity: 1;
   top: -55px;
 }
 
-div.revealable-text-container:hover p.revealable.four-line
+.revealable-text-container:hover .revealable.four-line
 {
   animation: icon-hover-text-reveal-four-line 0.6s;
   opacity: 1;
