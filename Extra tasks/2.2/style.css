@@ -7,6 +7,19 @@
   --div-choose-button-color: #F26430;
   --div-choose-button-text-color: white;
   --div-choose-text-color: red;
+  --flight-info-bottom-div-top-border-color: lightgray;
+  --additional-flight-info-icon-color: red;
+  --additional-flight-info-icon-shadow-color: gray;
+  --additional-flight-info-button-color: gray;
+  --flight-info-city-and-date-text-color: rgb(200, 200, 200);
+  --flight-info-diagram-fragment-color: rgb(220, 220, 220);
+  --flight-info-airport-name-color: #3D8CFE;
+  --revealable-text-background-color: black;
+  --revealable-text-color: white;
+
+  --section-hover-shadow-color: lightgray;
+  --div-choose-button-hover-color: #E15320;
+  --div-buttons-hover-color: rgb(0, 70, 255);
 }
 
 *
@@ -128,7 +141,7 @@ div.info > div:not(:last-child)
 div.info > div:last-child
 {
   padding-top: 10px;
-  border-top: solid lightgray 1px;
+  border-top: solid var(--flight-info-bottom-div-top-border-color) 1px;
 }
 
 div.info-header
@@ -160,9 +173,9 @@ div.additional-info i
 {
   width: 16px;
   margin-top: 3px;
-  box-shadow: 0 1px 3px gray;
+  box-shadow: 0 1px 3px var(--additional-flight-info-icon-shadow-color);
   border-radius: 50%;
-  color: red;
+  color: var(--additional-flight-info-icon-color);
 }
 
 div.revealable-text-container:first-of-type i
@@ -190,7 +203,7 @@ div.buttons
 
 div.buttons button
 {
-  color: gray;
+  color: var(--additional-flight-info-button-color);
   background: none;
   border: none;
   width: 24px;
@@ -232,7 +245,7 @@ div.time, div.time
 
 div.departure-info > div:not(.time), div.arrival-info > div:not(.time)
 {
-  color: rgb(200, 200, 200);
+  color: var(--flight-info-city-and-date-text-color);
   font-size: 12px;
   font-weight: 300;
   margin-top: 3px;
@@ -263,7 +276,7 @@ div.duration-and-icons
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  color: rgb(200, 200, 200);
+  color: var(--flight-info-city-and-date-text-color);
 }
 
 div.duration-and-icons span
@@ -363,7 +376,7 @@ div.stage:last-of-type > span
 div.diagram-fragment
 {
   width: 100%;
-  border: solid rgb(220, 220, 220) 1px;
+  border: solid var(--flight-info-diagram-fragment-color) 1px;
   margin-top: 2px;
 }
 
@@ -379,32 +392,32 @@ span.airport-name
   font-size: 10px;
   font-weight: 900;
   margin-top: 10px;
-  color: #3D8CFE;
+  color: var(--flight-info-airport-name-color);
 }
 
 section:hover
 {
   cursor: pointer;
-  box-shadow: 0 1px 10px lightgray;
+  box-shadow: 0 1px 10px var(--section-hover-shadow-color);
 }
 
 div.choose input:hover
 {
   cursor: inherit;
   color: rgb(220, 220, 220);
-  background-color: #E15320;
+  background-color: var(--div-choose-button-hover-color);
 }
 
 div.buttons button:hover
 {
   cursor: inherit;
-  color: rgb(0, 70, 255);
+  color: var(--div-buttons-hover-color);
 }
 
 p.revealable
 {
-  background-color: black;
-  color: white;
+  background-color: var(--revealable-text-background-color);
+  color: var(--revealable-text-color);
   text-align: center;
   position: absolute;
   top: -40px;
