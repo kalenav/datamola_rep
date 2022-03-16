@@ -294,15 +294,14 @@ var module = (function () {
 
     let user;
 
-    function getTweets(skip, top, filterConfig) {
-        skip = skip ?? 0;
-        top = top ?? 10;
+    function getTweets(skip = 0, top = 10, filterConfig) {
         let result = tweets.slice();
         if(filterConfig) {
             if(filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
             if(filterConfig.dateFrom) result = result.filter((tweet) => tweet.createdAt >= filterConfig.dateFrom);
             if(filterConfig.dateTo) result = result.filter((tweet) => tweet.createdAt <= filterConfig.dateTo);
             if(filterConfig.hashtags) result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => {
+                debugger;
                 let hashtagStart = tweet.text.indexOf(hashtag);
                 if(hashtagStart === -1) return false; // хэштег не был найден
                 let hashtagEnd = hashtagStart + hashtag.length - 1;
