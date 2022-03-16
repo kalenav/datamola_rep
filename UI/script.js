@@ -510,7 +510,7 @@ var module = (function () {
         console.log("");
 
         console.log("test 11: validateTweet({id: '', text: 'text', createdAt: new Date(), author: 'a beeper perhaps', comments: []})")
-        if(validateTweet({id: '', text: 'text', createdAt: new Date(), author: 'a beeper perhaps', comments: []})) {
+        if(!validateTweet({id: '', text: 'text', createdAt: new Date(), author: 'a beeper perhaps', comments: []})) {
             testsPassed++;
             console.log("passed");
         }
