@@ -350,9 +350,10 @@ var module = (function () {
 
     function editTweet(id, text) {
         const tweet = getTweet(id);
+        if(tweet.author !== user) return false;
         let snapshot = tweet.text;
         tweet.text = text;
-        if(tweet.author !== user || !validateTweet(tweet)) 
+        if(!validateTweet(tweet)) 
         {
             tweet.text = snapshot;
             return false;
