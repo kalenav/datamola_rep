@@ -362,11 +362,8 @@ var module = (function () {
     }
 
     function removeTweet(id) {
-        let tweetIndex = 0;
-        for(; tweetIndex < tweets.length; tweetIndex++) { // не исползоьвал getTweet, потому что нужен индекс, чтобы использовать splice
-            if(tweets[tweetIndex].id === id) break;
-        }
-        if(tweetIndex === tweets.length || tweets[tweetIndex].author !== user) return false;
+        let tweetIndex = tweets.findIndex((tw) => tw.id === id);
+        if(tweetIndex === -1 || tweets[tweetIndex].author !== user) return false;
         tweets.splice(tweetIndex, 1);
         return true;
     }
