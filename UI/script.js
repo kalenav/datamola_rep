@@ -390,6 +390,7 @@ var module = (function () {
         newComment.text = text;
         newComment.createdAt = new Date();
         newComment.author = user;
+        if(!validateComment(newComment)) return false;
         tweet.comments.push(newComment);
         return true;
     }
