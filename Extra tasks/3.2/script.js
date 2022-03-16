@@ -46,7 +46,7 @@ function greatestProfit(array) {
         for(let currOnePosition = leftBound + 1; currOnePosition < auxiliary.length - 1; currOnePosition++) {
             auxiliary[currOnePosition] = 1;
             for(let currTwoPosition = currOnePosition + 1; currTwoPosition < auxiliary.length; currTwoPosition++) {
-                if(array[currTwoPosition] >= array[currOnePosition]) continue; // нет смысла продавать акцию, если брокер не окупается
+                if(array[currTwoPosition] <= array[currOnePosition]) continue; // нет смысла продавать акцию, если брокер не окупается
                 auxiliary[currTwoPosition] = 2; // положили по нужным индексам 1 и 2,..
                 let currProfit = 0;
                 for(let i = 0; i < array.length; i++) { // посчитали прибыль для текущего вспомогательного массива, в котором больше нет пар 1 и 2
