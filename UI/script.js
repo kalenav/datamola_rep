@@ -345,7 +345,7 @@ var module = (function () {
             tweets.push(newTweet);
             return true;
         }
-        else return false;
+        return false;
     }
 
     function editTweet(id, text) {
