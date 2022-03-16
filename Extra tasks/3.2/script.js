@@ -33,14 +33,18 @@ function greatestProfit(array) {
     // этих подмассивов, после чего процесс повторяется рекурсивно до тех пор,
     // пока на очередную пару цифр 1 и 2 просто не останется места
 
+    function calcProfit() {
+        let currProfit = 0;
+        for(let i = 0; i < array.length; i++) { 
+            if(auxiliary[i] === 1) currProfit -= array[i];
+            if(auxiliary[i] === 2) currProfit += array[i];
+        }
+        if(currProfit > profit) profit = currProfit; 
+    }
+
     function insertPairs(leftBound) {
         if(leftBound >= auxiliary.length - 2) { // условие выхода - больше некуда вставлять пару цифр 1 и 2
-            let currProfit = 0;
-            for(let i = 0; i < array.length; i++) { // посчитали прибыль для текущего вспомогательного массива
-                if(auxiliary[i] === 1) currProfit -= array[i];
-                if(auxiliary[i] === 2) currProfit += array[i];
-            }
-            if(currProfit > profit) profit = currProfit; 
+            calcProfit(); // посчитали прибыль для текущего варианта заполнения вспомогательногот массива
             return;
         }
         for(let currOnePosition = leftBound + 1; currOnePosition < auxiliary.length - 1; currOnePosition++) {
@@ -48,12 +52,7 @@ function greatestProfit(array) {
             for(let currTwoPosition = currOnePosition + 1; currTwoPosition < auxiliary.length; currTwoPosition++) {
                 if(array[currTwoPosition] <= array[currOnePosition]) continue; // нет смысла продавать акцию, если брокер не окупается
                 auxiliary[currTwoPosition] = 2; // положили по нужным индексам 1 и 2,..
-                let currProfit = 0;
-                for(let i = 0; i < array.length; i++) { // посчитали прибыль для текущего вспомогательного массива, в котором больше нет пар 1 и 2
-                    if(auxiliary[i] === 1) currProfit -= array[i];
-                    if(auxiliary[i] === 2) currProfit += array[i];
-                }
-                if(currProfit > profit) profit = currProfit; 
+                calcProfit(); // посчитали прибыль для текущего массива, в котором больше не будет пар цифр 1 и 2
                 insertPairs(currTwoPosition);   // ...и вызвали функцию от "подмассива"
 
                 // после того, как строка выше выполнилась, т.е. для текущего
