@@ -47,7 +47,12 @@ function greatestProfit(array) {
             auxiliary[currOnePosition] = 1;
             for(let currTwoPosition = currOnePosition + 1; currTwoPosition < auxiliary.length; currTwoPosition++) {
                 auxiliary[currTwoPosition] = 2; // положили по нужным индексам 1 и 2,..
-                allPossibleAuxiliaryArrays.push(auxiliary.slice()); // ...запомнили массив, в котором текущая пара 1 и 2 - последняя...
+                let currProfit = 0;
+                for(let i = 0; i < array.length; i++) { // посчитали прибыль для текущего вспомогательного массива, в котором больше нет пар 1 и 2
+                    if(auxiliary[i] === 1) currProfit -= array[i];
+                    if(auxiliary[i] === 2) currProfit += array[i];
+                }
+                if(currProfit > profit) profit = currProfit; 
                 insertPairs(currTwoPosition);   // ...и вызвали функцию от "подмассива"
 
                 // после того, как строка выше выполнилась, т.е. для текущего
