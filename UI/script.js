@@ -1,3 +1,8 @@
+const englishAlphabetLeftBound = 65;
+const englishAlphabetRightBound = 122;
+const russianAlphabetLeftBound = 1040;
+const russianAlpahbetRightBound = 1103;
+
 const tweets = [
     {
         id: "1",
@@ -301,13 +306,13 @@ var module = (function () {
             if(filterConfig.dateFrom) result = result.filter((tweet) => tweet.createdAt >= filterConfig.dateFrom);
             if(filterConfig.dateTo) result = result.filter((tweet) => tweet.createdAt <= filterConfig.dateTo);
             if(filterConfig.hashtags) result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => {
-                debugger;
                 let hashtagStart = tweet.text.indexOf(hashtag);
                 if(hashtagStart === -1) return false; // хэштег не был найден
                 let hashtagEnd = hashtagStart + hashtag.length - 1;
                 if(hashtagEnd === tweet.text.length - 1) return true; // хэштегом заканчивается текст твита
                 let nextCharCode = tweet.text.charCodeAt(hashtagEnd + 1);
-                if((nextCharCode >= 65 && nextCharCode <= 122) || (nextCharCode >= 1040 && nextCharCode <= 1103)) return false; // после хэштега идёт буквенный символ, т.е. хэштег продолжается
+                if((nextCharCode >= englishAlphabetLeftBound && nextCharCode <= englishAlphabetRightBound) 
+                || (nextCharCode >= russianAlphabetLeftBound && nextCharCode <= russianAlpahbetRightBound)) return false; // после хэштега идёт буквенный символ, т.е. хэштег продолжается
                 return true;
             }));
             if(filterConfig.text || filterConfig.text === "") result = result.filter((tweet) => tweet.text.includes(filterConfig.text));
@@ -448,9 +453,9 @@ var module = (function () {
 
         console.log("");
 
-        console.log("test 5: getTweets(3, 5, {hashtags: ['tweet']})");
+        console.log("test 5: getTweets(0, 5, {hashtags: ['tweet']})");
         expecting = [tweets[18], tweets[6]];
-        actual = getTweets(3, 5, {hashtags: ["tweet"]});
+        actual = getTweets(0, 5, {hashtags: ["tweet"]});
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
             console.log("passed");
