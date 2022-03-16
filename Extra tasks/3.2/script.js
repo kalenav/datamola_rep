@@ -14,8 +14,8 @@ function greatestProfit(array) {
     // перебрав все возможные правильные способы заполнения этого массива и высчитывая
     // прибыль для каждого, найдём максимальную прибыль
 
-    const allPossibleAuxiliaryArrays = [new Array(array.length).fill(0)];
     let auxiliary = new Array(array.length).fill(0);
+    let profit = 0;
 
     // функция ниже пройдётся по всем возможным правильным способам заполнения 
     // вспомогательного массива. так как совершенно очевидно, что ради достижения
@@ -35,7 +35,12 @@ function greatestProfit(array) {
 
     function insertPairs(leftBound) {
         if(leftBound >= auxiliary.length - 2) { // условие выхода - больше некуда вставлять пару цифр 1 и 2
-            allPossibleAuxiliaryArrays.push(auxiliary.slice()) // запомнили копию текущего варианта заполнения массива
+            let currProfit = 0;
+            for(let i = 0; i < array.length; i++) { // посчитали прибыль для текущего вспомогательного массива
+                if(auxiliary[i] === 1) currProfit -= array[i];
+                if(auxiliary[i] === 2) currProfit += array[i];
+            }
+            if(currProfit > profit) profit = currProfit; 
             return;
         }
         for(let currOnePosition = leftBound + 1; currOnePosition < auxiliary.length - 1; currOnePosition++) {
@@ -61,15 +66,7 @@ function greatestProfit(array) {
 
     insertPairs(-1);
 
-    return allPossibleAuxiliaryArrays.reduce((r, currArray) => {
-        let currProfit = 0;
-        for(let i = 0; i < currArray.length; i++) {
-            if(currArray[i] === 1) currProfit -= array[i];
-            if(currArray[i] === 2) currProfit += array[i];
-        }
-        if(currProfit > r) return currProfit;
-        else return r;
-    }, 0);
+    return profit;
 }
 
 console.log(greatestProfit(arr1));
