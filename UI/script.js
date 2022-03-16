@@ -326,13 +326,12 @@ var module = (function () {
     }
 
     function validateTweet(tw) {
-        if(
-            !validateComment(tw)
-            || !tw.comments
-            || !(tw.comments instanceof Array)
-            || !tw.comments.every((comment) => validateComment(comment))
-        ) return false;
-        return true;
+        return (
+            validateComment(tw)
+            && tw.comments
+            && tw.comments instanceof Array
+            && tw.comments.every((comment) => validateComment(comment))
+        )
     }
 
     function addTweet(text) {
@@ -372,13 +371,12 @@ var module = (function () {
     }
 
     function validateComment(com) {
-        if(
-            (com.id !== "" && !com.id) 
-            || (com.text !== "" && !com.text) || com.text.length > 280 
-            || !com.createdAt
-            || !com.author
-        ) return false;
-        return true;
+        return (
+            (com.id === "" || com.id) 
+            && (com.text === "" || com.text) && com.text.length <= 280 
+            && com.createdAt
+            && com.author
+        );
     }
 
     function addComment(id, text) {
