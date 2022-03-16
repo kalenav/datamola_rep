@@ -1,4 +1,4 @@
-const arr = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
+const arr1 = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
 const arr2 = [-1, -2];
 
 function largestContinuousSubarraySum(array) {
@@ -12,5 +12,5 @@ function largestContinuousSubarraySum(array) {
     return sum;
 }
 
-console.log(largestContinuousSubarraySum(arr));
+console.log(largestContinuousSubarraySum(arr1));
 console.log(largestContinuousSubarraySum(arr2));

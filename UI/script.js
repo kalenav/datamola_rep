@@ -1,3 +1,8 @@
+const englishAlphabetLeftBound = 65;
+const englishAlphabetRightBound = 122;
+const russianAlphabetLeftBound = 1040;
+const russianAlpahbetRightBound = 1103;
+
 const tweets = [
     {
         id: "1",
@@ -294,9 +299,7 @@ var module = (function () {
 
     let user;
 
-    function getTweets(skip, top, filterConfig) {
-        skip = skip ?? 0;
-        top = top ?? 10;
+    function getTweets(skip = 0, top = 10, filterConfig) {
         let result = tweets.slice();
         if(filterConfig) {
             if(filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
@@ -308,7 +311,8 @@ var module = (function () {
                 let hashtagEnd = hashtagStart + hashtag.length - 1;
                 if(hashtagEnd === tweet.text.length - 1) return true; // хэштегом заканчивается текст твита
                 let nextCharCode = tweet.text.charCodeAt(hashtagEnd + 1);
-                if((nextCharCode >= 65 && nextCharCode <= 122) || (nextCharCode >= 1040 && nextCharCode <= 1103)) return false; // после хэштега идёт буквенный символ, т.е. хэштег продолжается
+                if((nextCharCode >= englishAlphabetLeftBound && nextCharCode <= englishAlphabetRightBound) 
+                || (nextCharCode >= russianAlphabetLeftBound && nextCharCode <= russianAlpahbetRightBound)) return false; // после хэштега идёт буквенный символ, т.е. хэштег продолжается
                 return true;
             }));
             if(filterConfig.text || filterConfig.text === "") result = result.filter((tweet) => tweet.text.includes(filterConfig.text));
@@ -322,13 +326,12 @@ var module = (function () {
     }
 
     function validateTweet(tw) {
-        if(
-            !validateComment(tw)
-            || !tw.comments
-            || !(tw.comments instanceof Array)
-            || !tw.comments.every((comment) => validateComment(comment))
-        ) return false;
-        return true;
+        return (
+            validateComment(tw)
+            && tw.comments
+            && tw.comments instanceof Array
+            && tw.comments.every((comment) => validateComment(comment))
+        )
     }
 
     function addTweet(text) {
@@ -342,14 +345,15 @@ var module = (function () {
             tweets.push(newTweet);
             return true;
         }
-        else return false;
+        return false;
     }
 
     function editTweet(id, text) {
         const tweet = getTweet(id);
+        if(tweet.author !== user) return false;
         let snapshot = tweet.text;
         tweet.text = text;
-        if(tweet.author !== user || !validateTweet(tweet)) 
+        if(!validateTweet(tweet)) 
         {
             tweet.text = snapshot;
             return false;
@@ -358,23 +362,19 @@ var module = (function () {
     }
 
     function removeTweet(id) {
-        let tweetIndex = 0;
-        for(; tweetIndex < tweets.length; tweetIndex++) { // не исползоьвал getTweet, потому что нужен индекс, чтобы использовать splice
-            if(tweets[tweetIndex].id === id) break;
-        }
-        if(tweetIndex === tweets.length || tweets[tweetIndex].author !== user) return false;
+        let tweetIndex = tweets.findIndex((tw) => tw.id === id);
+        if(tweetIndex === -1 || tweets[tweetIndex].author !== user) return false;
         tweets.splice(tweetIndex, 1);
         return true;
     }
 
     function validateComment(com) {
-        if(
-            (com.id !== "" && !com.id) 
-            || (com.text !== "" && !com.text) || com.text.length > 280 
-            || !com.createdAt
-            || !com.author
-        ) return false;
-        return true;
+        return (
+            (com.id === "" || com.id) 
+            && (com.text === "" || com.text) && com.text.length <= 280 
+            && com.createdAt
+            && com.author
+        );
     }
 
     function addComment(id, text) {
@@ -390,6 +390,7 @@ var module = (function () {
         newComment.text = text;
         newComment.createdAt = new Date();
         newComment.author = user;
+        if(!validateComment(newComment)) return false;
         tweet.comments.push(newComment);
         return true;
     }
@@ -449,9 +450,9 @@ var module = (function () {
 
         console.log("");
 
-        console.log("test 5: getTweets(3, 5, {hashtags: ['tweet']})");
+        console.log("test 5: getTweets(0, 5, {hashtags: ['tweet']})");
         expecting = [tweets[18], tweets[6]];
-        actual = getTweets(3, 5, {hashtags: ["tweet"]});
+        actual = getTweets(0, 5, {hashtags: ["tweet"]});
         if(actual.every((v, i) => actual[i] === expecting[i])) {
             testsPassed++;
             console.log("passed");
