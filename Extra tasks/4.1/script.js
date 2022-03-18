@@ -20,9 +20,45 @@ class List {
             iPlusFirstNode = ithNode.next;
             currNodeIndex++;
         }
-        if(i !== undefined && currNodeIndex !== i) return false; // i больше длины списка или меньше нуля
+
+        // возвращаем false только тогда, когда i указан, но неверный;
+        // неуказанный i - не проблема
+        if(i !== undefined && currNodeIndex !== i) return false;
+
         ithNode.next = newNode;
-        newNode.next = iPlusFirstNode;
+
+        // если i не указан, то это эквивалентно i, равному текущей длине списка;
+        // в таком случае в iPlusFirstNode будет лежать null, и ничего не сломается
+        newNode.next = iPlusFirstNode; 
         return true;
+    }
+
+    removeNode(i) {
+        if(this.root.next === null) return false;
+        let prevNode;
+        let ithNode = this.root;
+        let nextNode = this.root.next;
+        let currNodeIndex = 0;
+        while(currNodeIndex !== i && ithNode.next !== null) {
+            prevNode = ithNode;
+            ithNode = ithNode.next;
+            nextNode = ithNode.next;
+            currNodeIndex++;
+        }
+        if(i !== undefined && currNodeIndex !== i) return false; // аналогично методу addNode()
+        prevNode.next = nextNode; 
+        // нужный узел удалится сборщиком мусора после выполнения метода, 
+        // т.к. на него не ссылается ничего, кроме ithNode
+        return true;
+    }
+
+    print() {
+        let currNode = this.root;
+        do {
+            console.log(`${currNode.value}`);
+            if(currNode.next !== null) console.log(", ");
+            currNode = currNode.next;
+        }
+        while(currNode !== null);
     }
 }
