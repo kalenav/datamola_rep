@@ -35,6 +35,10 @@ class List {
 
     removeNode(i) {
         if(this.root.next === null) return false;
+        if(i === 0) {
+            this.root.next = this.root;
+            return true;
+        }
         let prevNode;
         let ithNode = this.root;
         let nextNode = this.root.next;
@@ -53,12 +57,14 @@ class List {
     }
 
     print() {
+        let result = "";
         let currNode = this.root;
         do {
-            console.log(`${currNode.value}`);
-            if(currNode.next !== null) console.log(", ");
+            result += `${currNode.value}`;
+            result += (currNode.next !== null) ? ", " : "";
             currNode = currNode.next;
         }
         while(currNode !== null);
+        console.log(result);
     }
 }
