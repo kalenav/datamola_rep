@@ -41,7 +41,7 @@ class Tweet {
             tw.id
             && typeof(tw.id) === "string"
             && tw.text
-            && typeof(tw.text === "string")
+            && typeof(tw.text) === "string"
             && tw.text.length <= 280
             && tw.createdAt
             && tw.createdAt instanceof Date
