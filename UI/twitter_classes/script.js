@@ -133,5 +133,12 @@ class TweetFeed {
         return this._tweets.find((tw) => tw.id === id);
     }
 
-    
+    add(text) {
+        const newTweet = new Tweet(String(Number(this._tweets[this._tweets.length - 1].id) + 1), text, new Date(), this._user, []);
+        if(Tweet.validate(newTweet)) {
+            this._tweets.push(newTweet);
+            return true;
+        }
+        return false;
+    }
 }
