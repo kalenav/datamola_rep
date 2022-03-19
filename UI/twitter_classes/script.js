@@ -66,5 +66,26 @@ class Comment {
         this.author = author;
     }
 
+    get id() {
+        return this._id;
+    }
+    set id(newId) {
+        this._id = newId;
+    }
+
+    get date() {
+        return this._createdAt;
+    }
+    set date(newDate) {
+        this._createdAt = newDate;
+    }
+
+    get author() {
+        return this._author;
+    }
+    set author(newAuthor) {
+        this._author = newAuthor;
+    }
+
     
 }
