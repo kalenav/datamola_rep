@@ -141,4 +141,14 @@ class TweetFeed {
         }
         return false;
     }
+
+    edit(id, text) {
+        const tweet = get(id);
+        if(tweet.author !== this._user) return false;
+        let snapshot = tweet.text;
+        tweet.text = text;
+        if(Tweet.validate(tweet)) return true;
+        tweet.text = snapshot;
+        return false;
+    }
 }
