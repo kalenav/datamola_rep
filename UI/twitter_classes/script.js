@@ -1,3 +1,8 @@
+const englishAlphabetLeftBound = 65;
+const englishAlphabetRightBound = 122;
+const russianAlphabetLeftBound = 1040;
+const russianAlpahbetRightBound = 1103;
+
 class Tweet {
 
     _id;
@@ -157,5 +162,12 @@ class TweetFeed {
         if(tweetIndex === -1 || this._tweets[tweetIndex].author !== this._user) return false;
         this._tweets = this._tweets.splice(tweetIndex, 1);
         return true;
+    }
+
+    get user() {
+        return this._user;
+    }
+    set user(newUser) {
+        this._user = user;
     }
 }
