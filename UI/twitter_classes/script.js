@@ -1,13 +1,13 @@
 class Tweet {
 
     _id;
-    _date;
+    _createdAt;
     _author;
 
-    constructor(id, text, date, author, comments) {
+    constructor(id, text, author, comments) {
         this.id = id;
         this.text = text;
-        this.date = date;
+        this.createdAt = new Date();
         this.author = author;
         this.comments = comments.slice();
     }
@@ -20,10 +20,10 @@ class Tweet {
     }
 
     get date() {
-        return this._date;
+        return this._createdAt;
     }
     set date(newDate) {
-        this._date = newDate;
+        this._createdAt = newDate;
     }
 
     get author() {
@@ -32,6 +32,4 @@ class Tweet {
     set author(newAuthor) {
         this._author = newAuthor;
     }
-
-    
 }
