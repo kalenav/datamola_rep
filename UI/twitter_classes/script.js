@@ -87,5 +87,17 @@ class Comment {
         this._author = newAuthor;
     }
 
-    
+    static validate(com) {
+        return (
+            com.id
+            && typeof(com.id) === "string"
+            && com.text
+            && typeof(com.text) === "string"
+            && com.text.length <= 280
+            && com.createdAt
+            && com.createdAt instanceof Date
+            && com.author !== ""
+            && typeof(com.author) === "string"
+        )
+    }
 }
