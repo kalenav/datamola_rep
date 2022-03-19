@@ -101,3 +101,37 @@ class Comment {
         )
     }
 }
+
+class TweetFeed {
+
+    _tweets;
+    _user;
+
+    getPage(skip = 0, top = 10, filterConfig) {
+        let result = this._tweets.slice();
+        if(filterConfig) {
+            if(filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
+            if(filterConfig.dateFrom) result = result.filter((tweet) => tweet.createdAt >= filterConfig.dateFrom);
+            if(filterConfig.dateTo) result = result.filter((tweet) => tweet.createdAt <= filterConfig.dateTo);
+            if(filterConfig.hashtags) result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => {
+                let hashtagStart = tweet.text.indexOf(hashtag);
+                if(hashtagStart === -1) return false; // хэштег не был найден
+                let hashtagEnd = hashtagStart + hashtag.length - 1;
+                if(hashtagEnd === tweet.text.length - 1) return true; // хэштегом заканчивается текст твита
+                let nextCharCode = tweet.text.charCodeAt(hashtagEnd + 1);
+                if((nextCharCode >= englishAlphabetLeftBound && nextCharCode <= englishAlphabetRightBound) 
+                || (nextCharCode >= russianAlphabetLeftBound && nextCharCode <= russianAlpahbetRightBound)) return false; // после хэштега идёт буквенный символ, т.е. хэштег продолжается
+                return true;
+            }));
+            if(filterConfig.text || filterConfig.text === "") result = result.filter((tweet) => tweet.text.includes(filterConfig.text));
+        }
+        result.sort((tweet1, tweet2) => tweet1.createdAt > tweet2.createdAt ? -1 : 1);
+        return result.slice(skip, skip + top);
+    }
+
+    get(id) {
+        return this._tweets.find((tw) => tw.id === id);
+    }
+
+    
+}
