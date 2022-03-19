@@ -198,52 +198,52 @@ class TweetFeed {
 
 
 const tweets = [
-    {
-        id: "1",
-        text: "Some text here",
-        createdAt: new Date("2022-03-09T22:22:22"),
-        author: "Alice",
-        comments: []
-    },
+    new Tweet(
+        "1",
+        "Some text here",
+        new Date("2022-03-09T22:22:22"),
+        "Alice",
+        []
+    ),
     
-    {
-        id: "2",
-        text: "Some other text here",
-        createdAt: new Date("2022-03-09T23:22:00"),
-        author: "Bob",
-        comments: []
-    },
+    new Tweet(
+        "2",
+        "Some other text here",
+        new Date("2022-03-09T23:22:00"),
+        "Bob",
+        []
+    ),
     
-    {
-        id: "3",
-        text: "Text with a #hashtag here",
-        createdAt: new Date("2022-03-10T20:20:00"),
-        author: "Charlie",
-        comments: []
-    },
+    new Tweet(
+        "3",
+        "Text with a #hashtag here",
+        new Date("2022-03-10T20:20:00"),
+        "Charlie",
+        []
+    ),
     
-    {
-        id: "4",
-        text: "Another #text with a #hashtag here",
-        createdAt: new Date("2022-03-11T12:03:05"),
-        author: "Daniel",
-        comments: []
-    },
+    new Tweet(
+        "4",
+        "Another #text with a #hashtag here",
+        new Date("2022-03-11T12:03:05"),
+        "Daniel",
+        []
+    ),
     
-    {
-        id: "5",
-        text: "Text is what this is",
-        createdAt: new Date("2022-03-11T13:05:01"),
-        author: "Ethan",
-        comments: []
-    },
+    new Tweet(
+        "5",
+        "Text is what this is",
+        new Date("2022-03-11T13:05:01"),
+        "Ethan",
+        []
+    ),
     
-    {
-        id: "6",
-        text: "Let your #imagination run wild, don't limit yourself. You can do much better than this.",
-        createdAt: new Date("2022-03-12T19:25:00"),
-        author: "Felicia",
-        comments: [
+    new Tweet(
+        "6",
+        "Let your #imagination run wild, don't limit yourself. You can do much better than this.",
+        new Date("2022-03-12T19:25:00"),
+        "Felicia",
+        [
             {
                 id: "c42",
                 text: "Thanks for the insipiration! I will do my best not to let you down.",
@@ -251,14 +251,14 @@ const tweets = [
                 author: "Konstantin"
             }
         ]
-    },
+    ),
     
-    {
-        id: "7",
-        text: "Wow, check out the #tweet below! I would never think it would be this easy to make that guy #write sensible tweets. Cheers, Felix!",
-        createdAt: new Date("2022-03-12T19:30:42"),
-        author: "George",
-        comments: [
+    new Tweet(
+        "7",
+        "Wow, check out the #tweet below! I would never think it would be this easy to make that guy #write sensible tweets. Cheers, Felix!",
+        new Date("2022-03-12T19:30:42"),
+        "George",
+        [
             {
                 id: "c43",
                 text: "And I took that personally. Sheesh. You didn't even #try talking to me to think that it would be difficult. Oh well.",
@@ -266,30 +266,30 @@ const tweets = [
                 author: "Konstantin"
             }
         ]
-    },
+    ),
     
-    {
-        id: "8",
-        text: "Ahem... With that out of the way, let's get into the #tweets. Eight done, twelve more to go. Just going to get myself a cup of #tea and I'll get right into it.",
-        createdAt: new Date("2022-03-12T19:32:21"),
-        author: "Konstantin",
-        comments: []
-    },
+    new Tweet(
+        "8",
+        "Ahem... With that out of the way, let's get into the #tweets. Eight done, twelve more to go. Just going to get myself a cup of #tea and I'll get right into it.",
+        new Date("2022-03-12T19:32:21"),
+        "Konstantin",
+        []
+    ),
     
-    {
-        id: "9",
-        text: "Guys, anyone #online?",
-        createdAt: new Date("2022-03-12T19:33:33"),
-        author: "Leonard",
-        comments: []
-    },
+    new Tweet(
+        "9",
+        "Guys, anyone #online?",
+        new Date("2022-03-12T19:33:33"),
+        "Leonard",
+        []
+    ),
     
-    {
-        id: "10",
-        text: "Yeah, I am, what is it?",
-        createdAt: new Date("2022-03-12T19:33:50"),
-        author: "Miranda",
-        comments: [
+    new Tweet(
+        "10",
+        "Yeah, I am, what is it?",
+        new Date("2022-03-12T19:33:50"),
+        "Miranda",
+        [
             {
                 id: "c44",
                 text: "FYI, there is a comment section under each tweet. Oh well. A friend of mine will continue my thought in the text tweet.",
@@ -297,38 +297,38 @@ const tweets = [
                 author: "Leonard"
             }
         ]
-    },
+    ),
     
-    {
-        id: "11",
-        text: "Hey everyone! Leonard and I wish to write the remaining nine #tweets so this Konstantin guy doesn't need to.",
-        createdAt: new Date("2022-03-12T19:35:00"),
-        author: "Natalie",
-        comments: []
-    },
+    new Tweet(
+        "11",
+        "Hey everyone! Leonard and I wish to write the remaining nine #tweets so this Konstantin guy doesn't need to.",
+        new Date("2022-03-12T19:35:00"),
+        "Natalie",
+        []
+    ),
     
-    {
-        id: "12",
-        text: "What an #idea! I'm in.",
-        createdAt: new Date("2022-03-12T19:35:50"),
-        author: "Olivia",
-        comments: []
-    },
+    new Tweet(
+        "12",
+        "What an #idea! I'm in.",
+        new Date("2022-03-12T19:35:50"),
+        "Olivia",
+        []
+    ),
     
-    {
-        id: "13",
-        text: "I'd like to #join too!",
-        createdAt: new Date("2022-03-12T19:36:14"),
-        author: "Patrick",
-        comments: []
-    },
+    new Tweet(
+        "13",
+        "I'd like to #join too!",
+        new Date("2022-03-12T19:36:14"),
+        "Patrick",
+        []
+    ),
     
-    {
-        id: "14",
-        text: "Wow, that a #community! I want to be a part of it too! And screw the #comments - write as much #tweets as you can!",
-        createdAt: new Date("2022-03-12T19:36:42"),
-        author: "Quentin",
-        comments: [
+    new Tweet(
+        "14",
+        "Wow, that a #community! I want to be a part of it too! And screw the #comments - write as much #tweets as you can!",
+        new Date("2022-03-12T19:36:42"),
+        "Quentin",
+        [
             {
                 id: "c45",
                 text: "Come on now. He needs to have comments or his mentors won't be happy. Did you even read the homework task? Duh.",
@@ -343,30 +343,30 @@ const tweets = [
                 author: "Quentin"
             }
         ]
-    },
+    ),
     
-    {
-        id: "15",
-        text: "I don't have the slightest #idea why we are doing this, but I guess we are!",
-        createdAt: new Date("2022-03-12T19:37:54"),
-        author: "Rose",
-        comments: []
-    },
+    new Tweet(
+        "15",
+        "I don't have the slightest #idea why we are doing this, but I guess we are!",
+        new Date("2022-03-12T19:37:54"),
+        "Rose",
+        []
+    ),
     
-    {
-        id: "16",
-        text: "Almost there, guys, keep it up! Post those #tweets like there's no tomorrow!",
-        createdAt: new Date("2022-03-12T19:38:22"),
-        author: "Simon",
-        comments: []
-    },
+    new Tweet(
+        "16",
+        "Almost there, guys, keep it up! Post those #tweets like there's no tomorrow!",
+        new Date("2022-03-12T19:38:22"),
+        "Simon",
+        []
+    ),
     
-    {
-        id: "17",
-        text: "Has anyone noticed that the names of #tweets posters are in alphabetic order yet?",
-        createdAt: new Date("2022-03-12T19:38:51"),
-        author: "Timothy",
-        comments: [
+    new Tweet(
+        "17",
+        "Has anyone noticed that the names of #tweets posters are in alphabetic order yet?",
+        new Date("2022-03-12T19:38:51"),
+        "Timothy",
+        [
             {
                 id: "c47",
                 text: "No.",
@@ -374,14 +374,14 @@ const tweets = [
                 author: "Anonymous"
             }
         ]
-    },
+    ),
     
-    {
-        id: "18",
-        text: "Wow, Timothy's right! We must keep it going like this! Everyone, quick, think of a #friend whose name starts with letters after U!",
-        createdAt: new Date("2022-03-12T19:39:33"),
-        author: "Ulrich",
-        comments: [ 
+    new Tweet(
+        "18",
+        "Wow, Timothy's right! We must keep it going like this! Everyone, quick, think of a #friend whose name starts with letters after U!",
+        new Date("2022-03-12T19:39:33"),
+        "Ulrich",
+        [ 
             {
                 id: "c48",
                 text: "Do acquaintances count?",
@@ -424,14 +424,14 @@ const tweets = [
                 author: "Ulrich"
             },
         ]
-    },
+    ),
     
-    {
-        id: "19",
-        text: "Okay, okay, I posted a #tweet. Jeez.",
-        createdAt: new Date("2022-03-12T19:45:44"),
-        author: "Victoria",
-        comments: [
+    new Tweet(
+        "19",
+        "Okay, okay, I posted a #tweet. Jeez.",
+        new Date("2022-03-12T19:45:44"),
+        "Victoria",
+        [
             {
                 id: "c54",
                 text: "Could you have waited a little longer?",
@@ -439,30 +439,30 @@ const tweets = [
                 author: "Ulrich"
             }
         ]
-    },
+    ),
     
-    {
-        id: "20",
-        text: "Okay, even though there were some issues back there, I hereby declare our #feat accomplished. WITH the alphabetical order kept.",
-        createdAt: new Date("2022-03-12T19:46:22"),
-        author: "Wendy",
-        comments: []
-    },
+    new Tweet(
+        "20",
+        "Okay, even though there were some issues back there, I hereby declare our #feat accomplished. WITH the alphabetical order kept.",
+        new Date("2022-03-12T19:46:22"),
+        "Wendy",
+        []
+    ),
 
-    {
-        id: "21",
-        text: "Wow, now that's a 'good morning'. That was quite a ride. Too bad I wasn't here then.",
-        createdAt: new Date("2022-03-13T08:46:31"),
-        author: "Xavier",
-        comments: []
-    },
+    new Tweet(
+        "21",
+        "Wow, now that's a 'good morning'. That was quite a ride. Too bad I wasn't here then.",
+        new Date("2022-03-13T08:46:31"),
+        "Xavier",
+        []
+    ),
 
-    {
-        id: "22",
-        text: "Just who do you think you are? He was supposed to do it by himself!",
-        createdAt: new Date("2022-03-13T13:43:21"),
-        author: "Yana",
-        comments: [
+    new Tweet(
+        "22",
+        "Just who do you think you are? He was supposed to do it by himself!",
+        new Date("2022-03-13T13:43:21"),
+        "Yana",
+        [
             {
                 id: "c55",
                 text: "I'm more concerned by the fact that it takes him more than a day to get a cup of tea...",
@@ -470,23 +470,23 @@ const tweets = [
                 author: "Leonard"
             }
         ]
-    },
+    ),
 
-    {
-        id: "23",
-        text: "I don't think he's coming back... You did well, guys. Go do #something else.",
-        createdAt: new Date("2022-03-14T22:26:01"),
-        author: "Zoe",
-        comments: []
-    },
+    new Tweet(
+        "23",
+        "I don't think he's coming back... You did well, guys. Go do #something else.",
+        new Date("2022-03-14T22:26:01"),
+        "Zoe",
+        []
+    ),
 
-    {
-        id: "24",
-        text: "Uh, hey, everyone! Sorry for the late arrival! Uhm... I have uh... Another task I need to do... Does anyone want to #help me out?",
-        createdAt: new Date("2022-04-25T22:22:22"),
-        author: "Konstantin",
-        comments: []
-    }
+    new Tweet(
+        "24",
+        "Uh, hey, everyone! Sorry for the late arrival! Uhm... I have uh... Another task I need to do... Does anyone want to #help me out?",
+        new Date("2022-04-25T22:22:22"),
+        "Konstantin",
+        []
+    )
 ]
 
 function tests() {
