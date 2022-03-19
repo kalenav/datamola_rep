@@ -112,6 +112,23 @@ class TweetFeed {
     _tweets;
     _user;
 
+    constructor(tws) {
+        this._tweets = tws.slice();
+    }
+
+    addAll(tws) {
+        const toReturn = [];
+        for(let i = 0; i < tws.length; i++) {
+            const currTweet = tws[i];
+            Tweet.validate(currTweet) ? this._tweets.push(currTweet) : toReturn.push(currTweet);
+        }
+        return toReturn;
+    }
+
+    clear() {
+        this._tweets = [];
+    }
+
     getPage(skip = 0, top = 10, filterConfig) {
         let result = this._tweets.slice();
         if(filterConfig) {
