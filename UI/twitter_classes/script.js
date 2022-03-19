@@ -32,4 +32,23 @@ class Tweet {
     set author(newAuthor) {
         this._author = newAuthor;
     }
+
+    addComment(id, text) {
+    }
+
+    static validate(tw) {
+        return (
+            tw.id
+            && typeof(tw.id) === "string"
+            && tw.text
+            && typeof(tw.text === "string")
+            && tw.text.length <= 280
+            && tw.createdAt
+            && tw.createdAt instanceof Date
+            && tw.author !== ""
+            && typeof(tw.author) === "string"
+            && tw.comments
+            && tw.comments instanceof Array
+        )
+    }
 }
