@@ -495,4 +495,277 @@ function tests() {
     const feed = new TweetFeed(tweets);
     let expecting;
     let actual;
+
+    console.log("test 1: feed.getPage()");
+    expecting = tweets.slice(14, 24).reverse();
+    actual = feed.getPage();
+    if(actual.every((v, i) => actual[i] === expecting[i])) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 2: feed.getPage(0, 10)");
+    expecting = tweets.slice(14, 24).reverse();
+    actual = feed.getPage(0, 10);
+    if(actual.every((v, i) => actual[i] === expecting[i])) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 3: feed.getPage(10, 10)");
+    expecting = tweets.slice(4, 14).reverse();
+    actual = feed.getPage(10, 10);
+    if(actual.every((v, i) => actual[i] === expecting[i])) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 4: feed.getPage(0, 10, {author: 'e'})")
+    expecting = [tweets[22], tweets[20], tweets[19], tweets[14], tweets[13], tweets[10], tweets[8], tweets[6], tweets[5], tweets[3], tweets[2], tweets[0]];
+    actual = feed.getPage(0, 10, {author: "e"});
+    if(actual.every((v, i) => actual[i] === expecting[i])) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 5: feed.getPage(0, 5, {hashtags: ['tweet']})");
+    expecting = [tweets[18], tweets[6]];
+    actual = feed.getPage(0, 5, {hashtags: ["tweet"]});
+    if(actual.every((v, i) => actual[i] === expecting[i])) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 6: feed.get('13')");
+    expecting = tweets[12];
+    actual = feed.get("13");
+    if(expecting === actual) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("7: feed.get('not an actual id')");
+    expecting = undefined;
+    actual = feed.get("not an actual id");
+    if(expecting === actual) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 8: Tweet.validate(new Tweet('1', 'hi there', 'someone', [])");
+    if(Tweet.validate(new Tweet('1', 'hi there', 'someone', []))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 9: Tweet.validate(tweets[4])");
+    if(Tweet.validate(tweets[4])) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 10: Tweet.validate(new Tweet('id', '', 'e', []))");
+    if(Tweet.validate(new Tweet('id', '', 'e', []))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 11: Tweet.validate(new Tweet('', 'text', 'a beeper perhaps', []))")
+    if(!Tweet.validate(new Tweet('', 'text', 'a beeper perhaps', []))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 12: Tweet.validate(new Tweet('123', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', 'some very wordy fella', []))");
+    if(!Tweet.validate(new Tweet('123', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', 'some very wordy fella', []))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 13: Tweet.validate(new Tweet('42', 'i always say morning instead of good morning', 'some very shady fella', []))");
+    if(Tweet.validate(new Tweet('42', 'i always say morning instead of good morning', 'some very shady fella', []))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 14: Tweet.validate(new Tweet('256', 'who am I?', '', []))");
+    if(!Tweet.validate(new Tweet('256', 'who am I?', '', []))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 15: Tweet.validate(new Tweet('512', 'alrighty then', 'some very agreeable fella',  {}))");
+    if(!Tweet.validate(new Tweet('512', 'alrighty then', 'some very agreeable fella',  {}))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 16: feed.add(\"i'm a text!\")");
+    feed.add("i'm a text!");
+    actual = tweets[tweets.length - 1];
+    if(
+    actual.id === "25"
+    && actual.text === "i'm a text!"
+    && actual.createdAt
+    && actual.author === "TEST_USER"
+    && actual.comments instanceof Array
+    && actual.comments.length === 0) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 17: feed.edit('25', \"i'm still a text, but different!\") (current user is the author)")
+    feed.edit('25', "i'm still a text, but different!");
+    if(tweets[tweets.length - 1].text === "i'm still a text, but different!") {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    feed.user = "OTHER_USER";
+    console.log("test 18: feed.edit('25', \"i'm yet another text!\") (current user is not the author)");
+    feed.edit('25', "i'm yet another text!");
+    if(tweets[tweets.length - 1].text === "i'm still a text, but different!") {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+    feed.user = "TEST_USER";
+
+    console.log("");
+
+    console.log("test 19: feed.edit('25', \"this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols\")");
+    if(!feed.edit('25', "this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols")) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 20: feed.remove('25') (user is the author)");
+    if(feed.remove('25')) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 21: feed.remove('15') (user is not he author)");
+    if(!feed.remove('15')) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 22: feed.remove('not an actual id')");
+    if(!feed.remove('not an actual id')) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 23: Comment.validate(new Comment('c1024', 'some text', 'some very unoriginal fella'))");
+    if(Comment.validate(new Comment('c1024', 'some text', 'some very unoriginal fella'))) {
+        testsPassed++;
+        console.log("passed");
+    }    
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 24: Comment.validate(new Comment('', '', 'some empty fella'))");
+    if(Comment.validate(new Comment('', '', 'some empty fella'))) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    /*
+    console.log("test 25: feed.addComment('2', 'what a great tweet!')");
+    if(feed.addComment('2', 'what a great tweet!')) {
+        const comment = tweets[1].comments[0];
+        if(comment.id === "c56"
+        && comment.text === "what a great tweet!"
+        && comment.createdAt
+        && comment.author === "TEST_USER") {
+            testsPassed++;
+            console.log("passed");
+        }
+        else console.log("FAILED");
+    }
+
+    console.log("");
+    */
+
+    console.log("test 26: feed.user = 'OTHER_USER'");
+    feed.user = 'OTHER_USER';
+    if(feed.user === "OTHER_USER") {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+    console.log("==========================================");
+    console.log("");
+
+    console.log(`${testsPassed}/26 tests passed`);
 }
