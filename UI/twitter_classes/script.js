@@ -52,3 +52,19 @@ class Tweet {
         )
     }
 }
+
+class Comment {
+
+    _id;
+    _createdAt;
+    _author;
+
+    constructor(id, text, author) {
+        this._id = id;
+        this.text = text;
+        this._createdAt = new Date();
+        this.author = author;
+    }
+
+    
+}
