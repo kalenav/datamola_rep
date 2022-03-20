@@ -9,12 +9,12 @@ class Tweet {
     _createdAt;
     _author;
 
-    constructor(id, text, author, comments) {
-        this.id = id;
+    constructor(id, text, date, author, comments) {
+        this._id = id;
         this.text = text;
-        this.createdAt = new Date();
-        this.author = author;
-        this.comments = comments.slice();
+        this._createdAt = date;
+        this._author = author;
+        this.comments = comments;
     }
 
     get id() {
@@ -44,15 +44,15 @@ class Tweet {
     static validate(tw) {
         return (
             tw instanceof Tweet
-            && tw.id
-            && typeof(tw.id) === "string"
-            && tw.text
+            && tw._id
+            && typeof(tw._id) === "string"
+            && (tw.text || tw.text === "")
             && typeof(tw.text) === "string"
             && tw.text.length <= 280
-            && tw.createdAt
-            && tw.createdAt instanceof Date
-            && tw.author !== ""
-            && typeof(tw.author) === "string"
+            && tw._createdAt
+            && tw._createdAt instanceof Date
+            && tw._author !== ""
+            && typeof(tw._author) === "string"
             && tw.comments
             && tw.comments instanceof Array
         )
@@ -65,10 +65,10 @@ class Comment {
     _createdAt;
     _author;
 
-    constructor(id, text, author) {
+    constructor(id, text, date, author) {
         this._id = id;
         this.text = text;
-        this._createdAt = new Date();
+        this._createdAt = date;
         this.author = author;
     }
 
@@ -96,15 +96,15 @@ class Comment {
     static validate(com) {
         return (
             com instanceof Comment
-            && com.id
-            && typeof(com.id) === "string"
-            && com.text
+            && com._id
+            && typeof(com._id) === "string"
+            && (com.text || com.text === "")
             && typeof(com.text) === "string"
             && com.text.length <= 280
-            && com.createdAt
-            && com.createdAt instanceof Date
-            && com.author !== ""
-            && typeof(com.author) === "string"
+            && com._createdAt
+            && com._createdAt instanceof Date
+            && com._author !== ""
+            && typeof(com._author) === "string"
         )
     }
 }
@@ -134,13 +134,9 @@ class TweetFeed {
     getPage(skip = 0, top = 10, filterConfig) {
         let result = this._tweets.slice();
         if(filterConfig) {
-            if(filterConfig.author) result = result.filter((tweet) => {
-                let author = tweet.author;
-                console.log(author);
-                return author.includes(filterConfig.author);
-            });
-            if(filterConfig.dateFrom) result = result.filter((tweet) => tweet.createdAt >= filterConfig.dateFrom);
-            if(filterConfig.dateTo) result = result.filter((tweet) => tweet.createdAt <= filterConfig.dateTo);
+            if(filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
+            if(filterConfig.dateFrom) result = result.filter((tweet) => tweet.date >= filterConfig.dateFrom);
+            if(filterConfig.dateTo) result = result.filter((tweet) => tweet.date <= filterConfig.dateTo);
             if(filterConfig.hashtags) result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => {
                 let hashtagStart = tweet.text.indexOf(hashtag);
                 if(hashtagStart === -1) return false; // хэштег не был найден
@@ -153,7 +149,7 @@ class TweetFeed {
             }));
             if(filterConfig.text || filterConfig.text === "") result = result.filter((tweet) => tweet.text.includes(filterConfig.text));
         }
-        result.sort((tweet1, tweet2) => tweet1.createdAt > tweet2.createdAt ? -1 : 1);
+        result.sort((tweet1, tweet2) => tweet1.date > tweet2.date ? -1 : 1);
         return result.slice(skip, skip + top);
     }
 
@@ -205,6 +201,7 @@ const tweets = [
     new Tweet(
         "1",
         "Some text here",
+        new Date("2022-03-09T22:22:22"),
         "Alice",
         []
     ),
@@ -212,6 +209,7 @@ const tweets = [
     new Tweet(
         "2",
         "Some other text here",
+        new Date("2022-03-09T23:22:00"),
         "Bob",
         []
     ),
@@ -219,6 +217,7 @@ const tweets = [
     new Tweet(
         "3",
         "Text with a #hashtag here",
+        new Date("2022-03-10T20:20:00"),
         "Charlie",
         []
     ),
@@ -226,6 +225,7 @@ const tweets = [
     new Tweet(
         "4",
         "Another #text with a #hashtag here",
+        new Date("2022-03-11T12:03:05"),
         "Daniel",
         []
     ),
@@ -233,6 +233,7 @@ const tweets = [
     new Tweet(
         "5",
         "Text is what this is",
+        new Date("2022-03-11T13:05:01"),
         "Ethan",
         []
     ),
@@ -240,28 +241,27 @@ const tweets = [
     new Tweet(
         "6",
         "Let your #imagination run wild, don't limit yourself. You can do much better than this.",
+        new Date("2022-03-12T19:25:00"),
         "Felicia",
         [
-            {
-                id: "c42",
-                text: "Thanks for the insipiration! I will do my best not to let you down.",
-                author: "Konstantin"
-            }
+            new Comment("c42", "Thanks for the insipiration! I will do my best not to let you down.", new Date("2022-03-12T19:25:25"), "Konstantin")
         ]
     ),
     
     new Tweet(
         "7",
         "Wow, check out the #tweet below! I would never think it would be this easy to make that guy #write sensible tweets. Cheers, Felix!",
+        new Date("2022-03-12T19:30:42"),
         "George",
         [
-            new Comment("c43", "And I took that personally. Sheesh. You didn't even #try talking to me to think that it would be difficult. Oh well.", "Konstantin")
+            new Comment("c43", "And I took that personally. Sheesh. You didn't even #try talking to me to think that it would be difficult. Oh well.", new Date("2022-03-12T19:30:50"), "Konstantin")
         ]
     ),
     
     new Tweet(
         "8",
         "Ahem... With that out of the way, let's get into the #tweets. Eight done, twelve more to go. Just going to get myself a cup of #tea and I'll get right into it.",
+        new Date("2022-03-12T19:32:21"),
         "Konstantin",
         []
     ),
@@ -269,6 +269,7 @@ const tweets = [
     new Tweet(
         "9",
         "Guys, anyone #online?",
+        new Date("2022-03-12T19:33:33"),
         "Leonard",
         []
     ),
@@ -276,15 +277,17 @@ const tweets = [
     new Tweet(
         "10",
         "Yeah, I am, what is it?",
+        new Date("2022-03-12T19:33:50"),
         "Miranda",
         [
-            new Comment("c44", "FYI, there is a comment section under each tweet. Oh well. A friend of mine will continue my thought in the text tweet.", "Leonard")
+            new Comment("c44", "FYI, there is a comment section under each tweet. Oh well. A friend of mine will continue my thought in the text tweet.", new Date("2022-03-12T19:34:24"), "Leonard")
         ]
     ),
     
     new Tweet(
         "11",
         "Hey everyone! Leonard and I wish to write the remaining nine #tweets so this Konstantin guy doesn't need to.",
+        new Date("2022-03-12T19:35:00"),
         "Natalie",
         []
     ),
@@ -292,6 +295,7 @@ const tweets = [
     new Tweet(
         "12",
         "What an #idea! I'm in.",
+        new Date("2022-03-12T19:35:50"),
         "Olivia",
         []
     ),
@@ -299,6 +303,7 @@ const tweets = [
     new Tweet(
         "13",
         "I'd like to #join too!",
+        new Date("2022-03-12T19:36:14"),
         "Patrick",
         []
     ),
@@ -306,16 +311,18 @@ const tweets = [
     new Tweet(
         "14",
         "Wow, that a #community! I want to be a part of it too! And screw the #comments - write as much #tweets as you can!",
+        new Date("2022-03-12T19:36:42"),
         "Quentin",
         [
-            new Comment("c45", "Come on now. He needs to have comments or his mentors won't be happy. Did you even read the homework task? Duh.", "Leonard"),
-            new Comment("c46", "Oh, right, right, sorry. And some comments too.", "Quentin")
+            new Comment("c45", "Come on now. He needs to have comments or his mentors won't be happy. Did you even read the homework task? Duh.", new Date("2022-03-12T19:37:03"), "Leonard"),
+            new Comment("c46", "Oh, right, right, sorry. And some comments too.", new Date("2022-03-12T19:37:30"), "Quentin")
         ]
     ),
     
     new Tweet(
         "15",
         "I don't have the slightest #idea why we are doing this, but I guess we are!",
+        new Date("2022-03-12T19:37:54"),
         "Rose",
         []
     ),
@@ -323,6 +330,7 @@ const tweets = [
     new Tweet(
         "16",
         "Almost there, guys, keep it up! Post those #tweets like there's no tomorrow!",
+        new Date("2022-03-12T19:38:22"),
         "Simon",
         []
     ),
@@ -330,38 +338,42 @@ const tweets = [
     new Tweet(
         "17",
         "Has anyone noticed that the names of #tweets posters are in alphabetic order yet?",
+        new Date("2022-03-12T19:38:51"),
         "Timothy",
         [
-            new Comment("c47", "No.", "Anonymous")
+            new Comment("c47", "No.", new Date("2022-03-12T19:39:10"), "Anonymous")
         ]
     ),
     
     new Tweet(
         "18",
         "Wow, Timothy's right! We must keep it going like this! Everyone, quick, think of a #friend whose name starts with letters after U!",
+        new Date("2022-03-12T19:39:33"),
         "Ulrich",
         [ 
-            new Comment("c48", "Do acquaintances count?", "Victoria"),
-            new Comment("c49", "Think later, you have the next letter! Quick, make a tweet before someone ruins it!", "Ulrich"),
-            new Comment("c50", "Oh god... I'm late, aren't I?", "Victoria"),
-            new Comment("c51", "No you aren't! Yet!", "Ulrich"),
-            new Comment("c52", "You sure? I'm pretty certain someone has already posted a tweet.", "Victoria"),
-            new Comment("c53", "JUST POST THE DAMN TWEET!", "Ulrich")
+            new Comment("c48", "Do acquaintances count?", new Date("2022-03-12T19:39:55"), "Victoria"),
+            new Comment("c49", "Think later, you have the next letter! Quick, make a tweet before someone ruins it!", new Date("2022-03-12T19:40:12"), "Ulrich"),
+            new Comment("c50", "Oh god... I'm late, aren't I?", new Date("2022-03-12T19:44:42"), "Victoria"),
+            new Comment("c51", "No you aren't! Yet!", new Date("2022-03-12T19:44:50"), "Ulrich"),
+            new Comment("c52", "You sure? I'm pretty certain someone has already posted a tweet.", new Date("2022-03-12T19:45:13"), "Victoria"),
+            new Comment("c53", "JUST POST THE DAMN TWEET!", new Date("2022-03-12T19:45:20"), "Ulrich")
         ]
     ),
     
     new Tweet(
         "19",
         "Okay, okay, I posted a #tweet. Jeez.",
+        new Date("2022-03-12T19:45:44"),
         "Victoria",
         [
-            new Comment("c54", "Could you have waited a little longer?", "Ulrich")
+            new Comment("c54", "Could you have waited a little longer?", new Date("2022-03-12T19:45:53"), "Ulrich")
         ]
     ),
     
     new Tweet(
         "20",
         "Okay, even though there were some issues back there, I hereby declare our #feat accomplished. WITH the alphabetical order kept.",
+        new Date("2022-03-12T19:46:22"),
         "Wendy",
         []
     ),
@@ -369,6 +381,7 @@ const tweets = [
     new Tweet(
         "21",
         "Wow, now that's a 'good morning'. That was quite a ride. Too bad I wasn't here then.",
+        new Date("2022-03-13T08:46:31"),
         "Xavier",
         []
     ),
@@ -376,15 +389,17 @@ const tweets = [
     new Tweet(
         "22",
         "Just who do you think you are? He was supposed to do it by himself!",
+        new Date("2022-03-13T13:43:21"),
         "Yana",
         [
-            new Comment("c55", "I'm more concerned by the fact that it takes him more than a day to get a cup of tea...", "Leonard")
+            new Comment("c55", "I'm more concerned by the fact that it takes him more than a day to get a cup of tea...", new Date("2022-03-13T21:28:03"), "Leonard")
         ]
     ),
 
     new Tweet(
         "23",
         "I don't think he's coming back... You did well, guys. Go do #something else.",
+        new Date("2022-03-14T22:26:01"),
         "Zoe",
         []
     ),
@@ -392,6 +407,7 @@ const tweets = [
     new Tweet(
         "24",
         "Uh, hey, everyone! Sorry for the late arrival! Uhm... I have uh... Another task I need to do... Does anyone want to #help me out?",
+        new Date("2022-04-25T22:22:22"),
         "Konstantin",
         []
     )
@@ -403,6 +419,7 @@ function tests() {
     const feed = new TweetFeed(tweets);
     let expecting;
     let actual;
+    console.log(feed);
 
     console.log("test 1: feed.getPage()");
     expecting = tweets.slice(14, 24).reverse();
@@ -481,8 +498,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 8: Tweet.validate(new Tweet('1', 'hi there', 'someone', [])");
-    if(Tweet.validate(new Tweet('1', 'hi there', 'someone', []))) {
+    console.log("test 8: Tweet.validate(new Tweet('1', 'hi there', new Date(), 'someone', []))");
+    if(Tweet.validate(new Tweet('1', 'hi there', new Date(), 'someone', []))) {
         testsPassed++;
         console.log("passed");
     }
@@ -490,8 +507,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 9: Tweet.validate(tweets[4])");
-    if(Tweet.validate(tweets[4])) {
+    console.log("test 9: Tweet.validate(feed.get('3'))");
+    if(Tweet.validate(feed.get('3'))) {
         testsPassed++;
         console.log("passed");
     }
@@ -499,8 +516,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 10: Tweet.validate(new Tweet('id', '', 'e', []))");
-    if(Tweet.validate(new Tweet('id', '', 'e', []))) {
+    console.log("test 10: Tweet.validate(new Tweet('id', '', new Date(), 'e', []))");
+    if(Tweet.validate(new Tweet('id', '', new Date(), 'e', []))) {
         testsPassed++;
         console.log("passed");
     }
@@ -508,8 +525,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 11: Tweet.validate(new Tweet('', 'text', 'a beeper perhaps', []))")
-    if(!Tweet.validate(new Tweet('', 'text', 'a beeper perhaps', []))) {
+    console.log("test 11: Tweet.validate(new Tweet('', 'text', new Date(), 'a beeper perhaps', []))")
+    if(!Tweet.validate(new Tweet('', 'text', new Date(), 'a beeper perhaps', []))) {
         testsPassed++;
         console.log("passed");
     }
