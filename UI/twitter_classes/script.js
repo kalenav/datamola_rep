@@ -167,7 +167,7 @@ class TweetFeed {
     }
 
     edit(id, text) {
-        const tweet = get(id);
+        const tweet = this.get(id);
         if(tweet.author !== this._user) return false;
         let snapshot = tweet.text;
         tweet.text = text;
@@ -417,6 +417,7 @@ function tests() {
     let testsPassed = 0;
 
     const feed = new TweetFeed(tweets);
+    feed.user = "TEST_USER";
     let expecting;
     let actual;
     console.log(feed);
@@ -487,7 +488,7 @@ function tests() {
 
     console.log("");
 
-    console.log("7: feed.get('not an actual id')");
+    console.log("test 7: feed.get('not an actual id')");
     expecting = undefined;
     actual = feed.get("not an actual id");
     if(expecting === actual) {
@@ -534,8 +535,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 12: Tweet.validate(new Tweet('123', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', 'some very wordy fella', []))");
-    if(!Tweet.validate(new Tweet('123', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', 'some very wordy fella', []))) {
+    console.log("test 12: Tweet.validate(new Tweet('123', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', new Date(), 'some very wordy fella', []))");
+    if(!Tweet.validate(new Tweet('123', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', new Date(), 'some very wordy fella', []))) {
         testsPassed++;
         console.log("passed");
     }
@@ -543,8 +544,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 13: Tweet.validate(new Tweet('42', 'i always say morning instead of good morning', 'some very shady fella', []))");
-    if(Tweet.validate(new Tweet('42', 'i always say morning instead of good morning', 'some very shady fella', []))) {
+    console.log("test 13: Tweet.validate(new Tweet('42', 'i always say morning instead of good morning', new Date(), 'some very shady fella', []))");
+    if(Tweet.validate(new Tweet('42', 'i always say morning instead of good morning', new Date(), 'some very shady fella', []))) {
         testsPassed++;
         console.log("passed");
     }
@@ -552,8 +553,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 14: Tweet.validate(new Tweet('256', 'who am I?', '', []))");
-    if(!Tweet.validate(new Tweet('256', 'who am I?', '', []))) {
+    console.log("test 14: Tweet.validate(new Tweet('256', 'who am I?', new Date(), '', []))");
+    if(!Tweet.validate(new Tweet('256', 'who am I?', new Date(), '', []))) {
         testsPassed++;
         console.log("passed");
     }
@@ -561,8 +562,8 @@ function tests() {
 
     console.log("");
 
-    console.log("test 15: Tweet.validate(new Tweet('512', 'alrighty then', 'some very agreeable fella',  {}))");
-    if(!Tweet.validate(new Tweet('512', 'alrighty then', 'some very agreeable fella',  {}))) {
+    console.log("test 15: Tweet.validate(new Tweet('512', 'alrighty then', new Date(), 'some very agreeable fella',  {}))");
+    if(!Tweet.validate(new Tweet('512', 'alrighty then', new Date(), 'some very agreeable fella',  {}))) {
         testsPassed++;
         console.log("passed");
     }
