@@ -158,7 +158,7 @@ class TweetFeed {
     }
 
     add(text) {
-        const newTweet = new Tweet(this.generateTweetId(), text, new Date(), this._user, []);
+        const newTweet = new Tweet(this._generateTweetId(), text, new Date(), this._user, []);
         if(Tweet.validate(newTweet)) {
             this._tweets.push(newTweet);
             return true;
@@ -411,7 +411,7 @@ const tweets = [
     new Tweet(
         "24",
         "Uh, hey, everyone! Sorry for the late arrival! Uhm... I have uh... Another task I need to do... Does anyone want to #help me out?",
-        new Date("2022-04-25T22:22:22"),
+        new Date("2022-03-19T22:22:22"),
         "Konstantin",
         []
     )
@@ -573,8 +573,6 @@ function tests() {
     }
     else console.log("FAILED");
 
-    console.log("");
-
     console.log("test 16: feed.add(\"i'm a text!\")");
     feed.add("i'm a text!");
     actual = tweets[tweets.length - 1];
@@ -589,8 +587,6 @@ function tests() {
         console.log("passed");
     }
     else console.log("FAILED");
-
-    console.log("");
 
     console.log("test 17: feed.edit('25', \"i'm still a text, but different!\") (current user is the author)")
     feed.edit('25', "i'm still a text, but different!");
