@@ -652,7 +652,7 @@ function tests() {
     console.log("");
 
     console.log("test 23: Comment.validate(new Comment('c1024', 'some text', 'some very unoriginal fella'))");
-    if(Comment.validate(new Comment('c1024', 'some text', 'some very unoriginal fella'))) {
+    if(Comment.validate(new Comment('c1024', 'some text', new Date(), 'some very unoriginal fella'))) {
         testsPassed++;
         console.log("passed");
     }    
@@ -661,7 +661,7 @@ function tests() {
     console.log("");
 
     console.log("test 24: Comment.validate(new Comment('', '', 'some empty fella'))");
-    if(Comment.validate(new Comment('', '', 'some empty fella'))) {
+    if(!Comment.validate(new Comment('', '', new Date(), 'some empty fella'))) {
         testsPassed++;
         console.log("passed");
     }
