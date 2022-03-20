@@ -158,7 +158,7 @@ class TweetFeed {
     }
 
     add(text) {
-        const newTweet = new Tweet(String(Number(this._tweets[this._tweets.length - 1].id) + 1), text, new Date(), this._user, []);
+        const newTweet = new Tweet(this.generateTweetId(), text, new Date(), this._user, []);
         if(Tweet.validate(newTweet)) {
             this._tweets.push(newTweet);
             return true;
@@ -183,11 +183,15 @@ class TweetFeed {
         return true;
     }
 
+    _generateTweetId() {
+        return String(Number(this._tweets[this._tweets.length - 1].id) + 1);
+    }
+
     get user() {
         return this._user;
     }
     set user(newUser) {
-        this._user = user;
+        this._user = newUser;
     }
 }
 
