@@ -573,13 +573,16 @@ function tests() {
     }
     else console.log("FAILED");
 
+    console.log("");
+
     console.log("test 16: feed.add(\"i'm a text!\")");
     feed.add("i'm a text!");
-    actual = tweets[tweets.length - 1];
+    actual = feed.getPage(0, 25)[0];
     if(
-    actual.id === "25"
+    Tweet.validate(actual)
+    && actual.id === "25"
     && actual.text === "i'm a text!"
-    && actual.createdAt
+    && actual.date
     && actual.author === "TEST_USER"
     && actual.comments instanceof Array
     && actual.comments.length === 0) {
@@ -588,9 +591,11 @@ function tests() {
     }
     else console.log("FAILED");
 
+    console.log("");
+
     console.log("test 17: feed.edit('25', \"i'm still a text, but different!\") (current user is the author)")
     feed.edit('25', "i'm still a text, but different!");
-    if(tweets[tweets.length - 1].text === "i'm still a text, but different!") {
+    if(feed.getPage(0, 25)[0].text === "i'm still a text, but different!") {
         testsPassed++;
         console.log("passed");
     }
@@ -601,7 +606,7 @@ function tests() {
     feed.user = "OTHER_USER";
     console.log("test 18: feed.edit('25', \"i'm yet another text!\") (current user is not the author)");
     feed.edit('25', "i'm yet another text!");
-    if(tweets[tweets.length - 1].text === "i'm still a text, but different!") {
+    if(feed.getPage(0, 25)[0].text === "i'm still a text, but different!") {
         testsPassed++;
         console.log("passed");
     }
