@@ -707,9 +707,34 @@ function tests() {
     }
     else console.log("FAILED");
 
+    console.log("")
+
+    console.log("test 27: feed.addAll([\n    new Tweet('190', 'tweettext', new Date(), 'Hans', []),\n    new Tweet('11', 'anotherTweetText', new Date(), 'another Hans', [new Comment('c222', 'morning', new Date(), 'another Hans')])\n])");
+    if(feed.addAll([
+        new Tweet('190', 'tweettext', new Date(), 'Hans', []),
+        new Tweet('11', 'anotherTweetText', new Date(), 'another Hans', [new Comment('c222', 'morning', new Date(), 'another Hans')])
+    ]).length === 0
+    && feed.get('190') && feed.get('11')) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
+    console.log("test 28: feed.addAll([\n    new Tweet(['', 'tweettext', new Date(), 'another Hans', [])\n    new Tweet('188', 'tweetText', new Date(), 'another Hans', [])\n])");
+    let temp = new Tweet('', 'tweettext', new Date(), 'another Hans', []);
+    if(feed.addAll([temp, new Tweet('188', 'tweetText', new Date(), 'another Hans', [])])[0] === temp && feed.get('188')) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
     console.log("");
     console.log("==========================================");
     console.log("");
 
-    console.log(`${testsPassed}/26 tests passed`);
+    console.log(`${testsPassed}/ tests passed`);
 }
