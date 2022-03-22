@@ -732,6 +732,17 @@ function tests() {
 
     console.log("");
 
+    console.log("test 29: feed.clear()");
+
+    feed.clear();
+    if(feed.getPage(0, 10).length === 0) {
+        testsPassed++;
+        console.log("passed");
+    }
+    else console.log("FAILED");
+
+    console.log("");
+
     console.log("");
     console.log("==========================================");
     console.log("");
