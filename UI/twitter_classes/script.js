@@ -182,7 +182,9 @@ class TweetFeed {
 
     addComment(id, text) { 
         const tweet = this.get(id);
+        if(!tweet) return false;
         tweet.comments.push(new Comment(this._generateCommentId(), text, new Date(), this._user));
+        return true;
     }
 
     _generateTweetId() {
@@ -196,7 +198,7 @@ class TweetFeed {
                 return currCommentId > r ? currCommentId : r;
             }, 0);
             return currTweetOldestCommentId > oldestCommentId ? currTweetOldestCommentId : oldestCommentId;
-        }, 0)));
+        }, 0) + 1));
     }
 
     get user() {
@@ -686,13 +688,14 @@ function tests() {
         const comment = tweets[1].comments[0];
         if(comment.id === "c56"
         && comment.text === "what a great tweet!"
-        && comment.createdAt
+        && comment.date
         && comment.author === "TEST_USER") {
             testsPassed++;
             console.log("passed");
         }
         else console.log("FAILED");
     }
+    else console.log("FAILED");
 
     console.log("");
 
