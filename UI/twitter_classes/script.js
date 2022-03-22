@@ -155,7 +155,7 @@ class TweetFeed {
     }
 
     add(text) {
-        const newTweet = new Tweet(`${++this._currOldestTweetId}`, text, new Date(), this._user, []);
+        const newTweet = new Tweet(this._generateTweetId(), text, new Date(), this._user, []);
         if(Tweet.validate(newTweet)) {
             this._tweets.push(newTweet);
             return true;
@@ -181,8 +181,8 @@ class TweetFeed {
     }
 
     addComment(id, text) { 
-        const tweet = this.find(id);
-        tweet.comments.push(new Comment(`c + ${++this._currOldestCommentId}`, text, new Date(), this._user));
+        const tweet = this.get(id);
+        tweet.comments.push(new Comment(this._generateCommentId(), text, new Date(), this._user));
     }
 
     _generateTweetId() {
@@ -681,7 +681,6 @@ function tests() {
 
     console.log("");
 
-    /*
     console.log("test 25: feed.addComment('2', 'what a great tweet!')");
     if(feed.addComment('2', 'what a great tweet!')) {
         const comment = tweets[1].comments[0];
@@ -696,7 +695,6 @@ function tests() {
     }
 
     console.log("");
-    */
 
     console.log("test 26: feed.user = 'OTHER_USER'");
     feed.user = 'OTHER_USER';
