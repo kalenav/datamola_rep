@@ -110,6 +110,8 @@ class TweetFeed {
 
     _tweets;
     _user;
+    _currOldestTweetId = 0;
+    _currOldestCommentId = 0;
 
     constructor(tws) {
         this._tweets = tws.slice();
@@ -155,7 +157,7 @@ class TweetFeed {
     }
 
     add(text) {
-        const newTweet = new Tweet(this._generateTweetId(), text, new Date(), this._user, []);
+        const newTweet = new Tweet(`${++this._currOldestTweetId}`, text, new Date(), this._user, []);
         if(Tweet.validate(newTweet)) {
             this._tweets.push(newTweet);
             return true;
@@ -182,21 +184,7 @@ class TweetFeed {
 
     addComment(id, text) { 
         const tweet = this.find(id);
-        tweet.comments.push(new Comment(this._generateCommentId(), text, new Date(), this._user));
-    }
-
-    _generateTweetId() {
-        return String(Number(this._tweets[this._tweets.length - 1].id) + 1);
-    }
-
-    _generateCommentId() {
-        return ('c' + String(this._tweets.reduce((oldestCommentId, tweet) => {
-            let currTweetOldestCommentId = tweet.comments.reduce((r, comment) => {
-                let currCommentId = Number(comment.id.slice(1, comment.id.length));
-                return currCommentId > r ? currCommentId : r;
-            }, 0);
-            return currTweetOldestCommentId > oldestCommentId ? currTweetOldestCommentId : oldestCommentId;
-        }, 0)));
+        tweet.comments.push(new Comment(`c + ${++this._currOldestCommentId}`, text, new Date(), this._user));
     }
 
     get user() {
