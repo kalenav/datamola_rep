@@ -176,7 +176,7 @@ class TweetFeed {
     remove(id) {
         const tweetIndex = this._tweets.findIndex((tw) => tw.id === id);
         if(tweetIndex === -1 || this._tweets[tweetIndex].author !== this._user) return false;
-        this._tweets = this._tweets.splice(tweetIndex, 1);
+        this._tweets.splice(tweetIndex, 1);
         return true;
     }
 
