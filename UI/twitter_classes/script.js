@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint linebreak-style: ['error', 'windows'] */
 /* eslint 'require-jsdoc': ['error', {
     'require': {
@@ -722,7 +724,7 @@ function tests() {
     console.log('==========================================');
     console.log('');
 
-    console.log(`${testsPassed}/ tests passed`);
+    console.log(`${testsPassed}/29 tests passed`);
 }
 
 tests();
