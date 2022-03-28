@@ -13,13 +13,12 @@ function createCalendar(elem, year, month) {
 
     const C = Math.floor(year / 100);
     const Y = (year % 100 - (month === 11 || month === 12) ? 1 : 0);
-    const startsAt = Math.floor(1 + Math.floor(2.6 * ((month + 9) % 12 + 1) - 0.2) - C + Y + Math.floor(Y / 4) + Math.floor(C / 4)) % 7; // https://cs.uwaterloo.ca/~alopez-o/math-faq/node73.html
+    let currDayOfTheWeek = Math.floor(1 + Math.floor(2.6 * ((month + 9) % 12 + 1) - 0.2) - C + Y + Math.floor(Y / 4) + Math.floor(C / 4)) % 7; // https://cs.uwaterloo.ca/~alopez-o/math-faq/node73.html
     let monthLength;
     if(month === 1 || month === 3 || month === 5 || month === 7 || month === 8 || month === 10 || month === 12) monthLength = 31;
     else if(month !== 2) monthLength = 30;
     else if(year % 4 !== 0) monthLength = 28;
     else monthLength = 29;
-    let currDayOfTheWeek = startsAt;
     let currDay = 1;
 
     function newWeek() {
