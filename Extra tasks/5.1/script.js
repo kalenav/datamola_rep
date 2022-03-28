@@ -41,5 +41,4 @@ function createCalendar(elem, year, month) {
     }
     table.style.borderCollapse = "collapse";
     elem.appendChild(table);
-    console.log(elem.innerHTML);
 }
