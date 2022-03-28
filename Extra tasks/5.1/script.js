@@ -1,9 +1,9 @@
 function createCalendar(elem, year, month) {
     const table = document.createElement("table");
-    const headerRow = document.createElement("th");
+    const headerRow = document.createElement("tr");
     const dayNames = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
     for(let i = 0; i < 7; i++) {
-        const currCell = document.createElement("td");
+        const currCell = document.createElement("th");
         currCell.append(dayNames[i]);
         currCell.style.border = "solid black 1px";
         headerRow.appendChild(currCell);
