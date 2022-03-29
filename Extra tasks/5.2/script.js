@@ -6,15 +6,16 @@ function createList(title, list) {
 
     const upperList = document.createElement("ul");
 
-    function createListPoint(listPoint, parent) {
+    function createListPoint(listPoint, parent, reduceFontSize) {
         const div = document.createElement("div");
         div.style.border = "solid grey 1px";
+        if(reduceFontSize) div.style.fontSize = '0.9em';
         div.append(listPoint.value);
         if(listPoint.children) {
             const subList = document.createElement("ul");
             listPoint.children.forEach((v) => {
                 const li = document.createElement("li");
-                createListPoint(v, li);
+                createListPoint(v, li, true);
                 subList.appendChild(li);
             });
             div.appendChild(subList);
@@ -25,7 +26,7 @@ function createList(title, list) {
 
     list.forEach((v) => {
         const li = document.createElement("li");
-        createListPoint(v, li);
+        createListPoint(v, li, false);
         upperList.appendChild(li);
     });
     container.appendChild(upperList);
