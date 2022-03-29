@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>extra homework 5.1</title>
+    </head>
+    <body style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <div id="container"></div>
+        <button onclick="createList('list', [
+        {
+           value: 'Пункт 1.',
+           children: null,
+        },
+        {
+           value: 'Пункт 2.',
+           children: [
+              {
+                 value: 'Подпункт 2.1.',
+                 children: null,
+              },
+              {
+                 value: 'Подпункт 2.2.',
+                 children: [
+                    {
+                       value: 'Подпункт 2.2.1.',
+                       children: null,
+                    },
+                    {
+                       value: 'Подпункт 2.2.2.',
+                       children: null,
+                    }
+                 ],
+              },
+              {
+                 value: 'Подпункт 2.3.',
+                 children: null,
+              }
+           ]
+        },
+        {
+           value: 'Пункт 3.',
+           children: null,
+        }
+      ])">create!</button>
+    </body>
+    <script src="script.js"></script>
+</html>
