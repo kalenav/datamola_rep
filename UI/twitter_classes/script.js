@@ -241,8 +241,8 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(tweets) {
-        this._container.innerHTML = "";
+    display(tweets) { // tweets: Array<Tweet>
+        this._container.innerHTML = '';
         tweets.forEach((tweet) => {
             const newTweet = document.createElement('div');
             newTweet.setAttribute('class', 'tweet');
@@ -289,6 +289,42 @@ class FilterView {
             if(filterChoices[i]) option.setAttribute('selected', '');
             else option.removeAttribute('selected');
         });
+    }
+}
+
+class TweetView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(tweet) {
+        this._container.innerHTML = '';
+        const tweet = document.createElement('section');
+
+        const authorAndDateContainer = document.createElement('p');
+        authorAndDateContainer.setAttribute('class', 'auhtor-info');
+        authorAndDateContainer.append(`Tweet by ${tweet.author} on ${tweet.date.getDay()}.${tweet.date.getMonth()} at ${tweet.date.getHours()}:${tweet.date.getMinutes()}`);
+        tweet.appendChild(authorAndDateContainer);
+
+        const tweetTextContainer = document.createElement('p');
+        tweetTextContainer.setAttribute('class', 'tweet-text');
+        let tweetText = tweet.text;
+        let hashtag = "";
+        for(let i = 0; i < tweetText.length; i++) {
+            if(tweetText[i] === '#') {
+                while(i < tweetText.length && tweetText[i] != ' ') {
+                    hashtag += tweetText[i++];
+                }
+                tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
+                hashtag = "";
+            }
+        }
+        tweetTextContainer.innerHTML = tweetText;
+        tweet.appendChild(tweetTextContainer);
+
+        this._container.appendChild(tweet);
     }
 }
 
