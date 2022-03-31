@@ -220,10 +220,6 @@ class TweetFeed {
     set user(newUser) {
         this._user = newUser;
     }
-
-    get tweets() {
-        return this._tweets;
-    }
 }
 
 class HeaderView {
@@ -343,17 +339,17 @@ function setCurrentUser(user) {
 
 function addTweet(text) {
     feed.add(text);
-    tweetFeedView.display(feed.tweets);
+    tweetFeedView.display(feed.getPage());
 }
 
 function editTweet(id, text) {
     feed.edit(id, text);
-    tweetFeedView.display(feed.tweets);
+    tweetFeedView.display(feed.getPage());
 }
 
 function removeTweet(id) {
     feed.remove(id);
-    tweetFeedView.display(feed.tweets);
+    tweetFeedView.display(feed.getPage());
 }
 
 function getFeed(skip, top, filterConfig) {
@@ -878,8 +874,7 @@ const tweetFeedView = new TweetFeedView('tweets');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
-setTimeout(() => 
-{
+setTimeout(() => {
     setCurrentUser('kostek');
     setTimeout(() => {
         getFeed();
@@ -889,6 +884,9 @@ setTimeout(() =>
                 editTweet('25', 'this is an edited tweet by kostek');
                 setTimeout(() => {
                     removeTweet('25');
+                    setTimeout(() => {
+                        showTweet('13');
+                    }, 1000);
                 }, 1000);
             }, 1000);
         }, 1000);
