@@ -253,7 +253,11 @@ class TweetFeedView {
 
             const authorAndDateContainer = document.createElement('p');
             authorAndDateContainer.setAttribute('class', 'author-info');
-            authorAndDateContainer.append(`by ${tweet.author} on ${tweet.date.getDay()}.${tweet.date.getMonth()} at ${tweet.date.getHours()}:${tweet.date.getMinutes()}`);
+            const day = Math.floor(tweet.date.getDate() / 10) === 0 ? `0${tweet.date.getDate()}` : tweet.date.getDate();
+            const month = Math.floor(tweet.date.getMonth() / 10) === 0 ? `0${tweet.date.getMonth()}` : tweet.date.getMonth();
+            const hours = Math.floor(tweet.date.getHours() / 10) === 0 ? `0${tweet.date.getHours()}` : tweet.date.getHours();
+            const minutes = Math.floor(tweet.date.getMinutes() / 10) === 0 ? `0${tweet.date.getMinutes()}` : tweet.date.getMinutes();
+            authorAndDateContainer.append(`by ${tweet.author} on ${day}.${month} at ${hours}:${minutes}`);
             newTweet.appendChild(authorAndDateContainer);
 
             const tweetTextContainer = document.createElement('p');
@@ -274,7 +278,7 @@ class TweetFeedView {
 
             const repliesNumberContainer = document.createElement('p');
             repliesNumberContainer.append(`${tweet.comments.length} replies`);
-            newTweet.appendChild(repliesNUmberContainer);
+            newTweet.appendChild(repliesNumberContainer);
 
             this._container.appendChild(newTweet);
         });
