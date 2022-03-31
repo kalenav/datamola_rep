@@ -220,6 +220,10 @@ class TweetFeed {
     set user(newUser) {
         this._user = newUser;
     }
+
+    get tweets() {
+        return this._tweets;
+    }
 }
 
 class HeaderView {
@@ -326,6 +330,16 @@ class TweetView {
 
         this._container.appendChild(tweet);
     }
+}
+
+function setCurrentUser(user) {
+    feed.user = user;
+    headerView.display(user);
+}
+
+function addTweet(text) {
+    feed.add(text);
+    tweetFeedView.display(feed.tweets);
 }
 
 
@@ -834,4 +848,11 @@ function tests() {
 }
 
 // tests();
+
+const feed = new TweetFeed(tweets);
+
+const headerView = new HeaderView('username');
+const tweetFeedView = new TweetFeedView('tweets');
+const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
+const tweetView = new TweetView('main-container');
 
