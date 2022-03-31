@@ -222,6 +222,18 @@ class TweetFeed {
     }
 }
 
+class HeaderView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(user) {
+        this._container.innerHTML = user;
+    }
+}
+
 
 const tweets = [
     new Tweet(
@@ -727,4 +739,5 @@ function tests() {
     console.log(`${testsPassed}/29 tests passed`);
 }
 
-tests();
+// tests();
+
