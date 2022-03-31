@@ -242,7 +242,7 @@ class TweetFeedView {
     }
 
     display(tweets) { // tweets: Array<Tweet>
-        this._container.innerHTML = '';
+        this._container.innerHTML = '<button class="filters-button">Filters</button>';
         tweets.forEach((tweet) => {
             const newTweet = document.createElement('div');
             newTweet.setAttribute('class', 'tweet');
@@ -334,6 +334,30 @@ class TweetView {
         tweetContainer.appendChild(tweetTextContainer);
 
         this._container.appendChild(tweetContainer);
+
+        const commentsContainer = document.createElement('section');
+        commentsContainer.setAttribute('class', 'comments');
+        tweet.comments.forEach((comment) => {
+            const currCommentContainer = document.createElement('div');
+            currCommentContainer.setAttribute('class', 'comment');
+
+            const authorAndDateContainer = document.createElement('p');
+            authorAndDateContainer.setAttribute('class', 'author-name');
+            const day = Math.floor(comment.date.getDate() / 10) === 0 ? `0${comment.date.getDate()}` : comment.date.getDate();
+            const month = Math.floor(comment.date.getMonth() / 10) === 0 ? `0${comment.date.getMonth()}` : comment.date.getMonth();
+            const hours = Math.floor(comment.date.getHours() / 10) === 0 ? `0${comment.date.getHours()}` : comment.date.getHours();
+            const minutes = Math.floor(comment.date.getMinutes() / 10) === 0 ? `0${comment.date.getMinutes()}` : comment.date.getMinutes();
+            authorAndDateContainer.append(`Comment by ${comment.author} on ${day}.${month} at ${hours}:${minutes}`);
+            currCommentContainer.appendChild(authorAndDateContainer);
+
+            const textContainer = document.createElement('p');
+            textContainer.setAttribute('class', 'comment-text');
+            textContainer.append(comment.text);
+            currCommentContainer.appendChild(textContainer);
+
+            commentsContainer.appendChild(currCommentContainer);
+        });
+        this._container.appendChild(commentsContainer);
     }
 }
 
@@ -890,7 +914,7 @@ setTimeout(() => {
                 setTimeout(() => {
                     removeTweet('25');
                     setTimeout(() => {
-                        showTweet('13');
+                        showTweet('18');
                     }, 1000);
                 }, 1000);
             }, 1000);
