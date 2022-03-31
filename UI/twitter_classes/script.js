@@ -234,6 +234,51 @@ class HeaderView {
     }
 }
 
+class TweetFeedView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(tweets) {
+        this._container.innerHTML = "";
+        tweets.forEach((tweet) => {
+            const newTweet = document.createElement('div');
+            newTweet.setAttribute('class', 'tweet');
+
+            const authorAndDateContainer = document.createElement('p');
+            authorAndDateContainer.setAttribute('class', 'author-info');
+            authorAndDateContainer.append(`by ${tweet.author} on ${tweet.date.getDay()}.${tweet.date.getMonth()} at ${tweet.date.getHours()}:${tweet.date.getMinutes()}`);
+            newTweet.appendChild(authorAndDateContainer);
+
+            const tweetTextContainer = document.createElement('p');
+            tweetTextContainer.setAttribute('class', 'tweet-text');
+            let tweetText = tweet.text;
+            let hashtagOpen = false;
+            let hashtag = "";
+            for(let i = 0; i < tweetText.length; i++) {
+                if(tweetText[i] === '#') {
+                    hashtagOpen = true;
+                    while(i < tweetText.length && tweetText[i] != ' ') {
+                        hashtag += tweetText[i++];
+                    }
+                    tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
+                    hashtag = "";
+                }
+            }
+            tweetTextContainer.innerHTML = tweetText;
+            newTweet.appendChild(tweetTextContainer);
+
+            const repliesNumberContainer = document.createElement('p');
+            repliesNumberContainer.append(`${tweet.comments.length} replies`);
+            newTweet.appendChild(repliesNUmberContainer);
+
+            this._container.appendChild(newTweet);
+        });
+    }
+}
+
 
 const tweets = [
     new Tweet(
