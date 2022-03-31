@@ -255,11 +255,9 @@ class TweetFeedView {
             const tweetTextContainer = document.createElement('p');
             tweetTextContainer.setAttribute('class', 'tweet-text');
             let tweetText = tweet.text;
-            let hashtagOpen = false;
             let hashtag = "";
             for(let i = 0; i < tweetText.length; i++) {
                 if(tweetText[i] === '#') {
-                    hashtagOpen = true;
                     while(i < tweetText.length && tweetText[i] != ' ') {
                         hashtag += tweetText[i++];
                     }
@@ -275,6 +273,21 @@ class TweetFeedView {
             newTweet.appendChild(repliesNUmberContainer);
 
             this._container.appendChild(newTweet);
+        });
+    }
+}
+
+class FilterView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(filterChoices) { // filterChoices: Array<Boolean>
+        this._container.children.forEach((option, i) => {
+            if(filterChoices[i]) option.setAttribute('selected', '');
+            else option.removeAttribute('selected');
         });
     }
 }
