@@ -352,7 +352,7 @@ function editTweet(id, text) {
 }
 
 function removeTweet(id) {
-    feed.removeTweet(id);
+    feed.remove(id);
     tweetFeedView.display(feed.tweets);
 }
 
@@ -878,6 +878,19 @@ const tweetFeedView = new TweetFeedView('tweets');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
-setCurrentUser('kostek');
-getFeed();
-
+setTimeout(() => 
+{
+    setCurrentUser('kostek');
+    setTimeout(() => {
+        getFeed();
+        setTimeout(() => {
+            addTweet('this is a new tweet by kostek');
+            setTimeout(() => {
+                editTweet('25', 'this is an edited tweet by kostek');
+                setTimeout(() => {
+                    removeTweet('25');
+                }, 1000);
+            }, 1000);
+        }, 1000);
+    }, 1000);
+}, 1000);
