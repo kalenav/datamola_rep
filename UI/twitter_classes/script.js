@@ -305,12 +305,12 @@ class TweetView {
 
     display(tweet) {
         this._container.innerHTML = '';
-        const tweet = document.createElement('section');
+        const tweetContainer = document.createElement('section');
 
         const authorAndDateContainer = document.createElement('p');
         authorAndDateContainer.setAttribute('class', 'auhtor-info');
         authorAndDateContainer.append(`Tweet by ${tweet.author} on ${tweet.date.getDay()}.${tweet.date.getMonth()} at ${tweet.date.getHours()}:${tweet.date.getMinutes()}`);
-        tweet.appendChild(authorAndDateContainer);
+        tweetContainer.appendChild(authorAndDateContainer);
 
         const tweetTextContainer = document.createElement('p');
         tweetTextContainer.setAttribute('class', 'tweet-text');
@@ -326,7 +326,7 @@ class TweetView {
             }
         }
         tweetTextContainer.innerHTML = tweetText;
-        tweet.appendChild(tweetTextContainer);
+        tweetContainer.appendChild(tweetTextContainer);
 
         this._container.appendChild(tweet);
     }
@@ -873,4 +873,7 @@ const headerView = new HeaderView('username');
 const tweetFeedView = new TweetFeedView('tweets');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
+
+setCurrentUser('kostek');
+getFeed();
 
