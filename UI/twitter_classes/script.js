@@ -222,6 +222,173 @@ class TweetFeed {
     }
 }
 
+class HeaderView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(user) {
+        this._container.innerHTML = user;
+    }
+}
+
+class TweetFeedView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(tweets) { // tweets: Array<Tweet>
+        this._container.innerHTML = '<button class="filters-button">Filters</button>';
+        tweets.forEach((tweet) => {
+            const newTweet = document.createElement('div');
+            newTweet.setAttribute('class', 'tweet');
+
+            const authorAndDateContainer = document.createElement('p');
+            authorAndDateContainer.setAttribute('class', 'author-info');
+            const day = Math.floor(tweet.date.getDate() / 10) === 0 ? `0${tweet.date.getDate()}` : tweet.date.getDate();
+            const month = Math.floor(tweet.date.getMonth() / 10) === 0 ? `0${tweet.date.getMonth()}` : tweet.date.getMonth();
+            const hours = Math.floor(tweet.date.getHours() / 10) === 0 ? `0${tweet.date.getHours()}` : tweet.date.getHours();
+            const minutes = Math.floor(tweet.date.getMinutes() / 10) === 0 ? `0${tweet.date.getMinutes()}` : tweet.date.getMinutes();
+            authorAndDateContainer.append(`by ${tweet.author} on ${day}.${month} at ${hours}:${minutes}`);
+            newTweet.appendChild(authorAndDateContainer);
+
+            const tweetTextContainer = document.createElement('p');
+            tweetTextContainer.setAttribute('class', 'tweet-text');
+            let tweetText = tweet.text;
+            let hashtag = "";
+            for(let i = 0; i < tweetText.length; i++) {
+                if(tweetText[i] === '#') {
+                    while(i < tweetText.length && tweetText[i] != ' ') {
+                        hashtag += tweetText[i++];
+                    }
+                    tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
+                    hashtag = "";
+                }
+            }
+            tweetTextContainer.innerHTML = tweetText;
+            newTweet.appendChild(tweetTextContainer);
+
+            const repliesNumberContainer = document.createElement('p');
+            repliesNumberContainer.append(`${tweet.comments.length} replies`);
+            newTweet.appendChild(repliesNumberContainer);
+
+            this._container.appendChild(newTweet);
+        });
+    }
+}
+
+class FilterView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(filterChoices) { // filterChoices: Array<Boolean>
+        this._container.children.forEach((option, i) => {
+            if(filterChoices[i]) option.setAttribute('selected', '');
+            else option.removeAttribute('selected');
+        });
+    }
+}
+
+class TweetView {
+    _container;
+
+    constructor(containerId) {
+        this._container = document.getElementById(containerId);
+    }
+
+    display(tweet) {
+        this._container.innerHTML = '';
+        const tweetContainer = document.createElement('section');
+        tweetContainer.setAttribute('class', 'tweet');
+
+        const authorAndDateContainer = document.createElement('p');
+        authorAndDateContainer.setAttribute('class', 'author-info');
+        const day = Math.floor(tweet.date.getDate() / 10) === 0 ? `0${tweet.date.getDate()}` : tweet.date.getDate();
+        const month = Math.floor(tweet.date.getMonth() / 10) === 0 ? `0${tweet.date.getMonth()}` : tweet.date.getMonth();
+        const hours = Math.floor(tweet.date.getHours() / 10) === 0 ? `0${tweet.date.getHours()}` : tweet.date.getHours();
+        const minutes = Math.floor(tweet.date.getMinutes() / 10) === 0 ? `0${tweet.date.getMinutes()}` : tweet.date.getMinutes();
+        authorAndDateContainer.append(`Tweet by ${tweet.author} on ${day}.${month} at ${hours}:${minutes}`);
+        tweetContainer.appendChild(authorAndDateContainer);
+
+        const tweetTextContainer = document.createElement('p');
+        tweetTextContainer.setAttribute('class', 'tweet-text');
+        let tweetText = tweet.text;
+        let hashtag = "";
+        for(let i = 0; i < tweetText.length; i++) {
+            if(tweetText[i] === '#') {
+                while(i < tweetText.length && tweetText[i] != ' ') {
+                    hashtag += tweetText[i++];
+                }
+                tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
+                hashtag = "";
+            }
+        }
+        tweetTextContainer.innerHTML = tweetText;
+        tweetContainer.appendChild(tweetTextContainer);
+
+        this._container.appendChild(tweetContainer);
+
+        const commentsContainer = document.createElement('section');
+        commentsContainer.setAttribute('class', 'comments');
+        tweet.comments.forEach((comment) => {
+            const currCommentContainer = document.createElement('div');
+            currCommentContainer.setAttribute('class', 'comment');
+
+            const authorAndDateContainer = document.createElement('p');
+            authorAndDateContainer.setAttribute('class', 'author-name');
+            const day = Math.floor(comment.date.getDate() / 10) === 0 ? `0${comment.date.getDate()}` : comment.date.getDate();
+            const month = Math.floor(comment.date.getMonth() / 10) === 0 ? `0${comment.date.getMonth()}` : comment.date.getMonth();
+            const hours = Math.floor(comment.date.getHours() / 10) === 0 ? `0${comment.date.getHours()}` : comment.date.getHours();
+            const minutes = Math.floor(comment.date.getMinutes() / 10) === 0 ? `0${comment.date.getMinutes()}` : comment.date.getMinutes();
+            authorAndDateContainer.append(`Comment by ${comment.author} on ${day}.${month} at ${hours}:${minutes}`);
+            currCommentContainer.appendChild(authorAndDateContainer);
+
+            const textContainer = document.createElement('p');
+            textContainer.setAttribute('class', 'comment-text');
+            textContainer.append(comment.text);
+            currCommentContainer.appendChild(textContainer);
+
+            commentsContainer.appendChild(currCommentContainer);
+        });
+        this._container.appendChild(commentsContainer);
+    }
+}
+
+function setCurrentUser(user) {
+    feed.user = user;
+    headerView.display(user);
+}
+
+function addTweet(text) {
+    feed.add(text);
+    tweetFeedView.display(feed.getPage());
+}
+
+function editTweet(id, text) {
+    feed.edit(id, text);
+    tweetFeedView.display(feed.getPage());
+}
+
+function removeTweet(id) {
+    feed.remove(id);
+    tweetFeedView.display(feed.getPage());
+}
+
+function getFeed(skip, top, filterConfig) {
+    tweetFeedView.display(feed.getPage(skip, top, filterConfig));
+}
+
+function showTweet(id) {
+    tweetView.display(feed.get(id));
+}
+
 
 const tweets = [
     new Tweet(
@@ -727,4 +894,30 @@ function tests() {
     console.log(`${testsPassed}/29 tests passed`);
 }
 
-tests();
+// tests();
+
+const feed = new TweetFeed(tweets);
+
+const headerView = new HeaderView('username');
+const tweetFeedView = new TweetFeedView('tweets');
+const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
+const tweetView = new TweetView('main-container');
+
+setTimeout(() => {
+    setCurrentUser('kostek');
+    setTimeout(() => {
+        getFeed();
+        setTimeout(() => {
+            addTweet('this is a new tweet by kostek');
+            setTimeout(() => {
+                editTweet('25', 'this is an edited tweet by kostek');
+                setTimeout(() => {
+                    removeTweet('25');
+                    setTimeout(() => {
+                        showTweet('18');
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }, 1000);
+    }, 1000);
+}, 1000);
