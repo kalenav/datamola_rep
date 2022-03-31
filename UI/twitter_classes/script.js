@@ -342,6 +342,24 @@ function addTweet(text) {
     tweetFeedView.display(feed.tweets);
 }
 
+function editTweet(id, text) {
+    feed.edit(id, text);
+    tweetFeedView.display(feed.tweets);
+}
+
+function removeTweet(id) {
+    feed.removeTweet(id);
+    tweetFeedView.display(feed.tweets);
+}
+
+function getFeed(skip, top, filterConfig) {
+    tweetFeedView.display(feed.getPage(skip, top, filterConfig));
+}
+
+function showTweet(id) {
+    tweetView.display(feed.get(id));
+}
+
 
 const tweets = [
     new Tweet(
