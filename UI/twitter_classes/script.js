@@ -244,6 +244,7 @@ class ViewUtils {
         const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
         return {day, month, hours, minutes};
     }
+
     static wrapHashtags(text) {
         let hashtag = "";
         for(let i = 0; i < text.length; i++) {
@@ -256,6 +257,12 @@ class ViewUtils {
             }
         }
         return text;
+    }
+    
+    static newParagraph(className) {
+        const p = document.createElement('p');
+        p.setAttribute('class', className);
+        return p;
     }
 }
 
