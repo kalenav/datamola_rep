@@ -342,18 +342,15 @@ function setCurrentUser(user) {
 }
 
 function addTweet(text) {
-    feed.add(text);
-    tweetFeedView.display(feed.getPage());
+    if(feed.add(text)) tweetFeedView.display(feed.getPage());;
 }
 
 function editTweet(id, text) {
-    feed.edit(id, text);
-    tweetFeedView.display(feed.getPage());
+    if(feed.edit(id, text)) tweetFeedView.display(feed.getPage());
 }
 
 function removeTweet(id) {
-    feed.remove(id);
-    tweetFeedView.display(feed.getPage());
+    if(feed.remove(id)) tweetFeedView.display(feed.getPage());
 }
 
 function getFeed(skip, top, filterConfig) {
@@ -361,7 +358,8 @@ function getFeed(skip, top, filterConfig) {
 }
 
 function showTweet(id) {
-    tweetView.display(feed.get(id));
+    const tweet = feed.get(id);
+    if(tweet) tweetView.display(tweet);
 }
 
 
