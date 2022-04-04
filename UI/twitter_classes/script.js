@@ -244,6 +244,19 @@ class ViewUtils {
         const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
         return {day, month, hours, minutes};
     }
+    static wrapHashtags(text) {
+        let hashtag = "";
+        for(let i = 0; i < text.length; i++) {
+            if(text[i] === '#') {
+                while(i < text.length && text[i] != ' ') {
+                    hashtag += text[i++];
+                }
+                text = text.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
+                hashtag = "";
+            }
+        }
+        return text;
+    }
 }
 
 class TweetFeedView {
@@ -267,17 +280,7 @@ class TweetFeedView {
 
             const tweetTextContainer = document.createElement('p');
             tweetTextContainer.setAttribute('class', 'tweet-text');
-            let tweetText = tweet.text;
-            let hashtag = "";
-            for(let i = 0; i < tweetText.length; i++) {
-                if(tweetText[i] === '#') {
-                    while(i < tweetText.length && tweetText[i] != ' ') {
-                        hashtag += tweetText[i++];
-                    }
-                    tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
-                    hashtag = "";
-                }
-            }
+            let tweetText = ViewUtils.wrapHashtags(tweet.text);
             tweetTextContainer.innerHTML = tweetText;
             newTweet.appendChild(tweetTextContainer);
 
@@ -325,17 +328,7 @@ class TweetView {
 
         const tweetTextContainer = document.createElement('p');
         tweetTextContainer.setAttribute('class', 'tweet-text');
-        let tweetText = tweet.text;
-        let hashtag = "";
-        for(let i = 0; i < tweetText.length; i++) {
-            if(tweetText[i] === '#') {
-                while(i < tweetText.length && tweetText[i] != ' ') {
-                    hashtag += tweetText[i++];
-                }
-                tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
-                hashtag = "";
-            }
-        }
+        let tweetText = ViewUtils.wrapHashtags(tweet.text);
         tweetTextContainer.innerHTML = tweetText;
         tweetContainer.appendChild(tweetTextContainer);
 
