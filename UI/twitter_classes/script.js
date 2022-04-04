@@ -262,7 +262,7 @@ class ViewUtils {
     static newParagraph(className, text) {
         const p = document.createElement('p');
         p.setAttribute('class', className);
-        p.append(text);
+        p.innerHTML = text;
         return p;
     }
 }
