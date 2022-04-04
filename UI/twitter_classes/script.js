@@ -342,11 +342,8 @@ class TweetView {
 
             const authorAndDateContainer = document.createElement('p');
             authorAndDateContainer.setAttribute('class', 'author-name');
-            const day = Math.floor(comment.date.getDate() / 10) === 0 ? `0${comment.date.getDate()}` : comment.date.getDate();
-            const month = Math.floor(comment.date.getMonth() / 10) === 0 ? `0${comment.date.getMonth()}` : comment.date.getMonth();
-            const hours = Math.floor(comment.date.getHours() / 10) === 0 ? `0${comment.date.getHours()}` : comment.date.getHours();
-            const minutes = Math.floor(comment.date.getMinutes() / 10) === 0 ? `0${comment.date.getMinutes()}` : comment.date.getMinutes();
-            authorAndDateContainer.append(`Comment by ${comment.author} on ${day}.${month} at ${hours}:${minutes}`);
+            const dateNumbers = ViewUtils.getDateNumbers(comment.date);
+            authorAndDateContainer.append(`Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`);
             currCommentContainer.appendChild(authorAndDateContainer);
 
             const textContainer = document.createElement('p');
