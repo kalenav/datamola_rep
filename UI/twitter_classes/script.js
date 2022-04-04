@@ -259,11 +259,11 @@ class ViewUtils {
         return text;
     }
 
-    static newParagraph(className, text) {
-        const p = document.createElement('p');
-        p.setAttribute('class', className);
-        p.innerHTML = text;
-        return p;
+    static newTag(tagName, className, text) {
+        const tag = document.createElement(tagName);
+        if(className) tag.setAttribute('class', className);
+        if(text) tag.innerHTML = text;
+        return tag;
     }
 }
 
@@ -277,13 +277,12 @@ class TweetFeedView {
     display(tweets) { // tweets: Array<Tweet>
         this._container.innerHTML = '<button class="filters-button">Filters</button>';
         tweets.forEach((tweet) => {
-            const newTweet = document.createElement('div');
-            newTweet.setAttribute('class', 'tweet');
+            const newTweet = ViewUtils.newTag('div', 'tweet');
 
             const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-            newTweet.appendChild(ViewUtils.newParagraph('author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
-            newTweet.appendChild(ViewUtils.newParagraph('tweet-text', ViewUtils.wrapHashtags(tweet.text)));
-            newTweet.appendChild(ViewUtils.newParagraph('', `${tweet.comments.length} replies`));
+            newTweet.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
+            newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
             this._container.appendChild(newTweet);
         });
     }
@@ -317,8 +316,8 @@ class TweetView {
         tweetContainer.setAttribute('class', 'tweet');
 
         const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-        tweetContainer.appendChild(ViewUtils.newParagraph('author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
-        tweetContainer.appendChild(ViewUtils.newParagraph('tweet-text', ViewUtils.wrapHashtags(tweet.text)));
+        tweetContainer.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+        tweetContainer.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
 
         this._container.appendChild(tweetContainer);
 
@@ -329,8 +328,8 @@ class TweetView {
             currCommentContainer.setAttribute('class', 'comment');
 
             const dateNumbers = ViewUtils.getDateNumbers(comment.date);
-            currCommentContainer.appendChild(ViewUtils.newParagraph('author-name', `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
-            currCommentContainer.appendChild(ViewUtils.newParagraph('comment-text', comment.text));
+            currCommentContainer.appendChild(ViewUtils.newTag('p', 'author-name', `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            currCommentContainer.appendChild(ViewUtils.newTag('p', 'comment-text', comment.text));
             commentsContainer.appendChild(currCommentContainer);
         });
         this._container.appendChild(commentsContainer);
