@@ -242,7 +242,7 @@ class ViewUtils {
         const month = Math.floor(date.getMonth() / 10) === 0 ? `0${date.getMonth()}` : date.getMonth();
         const hours = Math.floor(date.getHours() / 10) === 0 ? `0${date.getHours()}` : date.getHours();
         const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
-        return [day, month, hours, minutes]
+        return {day, month, hours, minutes};
     }
 }
 
@@ -261,11 +261,8 @@ class TweetFeedView {
 
             const authorAndDateContainer = document.createElement('p');
             authorAndDateContainer.setAttribute('class', 'author-info');
-            const day = Math.floor(tweet.date.getDate() / 10) === 0 ? `0${tweet.date.getDate()}` : tweet.date.getDate();
-            const month = Math.floor(tweet.date.getMonth() / 10) === 0 ? `0${tweet.date.getMonth()}` : tweet.date.getMonth();
-            const hours = Math.floor(tweet.date.getHours() / 10) === 0 ? `0${tweet.date.getHours()}` : tweet.date.getHours();
-            const minutes = Math.floor(tweet.date.getMinutes() / 10) === 0 ? `0${tweet.date.getMinutes()}` : tweet.date.getMinutes();
-            authorAndDateContainer.append(`by ${tweet.author} on ${day}.${month} at ${hours}:${minutes}`);
+            const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+            authorAndDateContainer.append(`by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`);
             newTweet.appendChild(authorAndDateContainer);
 
             const tweetTextContainer = document.createElement('p');
@@ -322,11 +319,8 @@ class TweetView {
 
         const authorAndDateContainer = document.createElement('p');
         authorAndDateContainer.setAttribute('class', 'author-info');
-        const day = Math.floor(tweet.date.getDate() / 10) === 0 ? `0${tweet.date.getDate()}` : tweet.date.getDate();
-        const month = Math.floor(tweet.date.getMonth() / 10) === 0 ? `0${tweet.date.getMonth()}` : tweet.date.getMonth();
-        const hours = Math.floor(tweet.date.getHours() / 10) === 0 ? `0${tweet.date.getHours()}` : tweet.date.getHours();
-        const minutes = Math.floor(tweet.date.getMinutes() / 10) === 0 ? `0${tweet.date.getMinutes()}` : tweet.date.getMinutes();
-        authorAndDateContainer.append(`Tweet by ${tweet.author} on ${day}.${month} at ${hours}:${minutes}`);
+        const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+        authorAndDateContainer.append(`by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`);
         tweetContainer.appendChild(authorAndDateContainer);
 
         const tweetTextContainer = document.createElement('p');
@@ -915,7 +909,7 @@ const tweetFeedView = new TweetFeedView('tweets');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
-/* setTimeout(() => {
+setTimeout(() => {
     setCurrentUser('kostek');
     setTimeout(() => {
         getFeed();
@@ -927,9 +921,9 @@ const tweetView = new TweetView('main-container');
                     removeTweet('25');
                     setTimeout(() => {
                         showTweet('18');
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }, 1000);
-    }, 1000);
-}, 1000); */
+                    }, 2000);
+                }, 2000);
+            }, 2000);
+        }, 2000);
+    }, 2000);
+}, 2000);
