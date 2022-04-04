@@ -285,6 +285,9 @@ class TweetFeedView {
             newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
             this._container.appendChild(newTweet);
         });
+        const loadMoreButtonContainer = ViewUtils.newTag('div', 'align-fix');
+        loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', 'load-more', 'Load more'));
+        this._container.appendChild(loadMoreButtonContainer);
     }
 }
 
