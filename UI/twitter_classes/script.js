@@ -236,6 +236,16 @@ class HeaderView {
     }
 }
 
+class ViewUtils {
+    static getDateNumbers(date) {
+        const day = Math.floor(date.getDate() / 10) === 0 ? `0${date.getDate()}` : date.getDate();
+        const month = Math.floor(date.getMonth() / 10) === 0 ? `0${date.getMonth()}` : date.getMonth();
+        const hours = Math.floor(date.getHours() / 10) === 0 ? `0${date.getHours()}` : date.getHours();
+        const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
+        return [day, month, hours, minutes]
+    }
+}
+
 class TweetFeedView {
     _container;
 
@@ -905,7 +915,7 @@ const tweetFeedView = new TweetFeedView('tweets');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
-setTimeout(() => {
+/* setTimeout(() => {
     setCurrentUser('kostek');
     setTimeout(() => {
         getFeed();
@@ -922,4 +932,4 @@ setTimeout(() => {
             }, 1000);
         }, 1000);
     }, 1000);
-}, 1000);
+}, 1000); */
