@@ -318,8 +318,7 @@ class TweetView {
 
     display(tweet) {
         this._container.innerHTML = '';
-        const tweetContainer = document.createElement('section');
-        tweetContainer.setAttribute('class', 'tweet');
+        const tweetContainer = ViewUtils.newTag('section', 'tweet');
 
         const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
         tweetContainer.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
@@ -327,12 +326,9 @@ class TweetView {
 
         this._container.appendChild(tweetContainer);
 
-        const commentsContainer = document.createElement('section');
-        commentsContainer.setAttribute('class', 'comments');
+        const commentsContainer = ViewUtils.newTag('section', 'comments');
         tweet.comments.forEach((comment) => {
-            const currCommentContainer = document.createElement('div');
-            currCommentContainer.setAttribute('class', 'comment');
-
+            const currCommentContainer = ViewUtils.newTag('div', 'comment');
             const dateNumbers = ViewUtils.getDateNumbers(comment.date);
             currCommentContainer.appendChild(ViewUtils.newTag('p', 'author-name', `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             currCommentContainer.appendChild(ViewUtils.newTag('p', 'comment-text', comment.text));
