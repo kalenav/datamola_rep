@@ -275,7 +275,9 @@ class TweetFeedView {
     }
 
     display(tweets) { // tweets: Array<Tweet>
-        this._container.innerHTML = '<button class="filters-button">Filters</button>';
+        this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text"></section>';
+        const tweetsSection = ViewUtils.newTag('section', 'tweets');
+        tweetsSection.appendChild(ViewUtils.newTag('button', 'filters-button', 'Filters'))
         tweets.forEach((tweet) => {
             const newTweet = ViewUtils.newTag('div', 'tweet');
 
@@ -283,11 +285,12 @@ class TweetFeedView {
             newTweet.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
             newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
-            this._container.appendChild(newTweet);
+            tweetsSection.appendChild(newTweet);
         });
         const loadMoreButtonContainer = ViewUtils.newTag('div', 'align-fix');
         loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', 'load-more', 'Load more'));
-        this._container.appendChild(loadMoreButtonContainer);
+        tweetsSection.appendChild(loadMoreButtonContainer);
+        this._container.appendChild(tweetsSection);
     }
 }
 
@@ -875,7 +878,7 @@ function tests() {
 const feed = new TweetFeed(tweets);
 
 const headerView = new HeaderView('username');
-const tweetFeedView = new TweetFeedView('tweets');
+const tweetFeedView = new TweetFeedView('main-container');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
