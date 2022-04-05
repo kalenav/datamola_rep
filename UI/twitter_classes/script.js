@@ -321,7 +321,7 @@ class TweetView {
         const tweetContainer = ViewUtils.newTag('section', 'tweet');
 
         const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-        tweetContainer.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+        tweetContainer.appendChild(ViewUtils.newTag('p', 'author-info', `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
         tweetContainer.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
 
         this._container.appendChild(tweetContainer);
