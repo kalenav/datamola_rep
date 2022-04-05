@@ -11,6 +11,10 @@
     font-weight: 400;
 }
 
+*:focus-visible {
+    outline: none;
+}
+
 html {
     font-size: 12px;
 }
@@ -323,11 +327,6 @@ section.new-comment {
     -webkit-text-security: disc;
 }
 
-.auth-window-textarea:focus-visible {
-    border: solid black 1px;
-    outline: none;
-}
-
 .auth-window-button {
     margin-top: 3rem;
 }
@@ -344,4 +343,75 @@ section.new-comment {
 
 .link:hover {
     cursor: pointer;
+}
+
+#filter-block {
+    position: absolute;
+    top: -4rem;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    font-size: 1.2rem;
+    height: 4rem;
+    background-color: var(--lightgray);
+    width: 100%;
+}
+
+#filter-block * {
+    font-size: inherit;
+}
+
+#filter-block > * {
+    margin-right: 1rem;
+}
+
+.filter {
+    resize: none;
+    width: 15%;
+    border-radius: 0.5rem;
+}
+
+textarea.filter {
+    font-size: 1.4rem;
+    padding: 1.1rem 0 0 1rem;
+    border: solid var(--lightgray-2) 1px;
+    background-color: var(--lightgray);
+    transition-duration: 0s;
+}
+
+textarea.filter:focus-visible {
+    background-color: white;
+}
+
+.date-filter-text {
+    margin: 0 1rem 0 0;
+}
+
+.date-filter-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 2rem;
+}
+
+.date-filter-lists {
+    width: 80%;
+}
+
+.date-filter-list {
+    height: 2rem;
+}
+
+.date-filter-block.from {
+    margin-bottom: 0.5rem;
+}
+
+.date-filter-list.day, .date-filter-list.month {
+    width: 20%;
+}
+
+.date-filter-list.year {
+    width: 30%;
 }
