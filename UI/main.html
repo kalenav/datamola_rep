@@ -12,7 +12,7 @@
     </head>
     <body>
         <header>
-            <button>Log In</button>
+            <button id="header-button">Log In</button>
             <div id="username" class="username"></div>
         </header>
         <main id="main-container">
@@ -20,10 +20,16 @@
                 <p>New tweet</p>
                 <input type="textarea" placeholder="Input text">
             </section>
-            <section id='tweets' class="tweets">
+            <section class="tweets">
                 <button class="filters-button">Filters</button>
                 <div class="tweet">
-                    <p class="author-info">by [Author Name] on [Date] at [Time]</p>
+                    <div class="author-info-block">
+                        <p class="author-info">by [Author Name] on [Date] at [Time]</p>
+                        <div class="own-tweet-buttons">
+                            <button class="own-tweet-button"><i class="fa-solid fa-pen-to-square own-tweet-tool"></i></button>
+                            <button class="own-tweet-button"><i class="fa-solid fa-trash own-tweet-tool"></i></button>
+                        </div>
+                    </div>
                     <p class="tweet-text">Tweet Text Tweet Text</p>
                     <p class="replies-number">N replies</p>
                 </div>
@@ -82,9 +88,10 @@
             <div class="footer-info">
                 <p class="creator-name">Loktev Konstantin</p>
                 <p class="email">konstantin.loktev.02@mail.ru</p>
-                <p class="last-edit-date">Last edited on 03.03.2022</p>
+                <p class="last-edit-date">Last edited on 05.04.2022</p>
             </div>
         </footer>
     </body>
     <script src="twitter_classes/script.js"></script>
+    <script src="https://kit.fontawesome.com/919b22fd99.js" crossorigin="anonymous"></script>
 </html>

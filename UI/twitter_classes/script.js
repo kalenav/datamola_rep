@@ -231,6 +231,43 @@ class HeaderView {
 
     display(user) {
         this._container.innerHTML = user;
+        const button = document.getElementById("header-button");
+        if(button.innerHTML === "Log In") button.innerHTML = "Log Out";
+    }
+}
+
+class ViewUtils {
+    static getDateNumbers(date) {
+        const day = Math.floor(date.getDate() / 10) === 0 ? `0${date.getDate()}` : date.getDate();
+        const month = Math.floor(date.getMonth() / 10) === 0 ? `0${date.getMonth()}` : date.getMonth();
+        const hours = Math.floor(date.getHours() / 10) === 0 ? `0${date.getHours()}` : date.getHours();
+        const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
+        return {day, month, hours, minutes};
+    }
+    
+    static wrapHashtags(text) {
+        let hashtag = "";
+        for(let i = 0; i < text.length; i++) {
+            if(text[i] === '#') {
+                while(i < text.length && text[i] != ' ') {
+                    hashtag += text[i++];
+                }
+                text = text.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
+                hashtag = "";
+            }
+        }
+        return text;
+    }
+
+    static newTag(tagName, className, text) {
+        const tag = document.createElement(tagName);
+        if(className) tag.setAttribute('class', className);
+        if(text) tag.innerHTML = text;
+        return tag;
+    }
+
+    static getOwn(tweets) {
+        return tweets.map((tweet) => tweet.author === feed.user ? true : false);
     }
 }
 
@@ -241,43 +278,36 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(tweets) { // tweets: Array<Tweet>
-        this._container.innerHTML = '<button class="filters-button">Filters</button>';
-        tweets.forEach((tweet) => {
-            const newTweet = document.createElement('div');
-            newTweet.setAttribute('class', 'tweet');
+    display(tweets, own) { // tweets: Array<Tweet>, own: Array<Boolean>
+        this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text"></section>';
+        const tweetsSection = ViewUtils.newTag('section', 'tweets');
+        tweetsSection.appendChild(ViewUtils.newTag('button', 'filters-button', 'Filters'))
+        tweets.forEach((tweet, index) => {
+            const newTweet = ViewUtils.newTag('div', 'tweet');
+            const isOwn = own[index];
+            const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : newTweet;
 
-            const authorAndDateContainer = document.createElement('p');
-            authorAndDateContainer.setAttribute('class', 'author-info');
-            const day = Math.floor(tweet.date.getDate() / 10) === 0 ? `0${tweet.date.getDate()}` : tweet.date.getDate();
-            const month = Math.floor(tweet.date.getMonth() / 10) === 0 ? `0${tweet.date.getMonth()}` : tweet.date.getMonth();
-            const hours = Math.floor(tweet.date.getHours() / 10) === 0 ? `0${tweet.date.getHours()}` : tweet.date.getHours();
-            const minutes = Math.floor(tweet.date.getMinutes() / 10) === 0 ? `0${tweet.date.getMinutes()}` : tweet.date.getMinutes();
-            authorAndDateContainer.append(`by ${tweet.author} on ${day}.${month} at ${hours}:${minutes}`);
-            newTweet.appendChild(authorAndDateContainer);
-
-            const tweetTextContainer = document.createElement('p');
-            tweetTextContainer.setAttribute('class', 'tweet-text');
-            let tweetText = tweet.text;
-            let hashtag = "";
-            for(let i = 0; i < tweetText.length; i++) {
-                if(tweetText[i] === '#') {
-                    while(i < tweetText.length && tweetText[i] != ' ') {
-                        hashtag += tweetText[i++];
-                    }
-                    tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
-                    hashtag = "";
-                }
+            const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+            authorInfoContainer.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            if(isOwn) { 
+                const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
+                const editButton = ViewUtils.newTag('button', 'own-tweet-button');
+                editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool'));
+                const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
+                deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool'));
+                buttonsContainer.appendChild(editButton);
+                buttonsContainer.appendChild(deleteButton);
+                authorInfoContainer.appendChild(buttonsContainer);
+                newTweet.appendChild(authorInfoContainer);
             }
-            tweetTextContainer.innerHTML = tweetText;
-            newTweet.appendChild(tweetTextContainer);
-
-            const repliesNumberContainer = document.createElement('p');
-            repliesNumberContainer.append(`${tweet.comments.length} replies`);
-            newTweet.appendChild(repliesNumberContainer);
-
-            this._container.appendChild(newTweet);
+            newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
+            newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
+            tweetsSection.appendChild(newTweet);
         });
+        const loadMoreButtonContainer = ViewUtils.newTag('div', 'align-fix');
+        loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', 'load-more', 'Load more'));
+        tweetsSection.appendChild(loadMoreButtonContainer);
+        this._container.appendChild(tweetsSection);
     }
 }
 
@@ -305,56 +335,20 @@ class TweetView {
 
     display(tweet) {
         this._container.innerHTML = '';
-        const tweetContainer = document.createElement('section');
-        tweetContainer.setAttribute('class', 'tweet');
+        const tweetContainer = ViewUtils.newTag('section', 'tweet');
 
-        const authorAndDateContainer = document.createElement('p');
-        authorAndDateContainer.setAttribute('class', 'author-info');
-        const day = Math.floor(tweet.date.getDate() / 10) === 0 ? `0${tweet.date.getDate()}` : tweet.date.getDate();
-        const month = Math.floor(tweet.date.getMonth() / 10) === 0 ? `0${tweet.date.getMonth()}` : tweet.date.getMonth();
-        const hours = Math.floor(tweet.date.getHours() / 10) === 0 ? `0${tweet.date.getHours()}` : tweet.date.getHours();
-        const minutes = Math.floor(tweet.date.getMinutes() / 10) === 0 ? `0${tweet.date.getMinutes()}` : tweet.date.getMinutes();
-        authorAndDateContainer.append(`Tweet by ${tweet.author} on ${day}.${month} at ${hours}:${minutes}`);
-        tweetContainer.appendChild(authorAndDateContainer);
-
-        const tweetTextContainer = document.createElement('p');
-        tweetTextContainer.setAttribute('class', 'tweet-text');
-        let tweetText = tweet.text;
-        let hashtag = "";
-        for(let i = 0; i < tweetText.length; i++) {
-            if(tweetText[i] === '#') {
-                while(i < tweetText.length && tweetText[i] != ' ') {
-                    hashtag += tweetText[i++];
-                }
-                tweetText = tweetText.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
-                hashtag = "";
-            }
-        }
-        tweetTextContainer.innerHTML = tweetText;
-        tweetContainer.appendChild(tweetTextContainer);
+        const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+        tweetContainer.appendChild(ViewUtils.newTag('p', 'author-info', `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+        tweetContainer.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
 
         this._container.appendChild(tweetContainer);
 
-        const commentsContainer = document.createElement('section');
-        commentsContainer.setAttribute('class', 'comments');
+        const commentsContainer = ViewUtils.newTag('section', 'comments');
         tweet.comments.forEach((comment) => {
-            const currCommentContainer = document.createElement('div');
-            currCommentContainer.setAttribute('class', 'comment');
-
-            const authorAndDateContainer = document.createElement('p');
-            authorAndDateContainer.setAttribute('class', 'author-name');
-            const day = Math.floor(comment.date.getDate() / 10) === 0 ? `0${comment.date.getDate()}` : comment.date.getDate();
-            const month = Math.floor(comment.date.getMonth() / 10) === 0 ? `0${comment.date.getMonth()}` : comment.date.getMonth();
-            const hours = Math.floor(comment.date.getHours() / 10) === 0 ? `0${comment.date.getHours()}` : comment.date.getHours();
-            const minutes = Math.floor(comment.date.getMinutes() / 10) === 0 ? `0${comment.date.getMinutes()}` : comment.date.getMinutes();
-            authorAndDateContainer.append(`Comment by ${comment.author} on ${day}.${month} at ${hours}:${minutes}`);
-            currCommentContainer.appendChild(authorAndDateContainer);
-
-            const textContainer = document.createElement('p');
-            textContainer.setAttribute('class', 'comment-text');
-            textContainer.append(comment.text);
-            currCommentContainer.appendChild(textContainer);
-
+            const currCommentContainer = ViewUtils.newTag('div', 'comment');
+            const dateNumbers = ViewUtils.getDateNumbers(comment.date);
+            currCommentContainer.appendChild(ViewUtils.newTag('p', 'author-name', `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            currCommentContainer.appendChild(ViewUtils.newTag('p', 'comment-text', comment.text));
             commentsContainer.appendChild(currCommentContainer);
         });
         this._container.appendChild(commentsContainer);
@@ -367,26 +361,34 @@ function setCurrentUser(user) {
 }
 
 function addTweet(text) {
-    feed.add(text);
-    tweetFeedView.display(feed.getPage());
+    if(feed.add(text)) {
+        const tweets = feed.getPage();
+        tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
+    }
 }
 
 function editTweet(id, text) {
-    feed.edit(id, text);
-    tweetFeedView.display(feed.getPage());
+    if(feed.edit(id, text)) {
+        const tweets = feed.getPage();
+        tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
+    }
 }
 
 function removeTweet(id) {
-    feed.remove(id);
-    tweetFeedView.display(feed.getPage());
+    if(feed.remove(id)) {
+        const tweets = feed.getPage();
+        tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
+    }
 }
 
 function getFeed(skip, top, filterConfig) {
-    tweetFeedView.display(feed.getPage(skip, top, filterConfig));
+    const tweets = feed.getPage(skip, top, filterConfig);
+    tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
 }
 
 function showTweet(id) {
-    tweetView.display(feed.get(id));
+    const tweet = feed.get(id);
+    if(tweet) tweetView.display(tweet);
 }
 
 
@@ -899,7 +901,7 @@ function tests() {
 const feed = new TweetFeed(tweets);
 
 const headerView = new HeaderView('username');
-const tweetFeedView = new TweetFeedView('tweets');
+const tweetFeedView = new TweetFeedView('main-container');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
@@ -915,9 +917,9 @@ setTimeout(() => {
                     removeTweet('25');
                     setTimeout(() => {
                         showTweet('18');
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }, 1000);
-    }, 1000);
-}, 1000);
+                    }, 2000);
+                }, 2000);
+            }, 2000);
+        }, 2000);
+    }, 2000);
+}, 2000);
