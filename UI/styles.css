@@ -179,33 +179,6 @@ div.footer-info p {
     text-align: center;
 }
 
-@media all and (max-width: 800px) {
-    button.filters-button {
-        left: 5%;
-    }
-
-    footer {
-        flex-direction: column;
-        height: 126px;
-        padding: 10px 0;
-    }
-
-    footer > p, div.footer-info {
-        margin: 0;
-    }
-
-    div.footer-info {
-        flex-direction: column;
-    }
-}
-
-@media all and (max-width: 500px) {
-    button.filters-button {
-        left: 15px;
-        padding: 5px;
-    }
-}
-
 header i {
     margin-left: 30px;
 }
@@ -352,10 +325,12 @@ section.new-comment {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    align-items: center;
     font-size: 1.2rem;
     height: 4rem;
     background-color: var(--lightgray);
     width: 100%;
+    padding: 1rem;
 }
 
 #filter-block * {
@@ -373,7 +348,6 @@ section.new-comment {
 }
 
 textarea.filter {
-    font-size: 1.4rem;
     padding: 1.1rem 0 0 1rem;
     border: solid var(--lightgray-2) 1px;
     background-color: var(--lightgray);
@@ -398,20 +372,82 @@ textarea.filter:focus-visible {
 
 .date-filter-lists {
     width: 80%;
-}
-
-.date-filter-list {
-    height: 2rem;
+    display: flex;
+    flex-direction: row;
 }
 
 .date-filter-block.from {
     margin-bottom: 0.5rem;
 }
 
+.date-filter-list {
+    margin-left: 0.5rem;
+    height: 2rem;
+}
+
 .date-filter-list.day, .date-filter-list.month {
-    width: 20%;
+    width: 30%;
 }
 
 .date-filter-list.year {
-    width: 30%;
+    width: 40%;
+}
+
+@media all and (max-width: 1400px) {
+    .filter {
+        width: 24%;
+    }
+
+    .date-filter-lists {
+        width: 75%;
+    }
+
+    .date-filter-list {
+        margin-left: 0.2rem;
+    }
+}
+
+@media all and (max-width: 800px) {
+    button.filters-button {
+        left: 5%;
+    }
+
+    footer {
+        flex-direction: column;
+        height: 126px;
+        padding: 10px 0;
+    }
+
+    footer > p, div.footer-info {
+        margin: 0;
+    }
+
+    div.footer-info {
+        flex-direction: column;
+    }
+
+    #filter-block {
+        flex-direction: column;
+        height: auto;
+        top: calc(1.3rem + 20px + 37px + 1rem);
+        width: 30rem;
+        left: -32rem;
+    }
+
+    #filter-block > * {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .filter {
+        width: 80%;
+        max-width: 80%;
+    }
+}
+
+@media all and (max-width: 500px) {
+    button.filters-button {
+        left: 15px;
+        padding: 5px;
+    }
 }
