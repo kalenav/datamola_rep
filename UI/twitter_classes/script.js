@@ -288,7 +288,13 @@ class TweetFeedView {
             if(isOwn) { 
                 const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
                 const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-                editButton.appendChild()
+                editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool'));
+                const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
+                deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool'));
+                buttonsContainer.appendChild(editButton);
+                buttonsContainer.appendChild(deleteButton);
+                authorInfoContainer.appendChild(buttonsContainer);
+                newTweet.appendChild(authorInfoContainer);
             }
             newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
             newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
@@ -345,27 +351,39 @@ class TweetView {
     }
 }
 
+function getOwn(tweets) {
+    return tweets.map((tweet) => tweet.author === feed.user ? true : false);
+}
+
 function setCurrentUser(user) {
     feed.user = user;
     headerView.display(user);
 }
 
 function addTweet(text) {
-    if(feed.add(text)) tweetFeedView.display(feed.getPage());;
+    if(feed.add(text)) {
+        const tweets = feed.getPage();
+        tweetFeedView.display(tweets, getOwn(tweets));
+    }
 }
 
 function editTweet(id, text) {
-    if(feed.edit(id, text)) tweetFeedView.display(feed.getPage());
+    if(feed.edit(id, text)) {
+        const tweets = feed.getPage();
+        tweetFeedView.display(tweets, getOwn(tweets));
+    }
 }
 
 function removeTweet(id) {
-    if(feed.remove(id)) tweetFeedView.display(feed.getPage());
+    if(feed.remove(id)) {
+        const tweets = feed.getPage();
+        tweetFeedView.display(tweets, getOwn(tweets));
+    }
 }
 
 function getFeed(skip, top, filterConfig) {
     const tweets = feed.getPage(skip, top, filterConfig);
-    const own = tweets.map((tweet) => tweet.author === feed.user ? true : false);
-    tweetFeedView.display(tweets, own);
+    tweetFeedView.display(tweets, getOwn(tweets));
 }
 
 function showTweet(id) {
@@ -887,7 +905,7 @@ const tweetFeedView = new TweetFeedView('main-container');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
-/* setTimeout(() => {
+setTimeout(() => {
     setCurrentUser('kostek');
     setTimeout(() => {
         getFeed();
@@ -904,4 +922,4 @@ const tweetView = new TweetView('main-container');
             }, 2000);
         }, 2000);
     }, 2000);
-}, 2000); */
+}, 2000);
