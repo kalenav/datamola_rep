@@ -259,11 +259,9 @@ class ViewUtils {
         return text;
     }
 
-    static newTag(tagName, classNames, text) {
+    static newTag(tagName, className, text) {
         const tag = document.createElement(tagName);
-        classNames.forEach((className) => {
-            tag.setAttribute('class', className);
-        });
+        if(className) tag.setAttribute('class', className);
         if(text) tag.innerHTML = text;
         return tag;
     }
@@ -290,7 +288,7 @@ class TweetFeedView {
             if(isOwn) { 
                 const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
                 const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-                editButton.appendChidl()
+                editButton.appendChild()
             }
             newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
             newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
