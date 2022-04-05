@@ -319,6 +319,10 @@ section.new-comment {
     height: 1.8rem;
 }
 
+.password {
+    -webkit-text-security: disc;
+}
+
 .auth-window-textarea:focus-visible {
     border: solid black 1px;
     outline: none;
