@@ -263,7 +263,7 @@ section.new-comment {
     padding: 0;
     background: none;
     border: none;
-    color: var(--secondary-color);
+    color: var(--lightgray-2);
     transition-duration: 0s;
 }
 
