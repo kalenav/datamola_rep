@@ -354,7 +354,6 @@ class TweetView {
             tweetContainer.appendChild(authorInfoContainer);
         }
         tweetContainer.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
-
         this._container.appendChild(tweetContainer);
 
         const commentsContainer = ViewUtils.newTag('section', 'comments');
@@ -366,6 +365,14 @@ class TweetView {
             commentsContainer.appendChild(currCommentContainer);
         });
         this._container.appendChild(commentsContainer);
+
+        const newCommentContainer = ViewUtils.newTag('section', 'new-comment');
+        newCommentContainer.appendChild(ViewUtils.newTag('p', '', 'Leave a comment'));
+        const commentTextarea = ViewUtils.newTag('input');
+        commentTextarea.setAttribute('type', 'textarea');
+        commentTextarea.setAttribute('placeholder', 'Input text');
+        newCommentContainer.appendChild(commentTextarea);
+        this._container.appendChild(newCommentContainer);
     }
 }
 
