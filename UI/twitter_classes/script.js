@@ -516,7 +516,6 @@ class Controller {
 
     constructor(tweets) {
         this._feed = new TweetFeed(tweets);
-
         this._headerView = new HeaderView('username');
         this._tweetFeedView = new TweetFeedView('main-container');
         this._filterView = new FilterView('filter-block');
@@ -575,11 +574,13 @@ class Controller {
 
     _addEventListeners() {
         document.getElementsByClassName('filters-button')[0].addEventListener('click', () => {
-            controller.toggleFilters();
+            this.toggleFilters();
         });
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
-            controller.showTweet(e.target.dataset.id);
+            const target = e.target;
+            if(target.getAttribute('class') !== 'tweet') return;
+            this.showTweet(e.target.dataset.id);
         });
     }
 
