@@ -229,10 +229,11 @@ class HeaderView {
         this._container = document.getElementById(containerId);
     }
 
-    display(user) {
+    display(user, empty) {
         this._container.innerHTML = user;
         const button = document.getElementById("header-button");
-        if(button.innerHTML === "Log In") button.innerHTML = "Log Out";
+        if(empty) button.innerHTML = "Log In";
+        else button.innerHTML = "Log Out";
     }
 }
 
@@ -370,7 +371,7 @@ class TweetView {
 
 function setCurrentUser(user) {
     feed.user = user;
-    headerView.display(user);
+    headerView.display(user, user ? false : true);
 }
 
 function addTweet(text) {
