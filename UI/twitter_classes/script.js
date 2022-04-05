@@ -333,12 +333,25 @@ class TweetView {
         this._container = document.getElementById(containerId);
     }
 
-    display(tweet) {
+    display(tweet, isOwn) {
         this._container.innerHTML = '';
         const tweetContainer = ViewUtils.newTag('section', 'tweet');
+        const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : tweetContainer;
 
         const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-        tweetContainer.appendChild(ViewUtils.newTag('p', 'author-info', `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+        authorInfoContainer.appendChild(ViewUtils.newTag('p', 'author-info', `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+        if(isOwn) { 
+            const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
+            const editButton = ViewUtils.newTag('button', 'own-tweet-button');
+            editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool'));
+            const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
+            deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool'));
+            buttonsContainer.appendChild(editButton);
+            buttonsContainer.appendChild(deleteButton);
+            authorInfoContainer.appendChild(buttonsContainer);
+            authorInfoContainer.style.marginRight = '10%';
+            tweetContainer.appendChild(authorInfoContainer);
+        }
         tweetContainer.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
 
         this._container.appendChild(tweetContainer);
@@ -388,7 +401,7 @@ function getFeed(skip, top, filterConfig) {
 
 function showTweet(id) {
     const tweet = feed.get(id);
-    if(tweet) tweetView.display(tweet);
+    if(tweet) tweetView.display(tweet, tweet.author === feed.user);
 }
 
 
