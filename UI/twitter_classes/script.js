@@ -265,6 +265,10 @@ class ViewUtils {
         if(text) tag.innerHTML = text;
         return tag;
     }
+
+    static getOwn(tweets) {
+        return tweets.map((tweet) => tweet.author === feed.user ? true : false);
+    }
 }
 
 class TweetFeedView {
@@ -351,10 +355,6 @@ class TweetView {
     }
 }
 
-function getOwn(tweets) {
-    return tweets.map((tweet) => tweet.author === feed.user ? true : false);
-}
-
 function setCurrentUser(user) {
     feed.user = user;
     headerView.display(user);
@@ -363,27 +363,27 @@ function setCurrentUser(user) {
 function addTweet(text) {
     if(feed.add(text)) {
         const tweets = feed.getPage();
-        tweetFeedView.display(tweets, getOwn(tweets));
+        tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
     }
 }
 
 function editTweet(id, text) {
     if(feed.edit(id, text)) {
         const tweets = feed.getPage();
-        tweetFeedView.display(tweets, getOwn(tweets));
+        tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
     }
 }
 
 function removeTweet(id) {
     if(feed.remove(id)) {
         const tweets = feed.getPage();
-        tweetFeedView.display(tweets, getOwn(tweets));
+        tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
     }
 }
 
 function getFeed(skip, top, filterConfig) {
     const tweets = feed.getPage(skip, top, filterConfig);
-    tweetFeedView.display(tweets, getOwn(tweets));
+    tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
 }
 
 function showTweet(id) {
