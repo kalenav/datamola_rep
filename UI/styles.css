@@ -321,7 +321,7 @@ section.new-comment {
 #filter-block {
     position: absolute;
     top: -4rem;
-    left: 0;
+    left: calc(-100% - 2rem);
     display: flex;
     flex-direction: row;
     justify-content: space-around;
