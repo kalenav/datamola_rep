@@ -40,7 +40,7 @@ header {
     margin-right: 1rem;
 }
 
-button {
+button:not(.own-tweet-button) {
     background-color: var(--primary-color);
     color: white;
     display: flex;
@@ -52,7 +52,7 @@ button {
     height: 37px;
 }
 
-button:hover {
+button:not(.own-tweet-button):hover {
     background-color: black;
     cursor: pointer;
 }
@@ -126,6 +126,7 @@ div.tweet > p, div.comment > p {
 
 p.author-info {
     color: var(--secondary-color);
+    margin: 0.3rem 0;
 }
 
 p.tweet-text, p.comment-text {
@@ -243,4 +244,34 @@ section.new-comment {
         overflow-y: auto;
         max-height: none;
     }
+}
+
+.author-info-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.own-tweet-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.own-tweet-button {
+    margin-left: 0.5rem;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    transition-duration: 0s;
+}
+
+.own-tweet-button:hover {
+    cursor: pointer;
+    color: var(--primary-color);
+}
+
+.own-tweet-tool {
+    transition-duration: 0s;
 }
