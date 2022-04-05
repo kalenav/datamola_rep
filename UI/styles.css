@@ -64,6 +64,7 @@ header button {
 main {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
 }
 
@@ -274,4 +275,69 @@ section.new-comment {
 
 .own-tweet-tool {
     transition-duration: 0s;
+}
+
+.auth-window {
+    display: flex;
+    flex-direction: column;
+    max-width: 35rem;
+    margin-top: 15rem;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
+    margin-bottom: 5rem;
+}
+
+.auth-window-header {
+    background-color: var(--primary-color);
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-window-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 0 2rem 0;
+    background-color: var(--lightgray);
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+
+.auth-window-textarea {
+    resize: none;
+    width: 20rem;
+    margin: 0.5rem 0;
+    background-color: var(--lightgray);
+    border-color: var(--lightgray-2);
+    padding: 0.5rem;
+    transition-duration: 0s;
+    font-size: 1.3rem;
+    height: 1.8rem;
+}
+
+.auth-window-textarea:focus-visible {
+    border: solid black 1px;
+    outline: none;
+}
+
+.auth-window-button {
+    margin-top: 3rem;
+}
+
+.auth-window-misc-text {
+    margin: 0.6rem 0 0 0;
+    color: var(--lightgray-2);
+}
+
+.link {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.link:hover {
+    cursor: pointer;
 }
