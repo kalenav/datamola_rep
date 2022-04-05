@@ -259,9 +259,11 @@ class ViewUtils {
         return text;
     }
 
-    static newTag(tagName, className, text) {
+    static newTag(tagName, classNames, text) {
         const tag = document.createElement(tagName);
-        if(className) tag.setAttribute('class', className);
+        classNames.forEach((className) => {
+            tag.setAttribute('class', className);
+        });
         if(text) tag.innerHTML = text;
         return tag;
     }
@@ -274,15 +276,22 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(tweets) { // tweets: Array<Tweet>
+    display(tweets, own) { // tweets: Array<Tweet>, own: Array<Boolean>
         this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text"></section>';
         const tweetsSection = ViewUtils.newTag('section', 'tweets');
         tweetsSection.appendChild(ViewUtils.newTag('button', 'filters-button', 'Filters'))
-        tweets.forEach((tweet) => {
+        tweets.forEach((tweet, index) => {
             const newTweet = ViewUtils.newTag('div', 'tweet');
+            const isOwn = own[index];
+            const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : newTweet;
 
             const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-            newTweet.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            authorInfoContainer.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            if(isOwn) { 
+                const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
+                const editButton = ViewUtils.newTag('button', 'own-tweet-button');
+                editButton.appendChidl()
+            }
             newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
             newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
             tweetsSection.appendChild(newTweet);
@@ -356,7 +365,9 @@ function removeTweet(id) {
 }
 
 function getFeed(skip, top, filterConfig) {
-    tweetFeedView.display(feed.getPage(skip, top, filterConfig));
+    const tweets = feed.getPage(skip, top, filterConfig);
+    const own = tweets.map((tweet) => tweet.author === feed.user ? true : false);
+    tweetFeedView.display(tweets, own);
 }
 
 function showTweet(id) {
@@ -878,7 +889,7 @@ const tweetFeedView = new TweetFeedView('main-container');
 const filterView = new FilterView(''); // фильтр-блока пока и нет, собственно
 const tweetView = new TweetView('main-container');
 
-setTimeout(() => {
+/* setTimeout(() => {
     setCurrentUser('kostek');
     setTimeout(() => {
         getFeed();
@@ -895,4 +906,4 @@ setTimeout(() => {
             }, 2000);
         }, 2000);
     }, 2000);
-}, 2000);
+}, 2000); */
