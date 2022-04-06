@@ -608,7 +608,7 @@ class Controller {
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             let target = e.target;
-            if(target.tagName === 'BUTTON') return;    
+            if(target.tagName === 'BUTTON' || target.tagName === 'I') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
@@ -624,7 +624,7 @@ class Controller {
 
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             const target = e.target;
-            if(target.tagName !== 'BUTTON' || target.classList.includes('filters-button')) return;
+            if(target.tagName !== 'I') return;
             let parentTweet = target;
             while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
             if(target.classList.contains('delete')) {
