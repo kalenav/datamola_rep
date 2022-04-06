@@ -409,7 +409,6 @@ class TweetFeedView {
             <textarea class="filter" placeholder="Tweet text"></textarea>
             <textarea class="filter" placeholder="Hashtags"></textarea>
         </div>`
-        tweetsSection.appendChild(ViewUtils.newTag('button', 'filters-button', 'Filters'))
         tweets.forEach((tweet, index) => {
             const newTweet = ViewUtils.newTag('div', 'tweet');
             newTweet.setAttribute('data-id', tweet.id);
@@ -518,9 +517,9 @@ class Controller {
         this._feed = new TweetFeed(tweets);
         this._headerView = new HeaderView('username');
         this._tweetFeedView = new TweetFeedView('main-container');
+        this.getFeed();
         this._filterView = new FilterView('filter-block');
         this._tweetView = new TweetView('main-container');
-        this.getFeed();
         this._addEventListeners();
     }
 
