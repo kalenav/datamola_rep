@@ -291,7 +291,7 @@ class TweetFeedView {
                     <p class="date-filter-text">From</p>
                     <div class="date-filter-lists">
                         <select class="date-filter-list day" name="day-from" id='day-from-filter'>
-                            <option value="1">1</option>
+                            <option value="1" selected='selected'>1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
@@ -324,7 +324,7 @@ class TweetFeedView {
                             <option value="31">31</option>
                         </select>
                         <select class="date-filter-list month" name="month-from" id='month-from-filter'>
-                            <option value="1">1</option>
+                            <option value="1" selected='selected'>1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
@@ -342,7 +342,7 @@ class TweetFeedView {
                             <option value="2">2021</option>
                             <option value="3">2020</option>
                             <option value="4">2019</option>
-                            <option value="5">2018</option>
+                            <option value="5" selected='selected'>2018</option>
                         </select>
                     </div>
                 </div>
@@ -380,7 +380,7 @@ class TweetFeedView {
                             <option value="28">28</option>
                             <option value="29">29</option>
                             <option value="30">30</option>
-                            <option value="31">31</option>
+                            <option value="31" selected='selected'>31</option>
                         </select>
                         <select class="date-filter-list month" name="month-to" id='month-to-filter'>
                             <option value="1">1</option>
@@ -394,10 +394,10 @@ class TweetFeedView {
                             <option value="4">9</option>
                             <option value="5">10</option>
                             <option value="1">11</option>
-                            <option value="2">12</option>
+                            <option value="2" selected='selected'>12</option>
                         </select>
                         <select class="date-filter-list year" name="year-to" id='year-to-filter'>
-                            <option value="1">2022</option>
+                            <option value="1" selected='selected'>2022</option>
                             <option value="2">2021</option>
                             <option value="3">2020</option>
                             <option value="4">2019</option>
