@@ -521,6 +521,7 @@ class Controller {
         this._initFeed();
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
+        this._addFilterEventListeners();
         this._tweetView = new TweetView('main-container');
     }
 
@@ -562,6 +563,7 @@ class Controller {
         this._tweetFeedView.display(tweets, own);
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
+        this._addFilterEventListeners();
     }
     
     showTweet(id) {
@@ -605,7 +607,20 @@ class Controller {
 
     _addFilterEventListeners() {
         const self = this;
+
+        const authorTextarea = document.getElementById('author-name-filter');
+        const tweetTextTextarea = document.getElementById('tweet-text-filter');
+        const hashtagsTextarea = document.getElementById('hashtags-filter');
+            
         
+    }
+
+    _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
+        return this.getFeed(0, 10, {
+            'author': authorTextarea.innerHTML,
+            'text': tweetTextTextarea.innerHTML,
+            'hashtags': hashtagsTextarea.innerHTML.split(' ')
+        });
     }
 
     get user() {
