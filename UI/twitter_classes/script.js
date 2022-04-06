@@ -549,7 +549,10 @@ class Controller {
     editTweet(id, text) {
         if(this._feed.edit(id, text)) {
             this._currShownTweets++;
-            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
+            if(document.getElementById('new-comment-textarea')) {
+                this.showTweet(document.getElementsByClassName('tweet')[0].dataset.id);
+            }
+            else this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         }
     }
     
@@ -692,8 +695,27 @@ class Controller {
             if(target.tagName !== 'I') return;
             let parentTweet = target;
             while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
+            const tweetId = parentTweet.dataset.id;
+            if(target.classList.contains('edit')) {
+                const tweetEditTextarea = ViewUtils.newTag('textarea');
+                tweetEditTextarea.style.position = 'fixed';
+                tweetEditTextarea.style.width = '700px';
+                tweetEditTextarea.style.top = '40%';
+                tweetEditTextarea.style.right = 'calc(50% - 350px)';
+                tweetEditTextarea.style.resize = 'vertical';
+                tweetEditTextarea.style.fontSize = '1.5rem';
+                tweetEditTextarea.value = self._feed.get(tweetId).text;
+                const body = document.body;
+                body.appendChild(tweetEditTextarea);
+                tweetEditTextarea.addEventListener('keyup', (e) => {
+                    const target = e.target;
+                    if(e.keyCode !== 13) return;
+                    self.editTweet(tweetId, target.value);
+                    body.removeChild(target);
+                });
+            }
             if(target.classList.contains('delete')) {
-                self.removeTweet(parentTweet.dataset.id);
+                self.removeTweet(tweetId);
                 self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
             }
         });
