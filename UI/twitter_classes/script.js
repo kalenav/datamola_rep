@@ -533,7 +533,10 @@ class Controller {
     setCurrentUser(user) {
         this._feed.user = user;
         this._headerView.display(user, user ? false : true);
-        this.getFeed(0, this._currShownTweets, this._currFilterConfig);
+        if(document.getElementById('new-comment-textarea')) { // текстареа коммента есть только на странице твита
+            this.showTweet(document.getElementsByClassName('tweet')[0].dataset.id);
+        }
+        else this.getFeed(0, this._currShownTweets, this._currFilterConfig);
     }
     
     addTweet(text) {
