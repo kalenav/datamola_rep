@@ -576,6 +576,7 @@ class Controller {
     showTweet(id) {
         const tweet = this._feed.get(id);
         if(tweet) this._tweetView.display(tweet, tweet.author === this._feed.user);
+        this._addTweetEventListeners();
     }
 
     toggleFilters() {
@@ -650,8 +651,7 @@ class Controller {
         const newCommentTextarea = document.getElementById('new-comment-textarea');
         newCommentTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
-            let tweet = e.target;
-            while(!target.classList.includes('tweet')) tweet = tweet.parentElement;
+            const tweet = document.getElementsByClassName('tweet')[0];
             const tweetId = tweet.dataset.id;
             self._feed.addComment(tweetId, newCommentTextarea.value);
             self.showTweet(tweetId);
