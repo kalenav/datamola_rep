@@ -421,9 +421,9 @@ class TweetFeedView {
             if(isOwn) { 
                 const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
                 const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-                editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool'));
+                editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square edit own-tweet-tool'));
                 const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
-                deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool'));
+                deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash delete own-tweet-tool'));
                 buttonsContainer.appendChild(editButton);
                 buttonsContainer.appendChild(deleteButton);
                 authorInfoContainer.appendChild(buttonsContainer);
@@ -498,6 +498,7 @@ class TweetView {
         const newCommentContainer = ViewUtils.newTag('section', 'new-comment');
         newCommentContainer.appendChild(ViewUtils.newTag('p', '', 'Leave a comment'));
         const commentTextarea = ViewUtils.newTag('input');
+        commentTextarea.setAttribute('id', 'new-comment-textarea');
         commentTextarea.setAttribute('type', 'textarea');
         commentTextarea.setAttribute('placeholder', 'Input text');
         newCommentContainer.appendChild(commentTextarea);
@@ -605,7 +606,7 @@ class Controller {
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             let target = e.target;
             if(target.tagName === 'BUTTON') return;    
-            while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
+            while(!target.classList.includes('tweet')) target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
 
@@ -616,6 +617,16 @@ class Controller {
         document.getElementById('new-tweet').addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
             self.addTweet(e.target.value);
+        });
+
+        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'BUTTON' || target.classList.includes('filters-button')) return;
+            let parentTweet = target;
+            while(!parentTweet.classList.includes('tweet')) parentTweet = parentTweet.parentElement; 
+            if(target.classList.includes('delete')) {
+                
+            }
         });
     }
 
