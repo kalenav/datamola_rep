@@ -231,7 +231,7 @@ class HeaderView {
 
     display(user, empty) {
         this._container.innerHTML = user;
-        const loginButton = this._container.getElementById("header-login-button");
+        const loginButton = document.getElementById("header-login-button");
         if(empty) loginButton.innerHTML = "Log In";
         else loginButton.innerHTML = "Log Out";
     }
@@ -535,22 +535,22 @@ class Controller {
     
     addTweet(text) {
         if(this._feed.add(text)) {
-            const tweets = this._feed.getPage();
-            this._tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
+            this._currShownTweets++;
+            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         }
     }
     
     editTweet(id, text) {
         if(this._feed.edit(id, text)) {
-            const tweets = this._feed.getPage();
-            this._tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
+            this._currShownTweets++;
+            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         }
     }
     
     removeTweet(id) {
         if(this._feed.remove(id)) {
-            const tweets = this._feed.getPage();
-            this._tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
+            this._currShownTweets++;
+            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         }
     }
 
@@ -611,6 +611,11 @@ class Controller {
 
         document.getElementsByClassName('load-more')[0].addEventListener('click', () => {
             self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
+        });
+
+        document.getElementById('new-tweet').addEventListener('keyup', (e) => {
+            if(e.keyCode !== 13) return;
+            self.addTweet(e.target.value);
         });
     }
 
