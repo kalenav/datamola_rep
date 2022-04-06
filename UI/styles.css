@@ -109,7 +109,7 @@ section.tweets > *:not(button) {
     padding: 1rem 0;
 }
 
-button.filters-button {
+button#filters-button {
     position: absolute;
     left: 10%;
     top: calc(1.3rem + 20px);

@@ -231,9 +231,9 @@ class HeaderView {
 
     display(user, empty) {
         this._container.innerHTML = user;
-        const button = document.getElementById("header-button");
-        if(empty) button.innerHTML = "Log In";
-        else button.innerHTML = "Log Out";
+        const loginButton = document.getElementById("header-login-button");
+        if(empty) loginButton.innerHTML = "Log In";
+        else loginButton.innerHTML = "Log Out";
     }
 }
 
