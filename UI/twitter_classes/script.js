@@ -286,7 +286,7 @@ class TweetFeedView {
         <button class="filters-button">Filters</button>
         <div id="filter-block">
             <textarea class="filter" placeholder="Author name" id='author-name-filter'></textarea>
-            <div class="filter">
+            <div class="filter" id='date-filter'>
                 <div class="date-filter-block from">
                     <p class="date-filter-text">From</p>
                     <div class="date-filter-lists">
@@ -643,6 +643,7 @@ class Controller {
         const self = this;
 
         const authorTextarea = document.getElementById('author-name-filter');
+        const filterBlock = document.getElementById('date-filter');
         const tweetTextTextarea = document.getElementById('tweet-text-filter');
         const hashtagsTextarea = document.getElementById('hashtags-filter');
 
