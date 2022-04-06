@@ -654,8 +654,7 @@ class Controller {
             while(!target.classList.includes('tweet')) tweet = tweet.parentElement;
             const tweetId = tweet.dataset.id;
             self._feed.addComment(tweetId, newCommentTextarea.value);
-            self.tweetView.display(self._feed.get(tweetId));
-            self._addTweetEventListeners();
+            self.showTweet(tweetId);
         });
     }
 
