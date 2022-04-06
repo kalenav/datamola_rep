@@ -513,12 +513,14 @@ class Controller {
 
     _filtersDisplayed = false;
 
+    _self;
+
     constructor(tweets) {
         this._feed = new TweetFeed(tweets);
         this._headerView = new HeaderView('username');
         this._addHeaderEventListeners();
         this._tweetFeedView = new TweetFeedView('main-container');
-        this.getFeed();
+        this._initFeed();
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
         this._tweetView = new TweetView('main-container');
@@ -549,6 +551,12 @@ class Controller {
             this._tweetFeedView.display(tweets, ViewUtils.getOwn(tweets));
         }
     }
+
+    _initFeed() {
+        const tweets = this._feed.getPage();
+        const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+        this._tweetFeedView.display(tweets, own);
+    }
     
     getFeed(skip, top, filterConfig) {
         const tweets = this._feed.getPage(skip, top, filterConfig);
@@ -574,23 +582,26 @@ class Controller {
     }
 
     _addHeaderEventListeners() {
+        const self = this;
+
         document.getElementById('header-home-button').addEventListener('click', () => {
-            this.getFeed();
+            self.getFeed();
         });
     }
 
     _addTweetFeedEventListeners() {
+        const self = this;
+
         document.getElementsByClassName('filters-button')[0].addEventListener('click', () => {
-            this.toggleFilters();
+            self.toggleFilters();
         });
         
-        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
-            let target = e.target;
-            if(target.tagName === 'BUTTON') return;
-            console.log(target.getAttribute('class'));     
-            while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
-            this.showTweet(target.dataset.id);
-        });
+        // document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+        //     let target = e.target;
+        //     if(target.tagName === 'BUTTON') return;    
+        //     while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
+        //     this.showTweet(target.dataset.id);
+        // });
     }
 
     get user() {
