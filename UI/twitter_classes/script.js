@@ -613,7 +613,9 @@ class Controller {
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             let target = e.target;
-            if(target.tagName === 'BUTTON' || target.tagName === 'I') return;    
+            if(target.tagName === 'BUTTON' ||
+            target.tagName === 'I' ||
+            target.tagName === 'SELECT') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
@@ -643,12 +645,12 @@ class Controller {
         const self = this;
 
         const authorTextarea = document.getElementById('author-name-filter');
-        const filterBlock = document.getElementById('date-filter');
+        const dateFilterBlock = document.getElementById('date-filter');
         const tweetTextTextarea = document.getElementById('tweet-text-filter');
         const hashtagsTextarea = document.getElementById('hashtags-filter');
 
         document.getElementById('filter-submit').addEventListener('click', () => {
-            self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea);
+            self._createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea);
             self.getFeed(0, 10, self._currFilterConfig);
         });
     }
@@ -677,9 +679,19 @@ class Controller {
         });
     }
 
-    _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
+    _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
+        const from = dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0];
+        const choicesFrom = [from.children[0], from.children[1], from.children[2]];
+        const dateFrom = new Date(choicesFrom.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
+        const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
+        const choicesTo = [to.children[0], to.children[1], to.children[2]];
+        const dateTo = new Date(choicesTo.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
+        console.log(dateFrom);
+        console.log(dateTo);
         this._currFilterConfig = {
             'author': authorTextarea.value,
+            dateFrom,
+            dateTo,
             'text': tweetTextTextarea.value,
             'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ') : [],
         };
