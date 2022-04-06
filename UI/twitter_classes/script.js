@@ -612,7 +612,13 @@ class Controller {
         const tweetTextTextarea = document.getElementById('tweet-text-filter');
         const hashtagsTextarea = document.getElementById('hashtags-filter');
             
-        
+        function callback() {
+            self._getFeed(0, 10, self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
+        }
+
+        authorTextarea.addEventListener('keypress', callback);
+        tweetTextTextarea.addEventListener('keypress', callback);
+        hashtagsTextarea.addEventListener('keypress', callback);
     }
 
     _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
