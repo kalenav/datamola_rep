@@ -610,7 +610,7 @@ class Controller {
         });
 
         document.getElementsByClassName('load-more')[0].addEventListener('click', () => {
-            self.getFeed(0, self._currShownTweets + 10);
+            self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
         });
     }
 
@@ -622,12 +622,13 @@ class Controller {
         const hashtagsTextarea = document.getElementById('hashtags-filter');
 
         document.getElementById('filter-submit').addEventListener('click', () => {
-            self.getFeed(0, 10, self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
+            self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea);
+            self.getFeed(0, 10, self._currFilterConfig);
         });
     }
 
     _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
-        return {
+        this._currFilterConfig = {
             'author': authorTextarea.value,
             'text': tweetTextTextarea.value,
             'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ') : [],
