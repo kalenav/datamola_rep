@@ -401,6 +401,7 @@ textarea.filter:focus-visible {
 .date-filter-list {
     margin-left: 0.5rem;
     height: 2rem;
+    background-color: var(--lightgray);
 }
 
 .date-filter-list.day, .date-filter-list.month {
