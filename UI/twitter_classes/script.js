@@ -408,6 +408,7 @@ class TweetFeedView {
             </div>
             <textarea class="filter" placeholder="Tweet text" id='tweet-text-filter'></textarea>
             <textarea class="filter" placeholder="Hashtags" id='hashtags-filter'></textarea>
+            <button id='filter-submit'>Filter</button>
         </div>`
         tweets.forEach((tweet, index) => {
             const newTweet = ViewUtils.newTag('div', 'tweet');
@@ -611,14 +612,6 @@ class Controller {
         const authorTextarea = document.getElementById('author-name-filter');
         const tweetTextTextarea = document.getElementById('tweet-text-filter');
         const hashtagsTextarea = document.getElementById('hashtags-filter');
-            
-        function callback() {
-            self._getFeed(0, 10, self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
-        }
-
-        authorTextarea.addEventListener('keypress', callback);
-        tweetTextTextarea.addEventListener('keypress', callback);
-        hashtagsTextarea.addEventListener('keypress', callback);
     }
 
     _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
