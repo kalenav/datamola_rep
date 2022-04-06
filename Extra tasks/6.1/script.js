@@ -9,6 +9,7 @@ function createList(title, list) {
     function createListPoint(listPoint, parent, reduceFontSize) {
         const div = document.createElement("div");
         div.style.border = "solid grey 1px";
+        div.classList.toggle('visible');
         if(reduceFontSize) div.style.fontSize = '0.9em';
         div.append(listPoint.value);
         if(listPoint.children) {
@@ -30,10 +31,11 @@ function createList(title, list) {
         upperList.appendChild(li);
     });
 
-    upperList.addEventListener('click', (e) => {
+    container.addEventListener('click', (e) => {
         const target = e.target;
         [...target.children].forEach((child) => {
-            target.removeChild(child);
+            child.classList.toggle('visible');
+            child.classList.toggle('hidden');
         });
     });
     container.appendChild(upperList);
