@@ -513,6 +513,8 @@ class Controller {
     _tweetView;
 
     _filtersDisplayed = false;
+    _currShownTweets;
+    _currFilterConfig;
 
     constructor(tweets) {
         this._feed = new TweetFeed(tweets);
@@ -556,6 +558,7 @@ class Controller {
         const tweets = this._feed.getPage();
         const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(tweets, own);
+        this._currShownTweets = 10;
     }
     
     getFeed(skip, top, filterConfig) {
@@ -565,6 +568,7 @@ class Controller {
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
         this._addFilterEventListeners();
+        this._currShownTweets = tweets.length;
     }
     
     showTweet(id) {
@@ -603,6 +607,10 @@ class Controller {
             if(target.tagName === 'BUTTON') return;    
             while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
             self.showTweet(target.dataset.id);
+        });
+
+        document.getElementsByClassName('load-more')[0].addEventListener('click', () => {
+            self.getFeed(0, self._currShownTweets + 10);
         });
     }
 
