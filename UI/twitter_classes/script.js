@@ -280,7 +280,7 @@ class TweetFeedView {
     }
 
     display(tweets, own) { // tweets: Array<Tweet>, own: Array<Boolean>
-        this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text"></section>';
+        this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
         const tweetsSection = ViewUtils.newTag('section', 'tweets');
         tweetsSection.innerHTML = `
         <button class="filters-button">Filters</button>
