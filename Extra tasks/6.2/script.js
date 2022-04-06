@@ -68,6 +68,10 @@ function checkForGameEnd(win) {
     return false;
 }
 
+function checkForDraw() {
+    return playareaState.every((row) => row.every((v) => v !== 0));
+}
+
 document.getElementById('playarea').addEventListener('click', (e) => {
     if(playareaBlocked) return;
     const target = e.target.parentElement;
@@ -79,12 +83,17 @@ document.getElementById('playarea').addEventListener('click', (e) => {
     if(checkForGameEnd(true)) {
         console.log('oh wow, you won!');
         playareaBlocked = true;
+        return;
     }
     addRandomO();
     if(checkForGameEnd(false)) {
         console.log('oh no, you lost!');
         playareaBlocked = true;
-    };
+        return;
+    }
+    if(checkForDraw()) {
+        console.log('oh well, it\'s a draw!');
+    }
 });
 
 document.getElementById('reset').addEventListener('click', () => {
