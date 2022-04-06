@@ -513,8 +513,6 @@ class Controller {
 
     _filtersDisplayed = false;
 
-    _self;
-
     constructor(tweets) {
         this._feed = new TweetFeed(tweets);
         this._headerView = new HeaderView('username');
@@ -562,6 +560,7 @@ class Controller {
         const tweets = this._feed.getPage(skip, top, filterConfig);
         const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(tweets, own);
+        this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
     }
     
@@ -596,12 +595,12 @@ class Controller {
             self.toggleFilters();
         });
         
-        // document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
-        //     let target = e.target;
-        //     if(target.tagName === 'BUTTON') return;    
-        //     while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
-        //     this.showTweet(target.dataset.id);
-        // });
+        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+            let target = e.target;
+            if(target.tagName === 'BUTTON') return;    
+            while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
+            self.showTweet(target.dataset.id);
+        });
     }
 
     get user() {
