@@ -466,7 +466,7 @@ class TweetView {
     display(tweet, isOwn) {
         this._container.innerHTML = '';
         const tweetContainer = ViewUtils.newTag('section', 'tweet');
-        tweetContainer.setAttribute('id', 'tweet');
+        tweetContainer.setAttribute('data-id', `${tweet.id}`);
         const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : tweetContainer;
 
         const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
