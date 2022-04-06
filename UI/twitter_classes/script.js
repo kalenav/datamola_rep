@@ -612,14 +612,18 @@ class Controller {
         const authorTextarea = document.getElementById('author-name-filter');
         const tweetTextTextarea = document.getElementById('tweet-text-filter');
         const hashtagsTextarea = document.getElementById('hashtags-filter');
+
+        document.getElementById('filter-submit').addEventListener('click', () => {
+            self.getFeed(0, 10, self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
+        });
     }
 
     _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
-        return this.getFeed(0, 10, {
+        return {
             'author': authorTextarea.innerHTML,
             'text': tweetTextTextarea.innerHTML,
             'hashtags': hashtagsTextarea.innerHTML.split(' ')
-        });
+        };
     }
 
     get user() {
