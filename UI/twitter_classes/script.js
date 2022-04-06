@@ -196,7 +196,9 @@ class TweetFeed {
     addComment(id, text) {
         const tweet = this.get(id);
         if (!tweet) return false;
-        tweet.comments.push(new Comment(this._generateCommentId(), text, new Date(), this._user));
+        const comment = new Comment(this._generateCommentId(), text, new Date(), this._user);
+        if(!Comment.validate(comment)) return false;
+        tweet.comments.push(comment);
         return true;
     }
 
@@ -686,7 +688,7 @@ class Controller {
             if(e.keyCode !== 13) return;
             const tweet = document.getElementsByClassName('tweet')[0];
             const tweetId = tweet.dataset.id;
-            self._feed.addComment(tweetId, newCommentTextarea.value);
+            if(!self._feed.addComment(tweetId, newCommentTextarea.value)) return;
             self.showTweet(tweetId);
         });
 
