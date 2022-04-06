@@ -240,7 +240,7 @@ class HeaderView {
 class ViewUtils {
     static getDateNumbers(date) {
         const day = Math.floor(date.getDate() / 10) === 0 ? `0${date.getDate()}` : date.getDate();
-        const month = Math.floor(date.getMonth() / 10) === 0 ? `0${date.getMonth()}` : date.getMonth();
+        const month = Math.floor(date.getMonth() / 10) === 0 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
         const hours = Math.floor(date.getHours() / 10) === 0 ? `0${date.getHours()}` : date.getHours();
         const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
         return {day, month, hours, minutes};
@@ -615,7 +615,8 @@ class Controller {
             let target = e.target;
             if(target.tagName === 'BUTTON' ||
             target.tagName === 'I' ||
-            target.tagName === 'SELECT') return;    
+            target.tagName === 'SELECT' ||
+            target.tagName === 'OPTION') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
@@ -681,13 +682,11 @@ class Controller {
 
     _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
         const from = dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0];
-        const choicesFrom = [from.children[0], from.children[1], from.children[2]];
+        const choicesFrom = [from.children[1], from.children[0], from.children[2]]; // классу даты нужен сначала месяц, потом день
         const dateFrom = new Date(choicesFrom.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
-        const choicesTo = [to.children[0], to.children[1], to.children[2]];
+        const choicesTo = [to.children[1], to.children[0], to.children[2]];
         const dateTo = new Date(choicesTo.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
-        console.log(dateFrom);
-        console.log(dateTo);
         this._currFilterConfig = {
             'author': authorTextarea.value,
             dateFrom,
