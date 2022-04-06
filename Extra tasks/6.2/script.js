@@ -10,17 +10,38 @@ const playareaState = [
     [0, 0, 0]
 ];
 
+let playareaBlocked = false;
+
 for(let i = 0; i < 3; i++) {
     for(let j = 0; j < 3; j++) {
         playarea[i][j] = document.getElementById(`${i + 1}_${j + 1}`);
     }
 }
 
-function setCell(i, j, x) {
+function getTargetCoords(target) {
+    const id = target.getAttribute('id');
+    return [Number(id[0]) - 1, Number(id[2]) - 1];
+}
+
+function setCell(target, x) {
+    const coords = getTargetCoords(target);
+    const i = coords[0];
+    const j = coords[1];
     if(playareaState[i][j]) return;
     playareaState[i][j] = x ? 1 : 2;
-    if(x) playarea[i][j].children[0].style.opacity = '1';
-    else playarea[i][j].children[1].style.opacity = '1';
+    if(x) target.children[0].style.opacity = '1';
+    else target.children[1].style.opacity = '1';
+}
+
+function addRandomO() {
+    if(playareaState.every((row) => row.every((v) => v !== 0))) return;
+    let i, j;
+    do {
+        i = Math.floor(Math.random() * 3);
+        j = Math.floor(Math.random() * 3);
+    }
+    while(playareaState[i][j] != 0);
+    setCell(playarea[i][j], false);
 }
 
 function clearCell(i, j) {
@@ -46,3 +67,32 @@ function checkForGameEnd(win) {
     }
     return false;
 }
+
+document.getElementById('playarea').addEventListener('click', (e) => {
+    if(playareaBlocked) return;
+    const target = e.target.parentElement;
+    const coords = getTargetCoords(target);
+    const i = coords[0];
+    const j = coords[1];
+    if(playareaState[i][j] !== 0) return;
+    setCell(target, true);
+    if(checkForGameEnd(true)) {
+        console.log('oh wow, you won!');
+        playareaBlocked = true;
+    }
+    addRandomO();
+    if(checkForGameEnd(false)) {
+        console.log('oh no, you lost!');
+        playareaBlocked = true;
+    };
+});
+
+document.getElementById('reset').addEventListener('click', () => {
+    playareaBlocked = false;
+    for(let i = 0; i < 3; i++) {
+        for(let j = 0; j < 3; j++) {
+            clearCell(i, j);
+            playareaState[i][j] = 0;
+        }
+    }
+});
