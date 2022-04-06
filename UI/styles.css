@@ -62,8 +62,16 @@ button:not(.own-tweet-button):hover {
     cursor: pointer;
 }
 
-header button {
+#header-login-button {
     margin-right: 30px;
+}
+
+#header-home-button {
+    margin: 0 auto 0 30px;
+    width: auto;
+    padding: 0;
+    background: none;
+    color: var(--lightgray-2);
 }
 
 main {
@@ -71,6 +79,15 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.home {
+    margin: 0;
+    transform: scale(1.5);
+}
+
+.home:hover {
+    color: black;
 }
 
 main > * {
@@ -109,7 +126,7 @@ section.tweets > *:not(button) {
     padding: 1rem 0;
 }
 
-button#filters-button {
+button.filters-button {
     position: absolute;
     left: 10%;
     top: calc(1.3rem + 20px);
