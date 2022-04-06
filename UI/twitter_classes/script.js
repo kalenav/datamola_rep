@@ -614,15 +614,16 @@ class Controller {
         const hashtagsTextarea = document.getElementById('hashtags-filter');
 
         document.getElementById('filter-submit').addEventListener('click', () => {
+            console.log(self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
             self.getFeed(0, 10, self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
         });
     }
 
     _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
         return {
-            'author': authorTextarea.innerHTML,
-            'text': tweetTextTextarea.innerHTML,
-            'hashtags': hashtagsTextarea.innerHTML.split(' ')
+            'author': authorTextarea.value,
+            'text': tweetTextTextarea.value,
+            'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ') : [],
         };
     }
 
