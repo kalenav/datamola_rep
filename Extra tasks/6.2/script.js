@@ -12,6 +12,8 @@ const playareaState = [
 
 let playareaBlocked = false;
 
+const game_result = document.getElementById('game-result');
+
 for(let i = 0; i < 3; i++) {
     for(let j = 0; j < 3; j++) {
         playarea[i][j] = document.getElementById(`${i + 1}_${j + 1}`);
@@ -81,23 +83,32 @@ document.getElementById('playarea').addEventListener('click', (e) => {
     if(playareaState[i][j] !== 0) return;
     setCell(target, true);
     if(checkForGameEnd(true)) {
-        console.log('oh wow, you won!');
         playareaBlocked = true;
+        game_result.innerHTML = `
+            <div class='spinning red'>Y</div><div class='spinning green'>O</div><div class='spinning blue bordering'>U</div> 
+            <div class='spinning magenta'>W</div><div class='spinning cyan'>O</div><div class='spinning yellow'>N</div>
+        `;
+        const animationNumber = Math.floor(Math.random() * 3) + 1;
+        [...game_result.getElementsByClassName('spinning')].forEach((letter, index) => {
+            letter.style.animation = `letter-anim${animationNumber} 1s infinite`;
+            if(animationNumber !== 1) letter.style.animationDelay = `${index * 1/12}s`;
+        });
         return;
     }
     addRandomO();
     if(checkForGameEnd(false)) {
-        console.log('oh no, you lost!');
         playareaBlocked = true;
+        game_result.innerHTML = 'you lost :(';
         return;
     }
     if(checkForDraw()) {
-        console.log('oh well, it\'s a draw!');
+        game_result.innerHTML = 'it\'s a draw!';
     }
 });
 
 document.getElementById('reset').addEventListener('click', () => {
     playareaBlocked = false;
+    game_result.innerHTML = '';
     for(let i = 0; i < 3; i++) {
         for(let j = 0; j < 3; j++) {
             clearCell(i, j);
