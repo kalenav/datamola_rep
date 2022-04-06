@@ -474,9 +474,9 @@ class TweetView {
         if(isOwn) { 
             const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
             const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-            editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool'));
+            editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool edit'));
             const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
-            deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool'));
+            deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool delete'));
             buttonsContainer.appendChild(editButton);
             buttonsContainer.appendChild(deleteButton);
             authorInfoContainer.appendChild(buttonsContainer);
@@ -657,6 +657,17 @@ class Controller {
             const tweetId = tweet.dataset.id;
             self._feed.addComment(tweetId, newCommentTextarea.value);
             self.showTweet(tweetId);
+        });
+
+        document.getElementsByClassName('tweet')[0].addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'I') return;
+            let parentTweet = target;
+            while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
+            if(target.classList.contains('delete')) {
+                self.removeTweet(parentTweet.dataset.id);
+                self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
+            }
         });
     }
 
