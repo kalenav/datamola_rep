@@ -614,7 +614,6 @@ class Controller {
         const hashtagsTextarea = document.getElementById('hashtags-filter');
 
         document.getElementById('filter-submit').addEventListener('click', () => {
-            console.log(self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
             self.getFeed(0, 10, self._createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea));
         });
     }
