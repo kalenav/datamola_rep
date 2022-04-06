@@ -533,6 +533,7 @@ class Controller {
     setCurrentUser(user) {
         this._feed.user = user;
         this._headerView.display(user, user ? false : true);
+        this.getFeed(0, this._currShownTweets, this._currFilterConfig);
     }
     
     addTweet(text) {
@@ -626,8 +627,9 @@ class Controller {
             if(target.tagName !== 'BUTTON' || target.classList.includes('filters-button')) return;
             let parentTweet = target;
             while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
-            if(target.classList.includes('delete')) {
-                
+            if(target.classList.contains('delete')) {
+                self.removeTweet(parentTweet.dataset.id);
+                self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
             }
         });
     }
