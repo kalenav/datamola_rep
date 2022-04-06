@@ -231,7 +231,7 @@ class HeaderView {
 
     display(user, empty) {
         this._container.innerHTML = user;
-        const loginButton = document.getElementById("header-login-button");
+        const loginButton = this._container.getElementById("header-login-button");
         if(empty) loginButton.innerHTML = "Log In";
         else loginButton.innerHTML = "Log Out";
     }
@@ -516,11 +516,12 @@ class Controller {
     constructor(tweets) {
         this._feed = new TweetFeed(tweets);
         this._headerView = new HeaderView('username');
+        this._addHeaderEventListeners();
         this._tweetFeedView = new TweetFeedView('main-container');
         this.getFeed();
         this._filterView = new FilterView('filter-block');
+        this._addTweetFeedEventListeners();
         this._tweetView = new TweetView('main-container');
-        this._addEventListeners();
     }
 
     setCurrentUser(user) {
@@ -553,6 +554,7 @@ class Controller {
         const tweets = this._feed.getPage(skip, top, filterConfig);
         const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(tweets, own);
+        this._addTweetFeedEventListeners();
     }
     
     showTweet(id) {
@@ -571,15 +573,23 @@ class Controller {
         }
     }
 
-    _addEventListeners() {
+    _addHeaderEventListeners() {
+        document.getElementById('header-home-button').addEventListener('click', () => {
+            this.getFeed();
+        });
+    }
+
+    _addTweetFeedEventListeners() {
         document.getElementsByClassName('filters-button')[0].addEventListener('click', () => {
             this.toggleFilters();
         });
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
-            const target = e.target;
-            if(target.getAttribute('class') !== 'tweet') return;
-            this.showTweet(e.target.dataset.id);
+            let target = e.target;
+            if(target.tagName === 'BUTTON') return;
+            console.log(target.getAttribute('class'));     
+            while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
+            this.showTweet(target.dataset.id);
         });
     }
 
