@@ -285,12 +285,12 @@ class TweetFeedView {
         tweetsSection.innerHTML = `
         <button class="filters-button">Filters</button>
         <div id="filter-block">
-            <textarea class="filter" placeholder="Author name"></textarea>
+            <textarea class="filter" placeholder="Author name" id='author-name-filter'></textarea>
             <div class="filter">
                 <div class="date-filter-block from">
                     <p class="date-filter-text">From</p>
                     <div class="date-filter-lists">
-                        <select class="date-filter-list day" name="day-from">
+                        <select class="date-filter-list day" name="day-from" id='day-from-filter'>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -323,7 +323,7 @@ class TweetFeedView {
                             <option value="30">30</option>
                             <option value="31">31</option>
                         </select>
-                        <select class="date-filter-list month" name="month-from">
+                        <select class="date-filter-list month" name="month-from" id='month-from-filter'>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -337,7 +337,7 @@ class TweetFeedView {
                             <option value="1">11</option>
                             <option value="2">12</option>
                         </select>
-                        <select class="date-filter-list year" name="year-from">
+                        <select class="date-filter-list year" name="year-from" id='year-from-filter'>
                             <option value="1">2022</option>
                             <option value="2">2021</option>
                             <option value="3">2020</option>
@@ -349,7 +349,7 @@ class TweetFeedView {
                 <div class="date-filter-block to">
                     <p class="date-filter-text">To</p>
                     <div class="date-filter-lists">
-                        <select class="date-filter-list day" name="day-to">
+                        <select class="date-filter-list day" name="day-to" id='day-to-filter'>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -382,7 +382,7 @@ class TweetFeedView {
                             <option value="30">30</option>
                             <option value="31">31</option>
                         </select>
-                        <select class="date-filter-list month" name="month-to">
+                        <select class="date-filter-list month" name="month-to" id='month-to-filter'>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -396,7 +396,7 @@ class TweetFeedView {
                             <option value="1">11</option>
                             <option value="2">12</option>
                         </select>
-                        <select class="date-filter-list year" name="year-to">
+                        <select class="date-filter-list year" name="year-to" id='year-to-filter'>
                             <option value="1">2022</option>
                             <option value="2">2021</option>
                             <option value="3">2020</option>
@@ -406,8 +406,8 @@ class TweetFeedView {
                     </div>
                 </div>
             </div>
-            <textarea class="filter" placeholder="Tweet text"></textarea>
-            <textarea class="filter" placeholder="Hashtags"></textarea>
+            <textarea class="filter" placeholder="Tweet text" id='tweet-text-filter'></textarea>
+            <textarea class="filter" placeholder="Hashtags" id='hashtags-filter'></textarea>
         </div>`
         tweets.forEach((tweet, index) => {
             const newTweet = ViewUtils.newTag('div', 'tweet');
@@ -601,6 +601,11 @@ class Controller {
             while(target.getAttribute('class') !== 'tweet') target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
+    }
+
+    _addFilterEventListeners() {
+        const self = this;
+        
     }
 
     get user() {
