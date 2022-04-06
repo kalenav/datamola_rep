@@ -643,6 +643,21 @@ class Controller {
         });
     }
 
+    _addTweetEventListeners() {
+        const self = this;
+
+        const newCommentTextarea = document.getElementById('new-comment-textarea');
+        newCommentTextarea.addEventListener('keyup', (e) => {
+            if(e.keyCode !== 13) return;
+            let tweet = e.target;
+            while(!target.classList.includes('tweet')) tweet = tweet.parentElement;
+            const tweetId = tweet.dataset.id;
+            self._feed.addComment(tweetId, newCommentTextarea.value);
+            self.tweetView.display(self._feed.get(tweetId));
+            self._addTweetEventListeners();
+        });
+    }
+
     _createFilterConfig(authorTextarea, tweetTextTextarea, hashtagsTextarea) {
         this._currFilterConfig = {
             'author': authorTextarea.value,
