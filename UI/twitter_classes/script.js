@@ -578,6 +578,8 @@ class Controller {
         const tweet = this._feed.get(id);
         if(tweet) this._tweetView.display(tweet, tweet.author === this._feed.user);
         this._addTweetEventListeners();
+        this._currShownTweets = 0;
+        this._currFilterConfig = {};
     }
 
     toggleFilters() {
