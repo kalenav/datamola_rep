@@ -254,7 +254,7 @@ class TweetFeed {
                 tweetarr[1],
                 new Date(tweetarr[2]),
                 tweetarr[3],
-                tweetarr[4].split(';').filter((v) => v !== '').map((commentstr) => {
+                !tweetarr[4] ? [] : tweetarr[4].split(';').filter((v) => v !== '').map((commentstr) => {
                     const commentarr = commentstr.split('::');
                     return new Comment(
                         commentarr[0],
@@ -811,6 +811,12 @@ class Controller {
                 }
             }
         });
+        
+        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+            const target = e.target
+            if(target.tagName !== 'SPAN') return;
+            self.getFeed(0, 10, { hashtags: [target.innerHTML] });
+        });
     }
 
     _addFilterEventListeners() {
@@ -1145,7 +1151,7 @@ const tweets = [
 ];
 
 const usersstr = 'Zoe:pass1;Ulrich:pass2;';
-const tweetsstr = tweets.map((tweet) => tweet.toString());
+const tweetsstr = tweets.map((tweet) => tweet.toString()).join('');
 
 if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(usersstr, tweetsstr);
 
