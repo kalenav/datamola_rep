@@ -67,6 +67,12 @@ class Tweet {
             tw.comments instanceof Array
         );
     }
+
+    toString() {
+        let result = `${this._id}:::${this.text}:::${this._createdAt}:::${this._author}:::`;
+        this.comments.forEach((com) => { result += `${com}` });
+        return result + ';';
+    }
 }
 
 class Comment {
@@ -115,6 +121,10 @@ class Comment {
             com._author !== '' &&
             typeof(com._author) === 'string'
         );
+    }
+
+    toString() {
+        return `${this._id}::${this.text}::${this._createdAt}::${this.author}`;
     }
 }
 
