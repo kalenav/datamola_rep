@@ -222,6 +222,10 @@ class TweetFeed {
     set user(newUser) {
         this._user = newUser;
     }
+
+    get length() {
+        return this._tweets.length;
+    }
 }
 
 class HeaderView {
@@ -687,9 +691,8 @@ class Controller {
             self.getFeed();
         });
 
-        const loginButton = document.getElementById('header-login-button');
-        loginButton.addEventListener('click', () => {
-            if(loginButton.innerHTML === 'Log In') {
+        document.getElementById('header-login-button').addEventListener('click', () => {
+            if(!self.user) { // всё ещё не понимаю, почему оно при логауте переходит на страницу логина 
                 self.showLoginForm();
             }
             else {
