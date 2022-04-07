@@ -124,13 +124,12 @@ class Comment {
     }
 
     toString() {
-        return `${this._id}::${this.text}::${this._createdAt}::${this.author};`;
+        return `${this._id}::${this.text}::${this._createdAt}::${this.author}++`;
     }
 }
 
 class TweetFeed {
     _tweets;
-    _user;
 
     constructor() {
         this.restore();
@@ -254,7 +253,7 @@ class TweetFeed {
                 tweetarr[1],
                 new Date(tweetarr[2]),
                 tweetarr[3],
-                tweetarr[4].split(';').filter((v) => v !== '').map((commentstr) => {
+                tweetarr[4].split('++').filter((v) => v !== '').map((commentstr) => {
                     const commentarr = commentstr.split('::');
                     return new Comment(
                         commentarr[0],
@@ -275,11 +274,17 @@ class HeaderView {
         this._container = document.getElementById(containerId);
     }
 
-    display(user, empty) {
-        this._container.innerHTML = user;
+    display(user, displayHomeButton) {
+        this._container.innerHTML = user ?? '';
         const loginButton = document.getElementById("header-login-button");
-        if(empty) loginButton.innerHTML = "Log In";
+        if(!user) loginButton.innerHTML = "Log In";
         else loginButton.innerHTML = "Log Out";
+        if(displayHomeButton) {
+            document.getElementById('header-home-button').style.display = 'inline-block';
+        }
+        else {
+            document.getElementById('header-home-button').style.display = 'none';
+        }
     }
 }
 
@@ -294,9 +299,10 @@ class ViewUtils {
     
     static wrapHashtags(text) {
         let hashtag = "";
+        const limiters = [' ', '.', ',', '!', '?', ';'];
         for(let i = 0; i < text.length; i++) {
             if(text[i] === '#') {
-                while(i < text.length && text[i] != ' ') {
+                while(i < text.length && !limiters.includes(text[i])) {
                     hashtag += text[i++];
                 }
                 text = text.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
@@ -584,7 +590,7 @@ class Controller {
 
     setCurrentUser(user) {
         this._feed.user = user;
-        this._headerView.display(user, user ? false : true);
+        this._headerView.display(user, false);
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         this._addHeaderEventListeners();
     }
@@ -615,9 +621,10 @@ class Controller {
 
     _initFeed() {
         const tweets = this._feed.getPage();
-        const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+        const own = this.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(true, tweets, own);
         this._currShownTweets = 10;
+        this._headerView.display('', false);
     }
     
     getFeed(skip, top, filterConfig) {
@@ -626,7 +633,7 @@ class Controller {
             this._tweetFeedView.display(false);
         }
         else {
-            const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+            const own = this.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
             this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0);
         }
@@ -634,14 +641,16 @@ class Controller {
         this._addTweetFeedEventListeners();
         this._addFilterEventListeners();
         this._currShownTweets = tweets.length;
+        this._headerView.display(this.user, false);
     }
     
     showTweet(id) {
         const tweet = this._feed.get(id);
-        if(tweet) this._tweetView.display(tweet, tweet.author === this._feed.user);
+        if(tweet) this._tweetView.display(tweet, tweet.author === this.user);
         this._addTweetEventListeners();
         this._currShownTweets = 0;
         this._currFilterConfig = {};
+        this._headerView.display(this.user, true);
     }
 
     toggleFilters() {
@@ -811,6 +820,12 @@ class Controller {
                 }
             }
         });
+        
+        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+            const target = e.target
+            if(target.tagName !== 'SPAN') return;
+            self.getFeed(0, 10, { hashtags: [target.innerHTML] });
+        });
     }
 
     _addFilterEventListeners() {
@@ -887,10 +902,6 @@ class Controller {
             'text': tweetTextTextarea.value,
             'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ') : [],
         };
-    }
-
-    get user() {
-        return this._feed.user;
     }
 }
 
@@ -1145,7 +1156,7 @@ const tweets = [
 ];
 
 const usersstr = 'Zoe:pass1;Ulrich:pass2;';
-const tweetsstr = tweets.map((tweet) => tweet.toString());
+const tweetsstr = tweets.map((tweet) => tweet.toString()).join('');
 
 if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(usersstr, tweetsstr);
 
