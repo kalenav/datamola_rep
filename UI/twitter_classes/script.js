@@ -611,8 +611,8 @@ class Controller {
                 <textarea class="auth-window-textarea password" placeholder="Input password"></textarea>
                 <button id="auth-window-button">Log In</button>
             </form>
-            <p class="auth-window-misc-text">Not a user yet? <a class="link">Sign up</a></p>
-            <p class="auth-window-misc-text"><a class="link">Return to main page</a></p>
+            <p class="auth-window-misc-text">Not a user yet? <a id="signup-link" class="link">Sign up</a></p>
+            <p class="auth-window-misc-text"><a id="main-page-link" class="link">Return to main page</a></p>
         </section>
         `;
 
@@ -626,6 +626,56 @@ class Controller {
                 self.setCurrentUser(username);
             }
         });
+
+        document.getElementById('signup-link').addEventListener('click', () => {
+            self.showSignupForm();
+        });
+
+        document.getElementById('main-page-link').addEventListener('click', () => {
+            self.getFeed();
+        });
+    }
+
+    showSignupForm() {
+        const self = this;
+
+        document.getElementById('main-container').innerHTML = `
+        <section class="auth-window">
+            <div class="auth-window-header">
+                <p class="auth-window-header-text">Signing Up</p>
+            </div>
+            <form class="auth-window-form">
+                <textarea class="auth-window-textarea username" placeholder="Input username"></textarea>
+                <textarea class="auth-window-textarea password" placeholder="Input password"></textarea>
+                <textarea class="auth-window-textarea password confirm" placeholder="Confirm password"></textarea>
+                <button class="auth-window-button">Sign up</button>
+            </form>
+            <p class="auth-window-misc-text">Already a user? <a id="login-link" class="link">Log in</a></p>
+            <p class="auth-window-misc-text"><a id="main-page-link" class="link">Return to main page</a></p>
+        </section>
+        `;
+
+        const form = document.getElementsByClassName('auth-window-form')[0];
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = form.getElementsByClassName('username')[0].value;
+            const password = form.getElementsByClassName('password')[0].value;
+            const passwordConfirm = form.getElementsByClassName('confirm')[0].value;
+            if(password !== passwordConfirm) {
+                self.showSignupForm();
+                return;
+            }
+            userList.addUser({ username, password });
+            self.getFeed();
+        });
+
+        document.getElementById('login-link').addEventListener('click', () => {
+            self.showLoginForm();
+        });
+
+        document.getElementById('main-page-link').addEventListener('click', () => {
+            self.getFeed();
+        });
     }
 
     _addHeaderEventListeners() {
@@ -633,6 +683,10 @@ class Controller {
 
         document.getElementById('header-home-button').addEventListener('click', () => {
             self.getFeed();
+        });
+
+        document.getElementById('header-login-button').addEventListener('click', () => {
+            self.showLoginForm();
         });
     }
 
