@@ -320,7 +320,7 @@ class ViewUtils {
     }
 
     static getOwn(tweets) {
-        return tweets.map((tweet) => tweet.author === controller.user ? true : false);
+        return tweets.map((tweet) => tweet.author === controller._feed.user ? true : false);
     }
 }
 
@@ -621,7 +621,7 @@ class Controller {
 
     _initFeed() {
         const tweets = this._feed.getPage();
-        const own = this.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+        const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(true, tweets, own);
         this._currShownTweets = 10;
         this._headerView.display('', false);
@@ -633,7 +633,7 @@ class Controller {
             this._tweetFeedView.display(false);
         }
         else {
-            const own = this.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+            const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
             this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0);
         }
@@ -641,16 +641,16 @@ class Controller {
         this._addTweetFeedEventListeners();
         this._addFilterEventListeners();
         this._currShownTweets = tweets.length;
-        this._headerView.display(this.user, false);
+        this._headerView.display(this._feed.user, false);
     }
     
     showTweet(id) {
         const tweet = this._feed.get(id);
-        if(tweet) this._tweetView.display(tweet, tweet.author === this.user);
+        if(tweet) this._tweetView.display(tweet, tweet.author === this._feed.user);
         this._addTweetEventListeners();
         this._currShownTweets = 0;
         this._currFilterConfig = {};
-        this._headerView.display(this.user, true);
+        this._headerView.display(this._feed.user, true);
     }
 
     toggleFilters() {
