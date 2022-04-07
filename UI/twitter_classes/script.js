@@ -764,8 +764,11 @@ class Controller {
                 });
             }
             if(target.classList.contains('delete')) {
-                self.removeTweet(tweetId);
-                self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
+                const choice = confirm('Are you sure?');
+                if(choice) {
+                    self.removeTweet(tweetId);
+                    self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
+                }
             }
         });
     }
@@ -821,8 +824,11 @@ class Controller {
                 });
             }
             if(target.classList.contains('delete')) {
-                self.removeTweet(tweetId);
-                self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
+                const choice = confirm('Are you sure?');
+                if(choice) {
+                    self.removeTweet(tweetId);
+                    self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
+                }
             }
         });
     }
