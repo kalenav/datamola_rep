@@ -767,6 +767,18 @@ class Controller {
     }
 }
 
+class UserList {
+    _users;
+
+    constructor(users) {
+        self._users = users.slice();
+    }
+
+    addUser(user) {
+        self._users.push(user);
+    }
+}
+
 
 const tweets = [
     new Tweet(
