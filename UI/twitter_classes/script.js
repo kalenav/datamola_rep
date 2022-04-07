@@ -139,17 +139,15 @@ class TweetFeed {
         const toReturn = [];
         for (let i = 0; i < tws.length; i++) {
             const currTweet = tws[i];
-            if(Tweet.validate(currTweet)) {
-                this._tweets.push(currTweet);
-                this.save(currTweet);
-            } 
-            else toReturn.push(currTweet);
+            Tweet.validate(currTweet) ? this._tweets.push(currTweet) : toReturn.push(currTweet);
         }
+        this.save();
         return toReturn;
     }
 
     clear() {
         this._tweets = [];
+        this.save();
     }
 
     getPage(skip = 0, top = 10, filterConfig) {
@@ -184,7 +182,7 @@ class TweetFeed {
         const newTweet = new Tweet(this._generateTweetId(), text, new Date(), this._user, []);
         if (Tweet.validate(newTweet)) {
             this._tweets.push(newTweet);
-            this.save(newTweet);
+            this.save();
             return true;
         }
         return false;
@@ -195,7 +193,11 @@ class TweetFeed {
         if (tweet.author !== this._user) return false;
         const snapshot = tweet.text;
         tweet.text = text;
-        if (Tweet.validate(tweet)) return true;
+        if (Tweet.validate(tweet)) 
+        {
+            this.save();
+            return true;
+        }
         tweet.text = snapshot;
         return false;
     }
@@ -204,6 +206,7 @@ class TweetFeed {
         const tweetIndex = this._tweets.findIndex((tw) => tw.id === id);
         if (tweetIndex === -1 || this._tweets[tweetIndex].author !== this._user) return false;
         this._tweets.splice(tweetIndex, 1);
+        this.save();
         return true;
     }
 
@@ -213,6 +216,7 @@ class TweetFeed {
         const comment = new Comment(this._generateCommentId(), text, new Date(), this._user);
         if(!Comment.validate(comment)) return false;
         tweet.comments.push(comment);
+        this.save();
         return true;
     }
 
@@ -241,8 +245,8 @@ class TweetFeed {
         return this._tweets.length;
     }
 
-    save(tweet) {
-        window.localStorage.tweets += tweet.toString();
+    save() {
+        window.localStorage.tweets = this._tweets.map((tweet) => `${tweet}`).join('');
     }
 
     restore() {
@@ -320,7 +324,7 @@ class ViewUtils {
     }
 
     static getOwn(tweets) {
-        return tweets.map((tweet) => tweet.author === controller.user ? true : false);
+        return tweets.map((tweet) => tweet.author === controller._feed.user ? true : false);
     }
 }
 
@@ -621,7 +625,7 @@ class Controller {
 
     _initFeed() {
         const tweets = this._feed.getPage();
-        const own = this.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+        const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(true, tweets, own);
         this._currShownTweets = 10;
         this._headerView.display('', false);
@@ -633,7 +637,7 @@ class Controller {
             this._tweetFeedView.display(false);
         }
         else {
-            const own = this.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+            const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
             this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0);
         }
@@ -641,16 +645,16 @@ class Controller {
         this._addTweetFeedEventListeners();
         this._addFilterEventListeners();
         this._currShownTweets = tweets.length;
-        this._headerView.display(this.user, false);
+        this._headerView.display(this._feed.user, false);
     }
     
     showTweet(id) {
         const tweet = this._feed.get(id);
-        if(tweet) this._tweetView.display(tweet, tweet.author === this.user);
+        if(tweet) this._tweetView.display(tweet, tweet.author === this._feed.user);
         this._addTweetEventListeners();
         this._currShownTweets = 0;
         this._currFilterConfig = {};
-        this._headerView.display(this.user, true);
+        this._headerView.display(this._feed.user, true);
     }
 
     toggleFilters() {
@@ -914,15 +918,15 @@ class UserList {
 
     addUser(user) {
         this._users.push(user);
-        this.save(user);
+        this.save();
     }
 
     has(user) {
         return this._users.some((el) => el.username === user.username && el.password === user.password);
     }
 
-    save(user) {
-        window.localStorage.users += `${user.username}:${user.password};`
+    save() {
+        window.localStorage.users = this._users.map((user) => `${user.username}:${user.password};`).join('');
     }
 
     restore() {
