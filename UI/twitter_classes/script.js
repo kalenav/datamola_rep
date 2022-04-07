@@ -758,7 +758,7 @@ class Controller {
         });
 
         document.getElementById('header-login-button').addEventListener('click', () => {
-            if(!self.user) { // всё ещё не понимаю, почему оно при логауте переходит на страницу логина 
+            if(!self._feed.user) { // всё ещё не понимаю, почему оно при логауте переходит на страницу логина 
                 self.showLoginForm();
             }
             else {
