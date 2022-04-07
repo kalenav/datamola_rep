@@ -905,7 +905,7 @@ class Controller {
             dateFrom,
             dateTo,
             'text': tweetTextTextarea.value,
-            'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ') : [],
+            'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ').filter((hashtag) => hashtag[0] === '#') : [],
         };
     }
 }
