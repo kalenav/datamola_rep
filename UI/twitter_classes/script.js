@@ -285,7 +285,11 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(tweets, own, all) { // tweets: Array<Tweet>, own: Array<Boolean>
+    display(found, tweets, own, all) { // tweets: Array<Tweet>, own: Array<Boolean>
+        if(!found) {
+            this._container.innerHTML = '<p style="font-size: 4rem; margin-top: 10rem; text-align: center;">No such tweets were found.</p>';
+            return;
+        }
         this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
         const tweetsSection = ViewUtils.newTag('section', 'tweets');
         tweetsSection.innerHTML = `
@@ -572,15 +576,20 @@ class Controller {
     _initFeed() {
         const tweets = this._feed.getPage();
         const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
-        this._tweetFeedView.display(tweets, own);
+        this._tweetFeedView.display(true, tweets, own);
         this._currShownTweets = 10;
     }
     
     getFeed(skip, top, filterConfig) {
         const tweets = this._feed.getPage(skip, top, filterConfig);
-        const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
-        const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
-        this._tweetFeedView.display(tweets, own, tweetsLeft === 0);
+        if(tweets.length === 0) {
+            this._tweetFeedView.display(false);
+        }
+        else {
+            const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+            const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
+            this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0);
+        }
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
         this._addFilterEventListeners();
