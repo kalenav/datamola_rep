@@ -857,17 +857,34 @@ class Controller {
 class UserList {
     _users;
 
-    constructor(users) {
-        this._users = users ? users.slice() : [];
+    constructor() {
+        this.restore();
     }
 
     addUser(user) {
         this._users.push(user);
+        this.save(user);
     }
 
     has(user) {
         return this._users.some((el) => el.username === user.username && el.password === user.password);
     }
+
+    save(user) {
+        window.localStorage.users += `${user.username}:${user.password};`
+    }
+
+    restore() {
+        this._users = window.localStorage.users.split(';').filter((v) => v !== '').map((userstr) => {
+            userstr = userstr.split(':');
+            return { username: userstr[0], password: userstr[1] };
+        });
+    }
+}
+
+function initLocalStorage(usersstr, tweetsstr) {
+    window.localStorage.setItem('users', usersstr);
+    window.localStorage.setItem('tweets', tweetsstr);
 }
 
 
@@ -1086,6 +1103,10 @@ const tweets = [
         [],
     ),
 ];
+
+const users = 'Zoe:pass1;Ulrich:pass2;';
+
+if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(users, tweets);
 
 const userList = new UserList();
 const controller = new Controller(tweets);
