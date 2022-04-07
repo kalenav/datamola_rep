@@ -243,14 +243,14 @@ class TweetFeed {
             return new Tweet(
                 tweetarr[0],
                 tweetarr[1],
-                tweetarr[2],
+                new Date(tweetarr[2]),
                 tweetarr[3],
                 tweetarr[4].split(';').filter((v) => v !== '').map((commentstr) => {
                     const commentarr = commentstr.split('::');
                     return new Comment(
                         commentarr[0],
                         commentarr[1],
-                        commentarr[2],
+                        new Date(commentarr[2]),
                         commentarr[3]
                     );
                 })
