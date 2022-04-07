@@ -133,7 +133,7 @@ class TweetFeed {
     _user;
 
     constructor() {
-        restore();
+        this.restore();
     }
 
     addAll(tws) {
@@ -238,13 +238,22 @@ class TweetFeed {
     }
 
     restore() {
-        this._tweets = window.localStorage.tweets.split(';').filter((v) => v !== '').map((tweetstr) => {
+        this._tweets = window.localStorage.tweets.split(';;').filter((v) => v !== '').map((tweetstr) => {
             const tweetarr = tweetstr.split(':::');
             return new Tweet(
-                tweetArr[0],
-                tweetArr[1],
-                tweetArr[2],
-                tweetArr[3],
+                tweetarr[0],
+                tweetarr[1],
+                tweetarr[2],
+                tweetarr[3],
+                tweetarr[4].split(';').filter((v) => v !== '').map((commentstr) => {
+                    const commentarr = commentstr.split('::');
+                    return new Comment(
+                        commentarr[0],
+                        commentarr[1],
+                        commentarr[2],
+                        commentarr[3]
+                    );
+                })
             );
         });
     }
@@ -552,8 +561,8 @@ class Controller {
     _currShownTweets;
     _currFilterConfig;
 
-    constructor(tweets) {
-        this._feed = new TweetFeed(tweets);
+    constructor() {
+        this._feed = new TweetFeed();
         this._headerView = new HeaderView('username');
         this._addHeaderEventListeners();
         this._tweetFeedView = new TweetFeedView('main-container');
@@ -898,7 +907,7 @@ class UserList {
 
     restore() {
         this._users = window.localStorage.users.split(';').filter((v) => v !== '').map((userstr) => {
-            userarr = userstr.split(':');
+            const userarr = userstr.split(':');
             return { username: userarr[0], password: userarr[1] };
         });
     }
@@ -1126,9 +1135,10 @@ const tweets = [
     ),
 ];
 
-const users = 'Zoe:pass1;Ulrich:pass2;';
+const usersstr = 'Zoe:pass1;Ulrich:pass2;';
+const tweetsstr = tweets.map((tweet) => tweet.toString());
 
-if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(users, tweets);
+if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(usersstr, tweetsstr);
 
 const userList = new UserList();
 const controller = new Controller(tweets);
