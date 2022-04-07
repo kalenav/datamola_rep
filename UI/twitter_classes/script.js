@@ -665,7 +665,8 @@ class Controller {
                 self.showSignupForm();
                 return;
             }
-            userList.addUser({ username, password });
+            const newUser = { username, password };
+            if(!userList.has(newUser)) userList.addUser(newUser);
             self.getFeed();
         });
 
