@@ -535,10 +535,7 @@ class Controller {
     setCurrentUser(user) {
         this._feed.user = user;
         this._headerView.display(user, user ? false : true);
-        if(document.getElementById('new-comment-textarea')) { // текстареа коммента есть только на странице твита
-            this.showTweet(document.getElementsByClassName('tweet')[0].dataset.id);
-        }
-        else this.getFeed(0, this._currShownTweets, this._currFilterConfig);
+        this.getFeed(0, this._currShownTweets, this._currFilterConfig);
     }
     
     addTweet(text) {
@@ -620,7 +617,8 @@ class Controller {
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', (e) => {
             e.preventDefault(); // чтобы не переходило на страницу с твитами само по себе
-            
+            const username = form.getElementsByClassName('username')[0].value;
+
         });
     }
 
