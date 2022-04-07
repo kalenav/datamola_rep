@@ -601,6 +601,29 @@ class Controller {
         }
     }
 
+    showLoginForm() {
+        document.getElementById('main-container').innerHTML = `
+        <section class="auth-window">
+            <div class="auth-window-header">
+                <p class="auth-window-header-text">Logging In</p>
+            </div>
+            <form class="auth-window-form">
+                <textarea class="auth-window-textarea username" placeholder="Input username"></textarea>
+                <textarea class="auth-window-textarea password" placeholder="Input password"></textarea>
+                <button id="auth-window-button">Log In</button>
+            </form>
+            <p class="auth-window-misc-text">Not a user yet? <a class="link">Sign up</a></p>
+            <p class="auth-window-misc-text"><a class="link">Return to main page</a></p>
+        </section>
+        `;
+
+        const form = document.getElementsByClassName('auth-window-form')[0];
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // чтобы не переходило на страницу с твитами само по себе
+            
+        });
+    }
+
     _addHeaderEventListeners() {
         const self = this;
 
@@ -1252,22 +1275,3 @@ const controller = new Controller(tweets);
 // }
 
 // tests();
-
-// setTimeout(() => {
-//     setCurrentUser('kostek');
-//     setTimeout(() => {
-//         getFeed();
-//         setTimeout(() => {
-//             addTweet('this is a new tweet by kostek');
-//             setTimeout(() => {
-//                 editTweet('25', 'this is an edited tweet by kostek');
-//                 setTimeout(() => {
-//                     removeTweet('25');
-//                     setTimeout(() => {
-//                         showTweet('18');
-//                     }, 2000);
-//                 }, 2000);
-//             }, 2000);
-//         }, 2000);
-//     }, 2000);
-// }, 2000);
