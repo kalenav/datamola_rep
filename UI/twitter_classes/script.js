@@ -124,7 +124,7 @@ class Comment {
     }
 
     toString() {
-        return `${this._id}::${this.text}::${this._createdAt}::${this.author};`;
+        return `${this._id}::${this.text}::${this._createdAt}::${this.author}++`;
     }
 }
 
@@ -254,7 +254,7 @@ class TweetFeed {
                 tweetarr[1],
                 new Date(tweetarr[2]),
                 tweetarr[3],
-                !tweetarr[4] ? [] : tweetarr[4].split(';').filter((v) => v !== '').map((commentstr) => {
+                tweetarr[4].split('++').filter((v) => v !== '').map((commentstr) => {
                     const commentarr = commentstr.split('::');
                     return new Comment(
                         commentarr[0],
@@ -294,9 +294,10 @@ class ViewUtils {
     
     static wrapHashtags(text) {
         let hashtag = "";
+        const limiters = [' ', '.', ',', '!', '?', ';'];
         for(let i = 0; i < text.length; i++) {
             if(text[i] === '#') {
-                while(i < text.length && text[i] != ' ') {
+                while(i < text.length && !limiters.includes(text[i])) {
                     hashtag += text[i++];
                 }
                 text = text.split(hashtag).join(`<span class='hashtag'>${hashtag}</span>`);
