@@ -71,7 +71,7 @@ class Tweet {
     toString() {
         let result = `${this._id}:::${this.text}:::${this._createdAt}:::${this._author}:::`;
         this.comments.forEach((com) => { result += `${com}` });
-        return result + ';';
+        return result + ';;';
     }
 }
 
@@ -124,7 +124,7 @@ class Comment {
     }
 
     toString() {
-        return `${this._id}::${this.text}::${this._createdAt}::${this.author}`;
+        return `${this._id}::${this.text}::${this._createdAt}::${this.author};`;
     }
 }
 
@@ -132,8 +132,8 @@ class TweetFeed {
     _tweets;
     _user;
 
-    constructor(tws) {
-        this._tweets = tws.slice();
+    constructor() {
+        restore();
     }
 
     addAll(tws) {
@@ -235,6 +235,18 @@ class TweetFeed {
 
     get length() {
         return this._tweets.length;
+    }
+
+    restore() {
+        this._tweets = window.localStorage.tweets.split(';').filter((v) => v !== '').map((tweetstr) => {
+            const tweetarr = tweetstr.split(':::');
+            return new Tweet(
+                tweetArr[0],
+                tweetArr[1],
+                tweetArr[2],
+                tweetArr[3],
+            );
+        });
     }
 }
 
@@ -886,8 +898,8 @@ class UserList {
 
     restore() {
         this._users = window.localStorage.users.split(';').filter((v) => v !== '').map((userstr) => {
-            userstr = userstr.split(':');
-            return { username: userstr[0], password: userstr[1] };
+            userarr = userstr.split(':');
+            return { username: userarr[0], password: userarr[1] };
         });
     }
 }
