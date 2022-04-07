@@ -285,7 +285,7 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(tweets, own) { // tweets: Array<Tweet>, own: Array<Boolean>
+    display(tweets, own, all) { // tweets: Array<Tweet>, own: Array<Boolean>
         this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
         const tweetsSection = ViewUtils.newTag('section', 'tweets');
         tweetsSection.innerHTML = `
@@ -439,9 +439,11 @@ class TweetFeedView {
             newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
             tweetsSection.appendChild(newTweet);
         });
-        const loadMoreButtonContainer = ViewUtils.newTag('div', 'align-fix');
-        loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', 'load-more', 'Load more'));
-        tweetsSection.appendChild(loadMoreButtonContainer);
+        if(!all) {
+            const loadMoreButtonContainer = ViewUtils.newTag('div', 'align-fix');
+            loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', 'load-more', 'Load more'));
+            tweetsSection.appendChild(loadMoreButtonContainer);
+        }
         this._container.appendChild(tweetsSection);
     }
 }
@@ -577,7 +579,8 @@ class Controller {
     getFeed(skip, top, filterConfig) {
         const tweets = this._feed.getPage(skip, top, filterConfig);
         const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
-        this._tweetFeedView.display(tweets, own);
+        const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
+        this._tweetFeedView.display(tweets, own, tweetsLeft === 0);
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
         this._addFilterEventListeners();
