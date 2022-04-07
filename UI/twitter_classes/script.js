@@ -757,14 +757,26 @@ class Controller {
             self.getFeed();
         });
 
-        document.getElementById('header-login-button').addEventListener('click', () => {
-            if(!self.user) { // всё ещё не понимаю, почему оно при логауте переходит на страницу логина 
-                self.showLoginForm();
-            }
-            else {
-                self.setCurrentUser('');
-            }
-        });
+        // как я понял, при логауте и перерисовке хидера кнопка
+        // логина успевает перерисоваться и подцепить себе
+        // event listener ещё до того, как событие click
+        // считается закончившимся, и в итоге происходит как будто
+        // двойное нажатие на кнопку, первое из которых было
+        // по кнопке log out, а второе - уже по log in, и вместо
+        // главной страницы при нажатии на log out пользователя
+        // переносит на форму авторизации. поэтому цепляем event listener
+        // на кнопку логина только тогда, когда страница прогрузилась
+
+        window.addEventListener('load', () => { 
+            document.getElementById('header-login-button').addEventListener('click', (e) => {
+                if(!self._feed.user) {
+                    self.showLoginForm();
+                }
+                else {
+                    self.setCurrentUser('');
+                }
+            });
+        })
     }
 
     _addTweetFeedEventListeners() {
@@ -779,14 +791,18 @@ class Controller {
             if(target.tagName === 'BUTTON' ||
             target.tagName === 'I' ||
             target.tagName === 'SELECT' ||
-            target.tagName === 'OPTION') return;    
+            target.tagName === 'OPTION' ||
+            target.tagName === 'TEXTAREA') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
 
-        document.getElementsByClassName('load-more')[0].addEventListener('click', () => {
-            self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
-        });
+        const loadMoreButton = document.getElementsByClassName('load-more')[0];
+        if(loadMoreButton) {
+            loadMoreButton.addEventListener('click', () => {
+                self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
+            });
+        }  
 
         document.getElementById('new-tweet').addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
