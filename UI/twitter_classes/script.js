@@ -140,7 +140,11 @@ class TweetFeed {
         const toReturn = [];
         for (let i = 0; i < tws.length; i++) {
             const currTweet = tws[i];
-            Tweet.validate(currTweet) ? this._tweets.push(currTweet) : toReturn.push(currTweet);
+            if(Tweet.validate(currTweet)) {
+                this._tweets.push(currTweet);
+                this.save(currTweet);
+            } 
+            else toReturn.push(currTweet);
         }
         return toReturn;
     }
@@ -181,6 +185,7 @@ class TweetFeed {
         const newTweet = new Tweet(this._generateTweetId(), text, new Date(), this._user, []);
         if (Tweet.validate(newTweet)) {
             this._tweets.push(newTweet);
+            this.save(newTweet);
             return true;
         }
         return false;
@@ -235,6 +240,10 @@ class TweetFeed {
 
     get length() {
         return this._tweets.length;
+    }
+
+    save(tweet) {
+        window.localStorage.tweets += tweet.toString();
     }
 
     restore() {
