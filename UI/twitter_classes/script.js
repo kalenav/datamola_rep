@@ -635,17 +635,18 @@ class Controller {
         const tweets = this._feed.getPage(skip, top, filterConfig);
         if(tweets.length === 0) {
             this._tweetFeedView.display(false);
+            this._headerView.display(this._feed.user, true);
         }
         else {
             const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
             this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0);
+            this._headerView.display(this._feed.user, false);
         }
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
         this._addFilterEventListeners();
         this._currShownTweets = tweets.length;
-        this._headerView.display(this._feed.user, false);
     }
     
     showTweet(id) {
