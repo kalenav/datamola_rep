@@ -599,6 +599,8 @@ class Controller {
     }
 
     showLoginForm() {
+        const self = this;
+
         document.getElementById('main-container').innerHTML = `
         <section class="auth-window">
             <div class="auth-window-header">
@@ -618,7 +620,11 @@ class Controller {
         form.addEventListener('submit', (e) => {
             e.preventDefault(); // чтобы не переходило на страницу с твитами само по себе
             const username = form.getElementsByClassName('username')[0].value;
-
+            const password = form.getElementsByClassName('password')[0].value;
+            const possibleUser = { username, password };
+            if(userList.has(possibleUser)) {
+                self.setCurrentUser(username);
+            }
         });
     }
 
@@ -769,11 +775,15 @@ class UserList {
     _users;
 
     constructor(users) {
-        self._users = users.slice();
+        this._users = users ? users.slice() : [];
     }
 
     addUser(user) {
-        self._users.push(user);
+        this._users.push(user);
+    }
+
+    has(user) {
+        return this._users.some((el) => el.username === user.username && el.password === user.password);
     }
 }
 
@@ -994,6 +1004,7 @@ const tweets = [
     ),
 ];
 
+const userList = new UserList();
 const controller = new Controller(tweets);
 
 // function tests() {
