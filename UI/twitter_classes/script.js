@@ -766,7 +766,7 @@ class Controller {
         // главной страницы при нажатии на log out пользователя
         // переносит на форму авторизации. поэтому цепляем event listener
         // на кнопку логина только тогда, когда страница прогрузилась
-        
+
         window.addEventListener('load', () => { 
             document.getElementById('header-login-button').addEventListener('click', (e) => {
                 if(!self._feed.user) {
@@ -791,14 +791,18 @@ class Controller {
             if(target.tagName === 'BUTTON' ||
             target.tagName === 'I' ||
             target.tagName === 'SELECT' ||
-            target.tagName === 'OPTION') return;    
+            target.tagName === 'OPTION' ||
+            target.tagName === 'TEXTAREA') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
 
-        document.getElementsByClassName('load-more')[0].addEventListener('click', () => {
-            self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
-        });
+        const loadMoreButton = document.getElementsByClassName('load-more')[0];
+        if(loadMoreButton) {
+            loadMoreButton.addEventListener('click', () => {
+                self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
+            });
+        }  
 
         document.getElementById('new-tweet').addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
