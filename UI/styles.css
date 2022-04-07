@@ -318,7 +318,7 @@ section.new-comment {
     -webkit-text-security: disc;
 }
 
-.auth-window-button {
+#auth-window-button {
     margin-top: 3rem;
 }
 
