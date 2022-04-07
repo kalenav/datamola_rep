@@ -536,6 +536,7 @@ class Controller {
         this._feed.user = user;
         this._headerView.display(user, user ? false : true);
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
+        this._addHeaderEventListeners();
     }
     
     addTweet(text) {
@@ -648,7 +649,7 @@ class Controller {
                 <textarea class="auth-window-textarea username" placeholder="Input username"></textarea>
                 <textarea class="auth-window-textarea password" placeholder="Input password"></textarea>
                 <textarea class="auth-window-textarea password confirm" placeholder="Confirm password"></textarea>
-                <button class="auth-window-button">Sign up</button>
+                <button id="auth-window-button">Sign up</button>
             </form>
             <p class="auth-window-misc-text">Already a user? <a id="login-link" class="link">Log in</a></p>
             <p class="auth-window-misc-text"><a id="main-page-link" class="link">Return to main page</a></p>
@@ -686,8 +687,14 @@ class Controller {
             self.getFeed();
         });
 
-        document.getElementById('header-login-button').addEventListener('click', () => {
-            self.showLoginForm();
+        const loginButton = document.getElementById('header-login-button');
+        loginButton.addEventListener('click', () => {
+            if(loginButton.innerHTML === 'Log In') {
+                self.showLoginForm();
+            }
+            else {
+                self.setCurrentUser('');
+            }
         });
     }
 
