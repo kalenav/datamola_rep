@@ -624,8 +624,8 @@ class Controller {
                 <p class="auth-window-header-text">Logging In</p>
             </div>
             <form class="auth-window-form">
-                <textarea class="auth-window-textarea username" placeholder="Input username"></textarea>
-                <textarea class="auth-window-textarea password" placeholder="Input password"></textarea>
+                <textarea class="auth-window-textarea username" required placeholder="Input username"></textarea>
+                <textarea class="auth-window-textarea password" required placeholder="Input password"></textarea>
                 <button id="auth-window-button">Log In</button>
             </form>
             <p class="auth-window-misc-text">Not a user yet? <a id="signup-link" class="link">Sign up</a></p>
@@ -662,9 +662,9 @@ class Controller {
                 <p class="auth-window-header-text">Signing Up</p>
             </div>
             <form class="auth-window-form">
-                <textarea class="auth-window-textarea username" placeholder="Input username"></textarea>
-                <textarea class="auth-window-textarea password" placeholder="Input password"></textarea>
-                <textarea class="auth-window-textarea password confirm" placeholder="Confirm password"></textarea>
+                <textarea class="auth-window-textarea username" required placeholder="Input username"></textarea>
+                <textarea class="auth-window-textarea password" reqired placeholder="Input password"></textarea>
+                <textarea class="auth-window-textarea password confirm" required placeholder="Confirm password"></textarea>
                 <button id="auth-window-button">Sign up</button>
             </form>
             <p class="auth-window-misc-text">Already a user? <a id="login-link" class="link">Log in</a></p>
