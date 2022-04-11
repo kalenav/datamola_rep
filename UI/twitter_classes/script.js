@@ -392,6 +392,7 @@ class TweetFeedView {
         filterBlock.appendChild(dateFilterBlock);
         filterBlock.appendChild(tweetTextTextarea);
         filterBlock.appendChild(hashtagsTextarea);
+        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Filter'));
 
         parent.appendChild(filterBlock);
     }
@@ -707,7 +708,8 @@ class Controller {
             while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
             const tweetId = parentTweet.dataset.id;
             if(target.classList.contains('edit')) {
-                const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea', value: self._feed.get(tweetId).text });
+                const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
+                tweetEditTextarea.value = self._feed.get(tweetId).text;
                 const body = document.body;
                 body.appendChild(tweetEditTextarea);
                 tweetEditTextarea.addEventListener('keyup', (e) => {
@@ -767,6 +769,7 @@ class Controller {
             const tweetId = parentTweet.dataset.id;
             if(target.classList.contains('edit')) {
                 const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea', value: self._feed.get(tweetId).text });
+                tweetEditTextarea.value = self._feed.get(tweetId).text;
                 const body = document.body;
                 body.appendChild(tweetEditTextarea);
                 tweetEditTextarea.addEventListener('keyup', (e) => {
