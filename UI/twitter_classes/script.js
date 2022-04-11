@@ -707,14 +707,7 @@ class Controller {
             while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
             const tweetId = parentTweet.dataset.id;
             if(target.classList.contains('edit')) {
-                const tweetEditTextarea = ViewUtils.newTag('textarea');
-                tweetEditTextarea.style.position = 'fixed';
-                tweetEditTextarea.style.width = '700px';
-                tweetEditTextarea.style.top = '40%';
-                tweetEditTextarea.style.right = 'calc(50% - 350px)';
-                tweetEditTextarea.style.resize = 'vertical';
-                tweetEditTextarea.style.fontSize = '1.5rem';
-                tweetEditTextarea.value = self._feed.get(tweetId).text;
+                const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea', value: self._feed.get(tweetId).text });
                 const body = document.body;
                 body.appendChild(tweetEditTextarea);
                 tweetEditTextarea.addEventListener('keyup', (e) => {
@@ -773,14 +766,7 @@ class Controller {
             while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
             const tweetId = parentTweet.dataset.id;
             if(target.classList.contains('edit')) {
-                const tweetEditTextarea = ViewUtils.newTag('textarea');
-                tweetEditTextarea.style.position = 'fixed';
-                tweetEditTextarea.style.width = '700px';
-                tweetEditTextarea.style.top = '40%';
-                tweetEditTextarea.style.right = 'calc(50% - 350px)';
-                tweetEditTextarea.style.resize = 'vertical';
-                tweetEditTextarea.style.fontSize = '1.5rem';
-                tweetEditTextarea.value = self._feed.get(tweetId).text;
+                const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea', value: self._feed.get(tweetId).text });
                 const body = document.body;
                 body.appendChild(tweetEditTextarea);
                 tweetEditTextarea.addEventListener('keyup', (e) => {
