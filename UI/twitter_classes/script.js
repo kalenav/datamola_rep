@@ -342,119 +342,13 @@ class TweetFeedView {
                 <div class="date-filter-block from">
                     <p class="date-filter-text">From</p>
                     <div class="date-filter-lists">
-                        <select class="date-filter-list day" name="day-from" id='day-from-filter'>
-                            <option value="1" selected='selected'>1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                            <option value="23">23</option>
-                            <option value="24">24</option>
-                            <option value="25">25</option>
-                            <option value="26">26</option>
-                            <option value="27">27</option>
-                            <option value="28">28</option>
-                            <option value="29">29</option>
-                            <option value="30">30</option>
-                            <option value="31">31</option>
-                        </select>
-                        <select class="date-filter-list month" name="month-from" id='month-from-filter'>
-                            <option value="1" selected='selected'>1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="1">6</option>
-                            <option value="2">7</option>
-                            <option value="3">8</option>
-                            <option value="4">9</option>
-                            <option value="5">10</option>
-                            <option value="1">11</option>
-                            <option value="2">12</option>
-                        </select>
-                        <select class="date-filter-list year" name="year-from" id='year-from-filter'>
-                            <option value="1">2022</option>
-                            <option value="2">2021</option>
-                            <option value="3">2020</option>
-                            <option value="4">2019</option>
-                            <option value="5" selected='selected'>2018</option>
-                        </select>
+                        <input type="date" id="date-from">
                     </div>
                 </div>
                 <div class="date-filter-block to">
                     <p class="date-filter-text">To</p>
                     <div class="date-filter-lists">
-                        <select class="date-filter-list day" name="day-to" id='day-to-filter'>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                            <option value="23">23</option>
-                            <option value="24">24</option>
-                            <option value="25">25</option>
-                            <option value="26">26</option>
-                            <option value="27">27</option>
-                            <option value="28">28</option>
-                            <option value="29">29</option>
-                            <option value="30">30</option>
-                            <option value="31" selected='selected'>31</option>
-                        </select>
-                        <select class="date-filter-list month" name="month-to" id='month-to-filter'>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="1">6</option>
-                            <option value="2">7</option>
-                            <option value="3">8</option>
-                            <option value="4">9</option>
-                            <option value="5">10</option>
-                            <option value="1">11</option>
-                            <option value="2" selected='selected'>12</option>
-                        </select>
-                        <select class="date-filter-list year" name="year-to" id='year-to-filter'>
-                            <option value="1" selected='selected'>2022</option>
-                            <option value="2">2021</option>
-                            <option value="3">2020</option>
-                            <option value="4">2019</option>
-                            <option value="5">2018</option>
-                        </select>
+                        <input type="date" id="date-to">
                     </div>
                 </div>
             </div>
