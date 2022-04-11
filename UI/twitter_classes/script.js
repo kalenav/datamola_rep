@@ -250,7 +250,17 @@ class TweetFeed {
     }
 
     restore() {
-        this._tweets = JSON.parse(window.localStorage.tweets)._tweets;
+        this._tweets = JSON.parse(window.localStorage.tweets).map((tweet) => new Tweet(
+            tweet._id, 
+            tweet.text, 
+            new Date(tweet._createdAt), 
+            tweet._author,
+            tweet.comments.map((com) => new Comment(
+                com._id,
+                com.text,
+                new Date(com._createdAt),
+                com._author
+            ))));
     }
 }
 
