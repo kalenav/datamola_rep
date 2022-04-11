@@ -308,9 +308,11 @@ class ViewUtils {
         return text;
     }
 
-    static newTag(tagName, className, text) {
+    static newTag(tagName, attributes, text) {
         const tag = document.createElement(tagName);
-        if(className) tag.setAttribute('class', className);
+        for(let attribute of attributes) {
+            tag.setAttribute(attribute, attributes[attribute]);
+        }
         if(text) tag.innerHTML = text;
         return tag;
     }
@@ -385,6 +387,16 @@ class TweetFeedView {
             tweetsSection.appendChild(loadMoreButtonContainer);
         }
         this._container.appendChild(tweetsSection);
+    }
+
+    _appendFilters(parent) {
+        parent.appendChild(ViewUtils.newTag('button', 'filters-button', 'Filters'));
+        const filterBlock = ViewUtils.newTag('div');
+        filterBlock.setAttribute('id', 'filter-block');
+        const authorNameTextarea = ViewUtils.newTag('textarea', 'filter');
+        authorNameTextarea.setAttribute('placeholder', 'Author1, author2, ...');
+        authorNameTextarea.setAttribute('id', 'author-name-filter');
+
     }
 }
 
