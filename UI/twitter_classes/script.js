@@ -809,8 +809,8 @@ class Controller {
         const dateTo = new Date(choicesTo.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
         this._currFilterConfig = {
             'author': authorTextarea.value,
-            dateFrom,
-            dateTo,
+            'dateFrom': dateFrom,
+            'dateTo': dateTo,
             'text': tweetTextTextarea.value,
             'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ').filter((hashtag) => hashtag[0] === '#') : [],
         };
