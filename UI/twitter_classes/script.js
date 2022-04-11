@@ -336,28 +336,7 @@ class TweetFeedView {
         }
         this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
         const tweetsSection = ViewUtils.newTag('section', { class: 'tweets' });
-        tweetsSection.innerHTML = `
-        <button class="filters-button">Filters</button>
-        <div id="filter-block">
-            <textarea class="filter" placeholder="Author name" id='author-name-filter'></textarea>
-            <div class="filter" id='date-filter'>
-                <div class="date-filter-block from">
-                    <p class="date-filter-text">From</p>
-                    <div class="date-filter-lists">
-                        <input type="date" id="date-from">
-                    </div>
-                </div>
-                <div class="date-filter-block to">
-                    <p class="date-filter-text">To</p>
-                    <div class="date-filter-lists">
-                        <input type="date" id="date-to">
-                    </div>
-                </div>
-            </div>
-            <textarea class="filter" placeholder="Tweet text" id='tweet-text-filter'></textarea>
-            <textarea class="filter" placeholder="Hashtags" id='hashtags-filter'></textarea>
-            <button id='filter-submit'>Filter</button>
-        </div>`
+        this._appendFilters(tweetsSection);
         tweets.forEach((tweet, index) => {
             const newTweet = ViewUtils.newTag('div', { class: 'tweet', 'data-id': tweet.id });
             const isOwn = own[index];
@@ -389,12 +368,32 @@ class TweetFeedView {
     }
 
     _appendFilters(parent) {
-        parent.appendChild(ViewUtils.newTag('button', 'filters-button', 'Filters'));
+        parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
         const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
-        const authorNameTextarea = ViewUtils.newTag('textarea', 'filter');
-        authorNameTextarea.setAttribute('placeholder', 'Author1, author2, ...');
-        authorNameTextarea.setAttribute('id', 'author-name-filter');
+        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'author1 author2 ...', id: 'author-name-filter' });
+        const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter' });
+        const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: '#hashtag1 #hashtag2 ...', id: 'hashtags-filter' });
 
+        const dateFilterBlock = ViewUtils.newTag('div', { class: 'filter', id: 'date-filter' });
+        const dateFilterBlockFrom = ViewUtils.newTag('div', { class: 'date-filter-block from' });
+        dateFilterBlockFrom.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'From'));
+        const dateFromInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
+        dateFromInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-from' }));
+        dateFilterBlockFrom.appendChild(dateFromInputContainer);
+        const dateFilterBlockTo = ViewUtils.newTag('div', { class: 'date-filter-block to' });
+        dateFilterBlockTo.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'To'));
+        const dateToInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
+        dateToInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-to' }));
+        dateFilterBlockTo.appendChild(dateToInputContainer);
+        dateFilterBlock.appendChild(dateFilterBlockFrom);
+        dateFilterBlock.appendChild(dateFilterBlockTo);
+
+        filterBlock.appendChild(authorNameTextarea);
+        filterBlock.appendChild(dateFilterBlock);
+        filterBlock.appendChild(tweetTextTextarea);
+        filterBlock.appendChild(hashtagsTextarea);
+
+        parent.appendChild(filterBlock);
     }
 }
 
