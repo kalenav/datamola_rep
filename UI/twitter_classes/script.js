@@ -274,8 +274,7 @@ class HeaderView {
     display(user, displayHomeButton) {
         this._container.innerHTML = user ?? '';
         const loginButton = document.getElementById("header-login-button");
-        if(!user) loginButton.innerHTML = "Log In";
-        else loginButton.innerHTML = "Log Out";
+        loginButton.innerHTML = user ? "Log Out" : "Log In";
         if(displayHomeButton) {
             document.getElementById('header-home-button').style.display = 'inline-block';
         }
