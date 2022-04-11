@@ -335,7 +335,7 @@ class TweetFeedView {
             return;
         }
         this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
-        const tweetsSection = ViewUtils.newTag('section', 'tweets');
+        const tweetsSection = ViewUtils.newTag('section', { class: 'tweets' });
         tweetsSection.innerHTML = `
         <button class="filters-button">Filters</button>
         <div id="filter-block">
@@ -359,31 +359,30 @@ class TweetFeedView {
             <button id='filter-submit'>Filter</button>
         </div>`
         tweets.forEach((tweet, index) => {
-            const newTweet = ViewUtils.newTag('div', 'tweet');
-            newTweet.setAttribute('data-id', tweet.id);
+            const newTweet = ViewUtils.newTag('div', { class: 'tweet', 'data-id': tweet.id });
             const isOwn = own[index];
-            const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : newTweet;
+            const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : newTweet;
 
             const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-            authorInfoContainer.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             if(isOwn) { 
-                const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
-                const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-                editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square edit own-tweet-tool'));
-                const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
-                deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash delete own-tweet-tool'));
+                const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
+                const editButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+                editButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-pen-to-square edit own-tweet-tool' }));
+                const deleteButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+                deleteButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-trash delete own-tweet-tool' }));
                 buttonsContainer.appendChild(editButton);
                 buttonsContainer.appendChild(deleteButton);
                 authorInfoContainer.appendChild(buttonsContainer);
                 newTweet.appendChild(authorInfoContainer);
             }
-            newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
-            newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
+            newTweet.appendChild(ViewUtils.newTag('p', { class: 'tweet-text' }, ViewUtils.wrapHashtags(tweet.text)));
+            newTweet.appendChild(ViewUtils.newTag('p', null, `${tweet.comments.length} replies`));
             tweetsSection.appendChild(newTweet);
         });
         if(!all) {
-            const loadMoreButtonContainer = ViewUtils.newTag('div', 'align-fix');
-            loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', 'load-more', 'Load more'));
+            const loadMoreButtonContainer = ViewUtils.newTag('div', { class: 'align-fix' });
+            loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', { class: 'load-more' }, 'Load more'));
             tweetsSection.appendChild(loadMoreButtonContainer);
         }
         this._container.appendChild(tweetsSection);
@@ -425,43 +424,39 @@ class TweetView {
 
     display(tweet, isOwn) {
         this._container.innerHTML = '';
-        const tweetContainer = ViewUtils.newTag('section', 'tweet');
-        tweetContainer.setAttribute('data-id', `${tweet.id}`);
-        const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : tweetContainer;
+        const tweetContainer = ViewUtils.newTag('section', { class: 'tweet', 'data-id': tweet.id });
+        const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : tweetContainer;
 
         const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-        authorInfoContainer.appendChild(ViewUtils.newTag('p', 'author-info', `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+        authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
         if(isOwn) { 
-            const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
-            const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-            editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool edit'));
-            const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
-            deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool delete'));
+            const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
+            const editButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+            editButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-pen-to-square own-tweet-tool edit' }));
+            const deleteButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+            deleteButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-trash own-tweet-tool delete' }));
             buttonsContainer.appendChild(editButton);
             buttonsContainer.appendChild(deleteButton);
             authorInfoContainer.appendChild(buttonsContainer);
             authorInfoContainer.style.marginRight = '10%';
             tweetContainer.appendChild(authorInfoContainer);
         }
-        tweetContainer.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
+        tweetContainer.appendChild(ViewUtils.newTag('p', { class: 'tweet-text' }, ViewUtils.wrapHashtags(tweet.text)));
         this._container.appendChild(tweetContainer);
 
-        const commentsContainer = ViewUtils.newTag('section', 'comments');
+        const commentsContainer = ViewUtils.newTag('section', { class: 'comments' });
         tweet.comments.forEach((comment) => {
-            const currCommentContainer = ViewUtils.newTag('div', 'comment');
+            const currCommentContainer = ViewUtils.newTag('div', { class: 'comment' });
             const dateNumbers = ViewUtils.getDateNumbers(comment.date);
-            currCommentContainer.appendChild(ViewUtils.newTag('p', 'author-name', `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
-            currCommentContainer.appendChild(ViewUtils.newTag('p', 'comment-text', comment.text));
+            currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'author-name' }, `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'comment-text' }, comment.text));
             commentsContainer.appendChild(currCommentContainer);
         });
         this._container.appendChild(commentsContainer);
 
-        const newCommentContainer = ViewUtils.newTag('section', 'new-comment');
-        newCommentContainer.appendChild(ViewUtils.newTag('p', '', 'Leave a comment'));
-        const commentTextarea = ViewUtils.newTag('input');
-        commentTextarea.setAttribute('id', 'new-comment-textarea');
-        commentTextarea.setAttribute('type', 'textarea');
-        commentTextarea.setAttribute('placeholder', 'Input text');
+        const newCommentContainer = ViewUtils.newTag('section', { class: 'new-comment' });
+        newCommentContainer.appendChild(ViewUtils.newTag('p', null, 'Leave a comment'));
+        const commentTextarea = ViewUtils.newTag('input', { id: 'new-comment-textarea', type: 'textarea', placeholder: 'Input comment' });
         newCommentContainer.appendChild(commentTextarea);
         this._container.appendChild(newCommentContainer);
     }
