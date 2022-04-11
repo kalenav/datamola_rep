@@ -412,6 +412,12 @@ textarea.filter:focus-visible {
     width: 40%;
 }
 
+.not-found {
+    font-size: 4rem; 
+    margin-top: 10rem; 
+    text-align: center;
+}
+
 @media all and (max-width: 1400px) {
     .filter {
         width: 24%;

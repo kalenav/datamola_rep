@@ -329,7 +329,7 @@ class TweetFeedView {
 
     display(found, tweets, own, all) { // tweets: Array<Tweet>, own: Array<Boolean>
         if(!found) {
-            this._container.innerHTML = '<p style="font-size: 4rem; margin-top: 10rem; text-align: center;">No such tweets were found.</p>';
+            this._container.innerHTML = '<p class="not-found">No such tweets were found.</p>';
             return;
         }
         this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
