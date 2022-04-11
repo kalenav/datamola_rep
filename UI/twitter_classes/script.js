@@ -246,28 +246,11 @@ class TweetFeed {
     }
 
     save() {
-        window.localStorage.tweets = this._tweets.map((tweet) => `${tweet}`).join('');
+        window.localStorage.tweets = JSON.stringify(this._tweets);
     }
 
     restore() {
-        this._tweets = window.localStorage.tweets.split(';;').filter((v) => v !== '').map((tweetstr) => {
-            const tweetarr = tweetstr.split(':::');
-            return new Tweet(
-                tweetarr[0],
-                tweetarr[1],
-                new Date(tweetarr[2]),
-                tweetarr[3],
-                tweetarr[4].split('++').filter((v) => v !== '').map((commentstr) => {
-                    const commentarr = commentstr.split('::');
-                    return new Comment(
-                        commentarr[0],
-                        commentarr[1],
-                        new Date(commentarr[2]),
-                        commentarr[3]
-                    );
-                })
-            );
-        });
+        this._tweets = JSON.parse(window.localStorage.tweets)._tweets;
     }
 }
 
@@ -927,7 +910,7 @@ class Controller {
 }
 
 class UserList {
-    _users;
+    _users = [];
 
     constructor() {
         this.restore();
@@ -943,14 +926,11 @@ class UserList {
     }
 
     save() {
-        window.localStorage.users = this._users.map((user) => `${user.username}:${user.password};`).join('');
+        window.localStorage.users = JSON.stringify(this._users);
     }
 
     restore() {
-        this._users = window.localStorage.users.split(';').filter((v) => v !== '').map((userstr) => {
-            const userarr = userstr.split(':');
-            return { username: userarr[0], password: userarr[1] };
-        });
+        this._users = JSON.parse(window.localStorage.users);
     }
 }
 
@@ -1176,8 +1156,8 @@ const tweets = [
     ),
 ];
 
-const usersstr = 'Zoe:pass1;Ulrich:pass2;';
-const tweetsstr = tweets.map((tweet) => tweet.toString()).join('');
+const usersstr = '[{"username":"Zoe","password":"pass"},{"username":"Ulrich","password":"pass"}]';
+const tweetsstr = JSON.stringify(tweets);
 
 if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(usersstr, tweetsstr);
 
