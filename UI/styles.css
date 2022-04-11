@@ -398,20 +398,6 @@ textarea.filter:focus-visible {
     margin-bottom: 0.5rem;
 }
 
-.date-filter-list {
-    margin-left: 0.5rem;
-    height: 2rem;
-    background-color: var(--lightgray);
-}
-
-.date-filter-list.day, .date-filter-list.month {
-    width: 30%;
-}
-
-.date-filter-list.year {
-    width: 40%;
-}
-
 .not-found {
     font-size: 4rem; 
     margin-top: 10rem; 
