@@ -310,7 +310,7 @@ class ViewUtils {
 
     static newTag(tagName, attributes, text) {
         const tag = document.createElement(tagName);
-        for(let attribute of attributes) {
+        for(let attribute in attributes) {
             tag.setAttribute(attribute, attributes[attribute]);
         }
         if(text) tag.innerHTML = text;
@@ -390,8 +390,7 @@ class TweetFeedView {
 
     _appendFilters(parent) {
         parent.appendChild(ViewUtils.newTag('button', 'filters-button', 'Filters'));
-        const filterBlock = ViewUtils.newTag('div');
-        filterBlock.setAttribute('id', 'filter-block');
+        const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
         const authorNameTextarea = ViewUtils.newTag('textarea', 'filter');
         authorNameTextarea.setAttribute('placeholder', 'Author1, author2, ...');
         authorNameTextarea.setAttribute('id', 'author-name-filter');
