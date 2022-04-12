@@ -916,7 +916,7 @@ class TweetFeedApiService {
     }
 
     getTweets(author, text, dateFrom, dateTo, from, count, hashtags) {
-        return this._createRequest('/tweet', 'GET', {}, {
+        return this._createRequest('/tweet', 'GET', { params: {
             author,
             text,
             dateFrom,
@@ -924,41 +924,41 @@ class TweetFeedApiService {
             from,
             count,
             hashtags,
-        });
+        }} );
     }
 
     addTweet(auth, text) {
-        return this._createRequest('/tweet', 'POST', { 'Authorization': auth }, text);
+        return this._createRequest('/tweet', 'POST', { 'Authorization': 'Bearer ' + auth }, { text });
     } 
 
     editTweet(id, auth, text) {
-        return this._createRequest(`/tweet/${id}`, 'PUT', { 'Authorization': auth }, text);
+        return this._createRequest(`/tweet/${id}`, 'PUT', { 'Authorization': 'Bearer ' + auth }, { text });
     }
 
     removeTweet(id, auth) {
-        return this._createRequest(`/tweet/${id}`, 'DELETE', { 'Authorization': auth });
+        return this._createRequest(`/tweet/${id}`, 'DELETE', { 'Authorization': 'Bearer ' + auth });
     }
 
     addComment(tweetId, auth, text) {
-        return this._createRequest(`/tweet/${tweetId}/comment`, 'POST', { 'Authorization': auth }, text); 
+        return this._createRequest(`/tweet/${tweetId}/comment`, 'POST', { 'Authorization': 'Bearer ' + auth }, { text }); 
     }
 
     editComment(tweetId, id, auth, text) {
-        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'PUT', { 'Authorization': auth }, text);
+        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'PUT', { 'Authorization': 'Bearer ' + auth }, { text });
     }
 
     removeComment(tweetId, id, auth) {
-        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'DELETE', { 'Authorization': auth })
+        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'DELETE', { 'Authorization': 'Bearer ' + auth })
     }
 
-    _createRequest(path, method, extraHeaders = {}, bodyobj = '') {
+    _createRequest(path, method, extraHeaders = {}, bodyobj = {}) {
         const headers = {};
         for(let header in this._defaultHeaders) headers[header] = this._defaultHeaders[header];
         for(let header in extraHeaders) headers[header] = extraHeaders[header];
         return fetch(this._serverAddress + path, {
             method,
             headers,
-            body: JSON.stringify(bodyobj),
+            body: method !== 'GET' ? JSON.stringify(bodyobj) : undefined,
         })
     }
 }
@@ -1188,3 +1188,9 @@ if(!window.localStorage.users || !window.localStorage.tweets || window.localStor
 const userList = new UserList();
 const controller = new Controller(tweets);
 const api = new TweetFeedApiService('https://jslabapi.datamola.com');
+
+api.getTweets()
+.then(response => response.json())
+.then(response => {
+    console.log(response);
+});
