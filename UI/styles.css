@@ -104,13 +104,21 @@ section.new-tweet p, section.new-comment p {
     margin-left: 15%;
 }
 
-section.new-tweet input, section.new-comment input {
+section.new-tweet textarea, section.new-comment textarea {
     font-weight: 300;
     padding: 10px;
     width: 80%;
     margin: 0 auto;
     border: solid var(--lightgray-2) 1px;
     border-radius: 2px;
+    resize: none;
+}
+
+.new-tweet-button-container, .new-comment-button-container {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin: 1rem 10% 0 0;
 }
 
 section.tweets {
@@ -276,7 +284,7 @@ section.new-comment {
     display: flex;
     flex-direction: column;
     max-width: 35rem;
-    margin-top: 15rem;
+    margin-top: 10rem;
     border-radius: 0.5rem;
     font-size: 1.2rem;
     margin-bottom: 5rem;
@@ -398,18 +406,38 @@ textarea.filter:focus-visible {
     margin-bottom: 0.5rem;
 }
 
-.date-filter-list {
-    margin-left: 0.5rem;
-    height: 2rem;
-    background-color: var(--lightgray);
+.not-found {
+    font-size: 4rem; 
+    margin-top: 10rem; 
+    text-align: center;
 }
 
-.date-filter-list.day, .date-filter-list.month {
-    width: 30%;
+#tweet-edit-textarea {
+    width: 700px;
+    resize: vertical;
+    font-size: 1.5rem;
 }
 
-.date-filter-list.year {
-    width: 40%;
+#tweet-edit-textarea-container {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+}
+
+.tweet-active-edit-button {
+    margin: 1rem 2rem 0 0;
+}
+
+.tweet-active-edit-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
 @media all and (max-width: 1400px) {

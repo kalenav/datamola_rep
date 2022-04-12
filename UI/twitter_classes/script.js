@@ -153,7 +153,7 @@ class TweetFeed {
     getPage(skip = 0, top = 10, filterConfig) {
         let result = this._tweets.slice();
         if (filterConfig) {
-            if (filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
+            if (filterConfig.author) result = result.filter((tweet) => filterConfig.author.split(' ').some((auth) => tweet.author.includes(auth)));
             if (filterConfig.dateFrom) result = result.filter((tweet) => tweet.date >= filterConfig.dateFrom);
             if (filterConfig.dateTo) result = result.filter((tweet) => tweet.date <= filterConfig.dateTo);
             if (filterConfig.hashtags) {
@@ -246,28 +246,23 @@ class TweetFeed {
     }
 
     save() {
-        window.localStorage.tweets = this._tweets.map((tweet) => `${tweet}`).join('');
+        window.localStorage.tweets = JSON.stringify(this._tweets);
     }
 
     restore() {
-        this._tweets = window.localStorage.tweets.split(';;').filter((v) => v !== '').map((tweetstr) => {
-            const tweetarr = tweetstr.split(':::');
-            return new Tweet(
-                tweetarr[0],
-                tweetarr[1],
-                new Date(tweetarr[2]),
-                tweetarr[3],
-                tweetarr[4].split('++').filter((v) => v !== '').map((commentstr) => {
-                    const commentarr = commentstr.split('::');
-                    return new Comment(
-                        commentarr[0],
-                        commentarr[1],
-                        new Date(commentarr[2]),
-                        commentarr[3]
-                    );
-                })
-            );
-        });
+        this._tweets = JSON.parse(window.localStorage.tweets).map((tweet) => new Tweet(
+            tweet._id, 
+            tweet.text, 
+            new Date(tweet._createdAt), 
+            tweet._author,
+            tweet.comments.map((com) => new Comment(
+                com._id,
+                com.text,
+                new Date(com._createdAt),
+                com._author
+            ))));
+
+        this._user = window.localStorage.lastUser;
     }
 }
 
@@ -281,13 +276,13 @@ class HeaderView {
     display(user, displayHomeButton) {
         this._container.innerHTML = user ?? '';
         const loginButton = document.getElementById("header-login-button");
-        if(!user) loginButton.innerHTML = "Log In";
-        else loginButton.innerHTML = "Log Out";
+        loginButton.innerHTML = user ? "Log Out" : "Log In";
+        const homeButton = document.getElementById('header-home-button');
         if(displayHomeButton) {
-            document.getElementById('header-home-button').style.display = 'inline-block';
+            homeButton.style.display = 'inline-block';
         }
         else {
-            document.getElementById('header-home-button').style.display = 'none';
+            homeButton.style.display = 'none';
         }
     }
 }
@@ -316,15 +311,13 @@ class ViewUtils {
         return text;
     }
 
-    static newTag(tagName, className, text) {
+    static newTag(tagName, attributes, text) {
         const tag = document.createElement(tagName);
-        if(className) tag.setAttribute('class', className);
-        if(text) tag.innerHTML = text;
+        for(let attribute in attributes) {
+            tag.setAttribute(attribute, attributes[attribute]);
+        }
+        if(text) tag.innerHTML = text.split('\n').join('<br>');
         return tag;
-    }
-
-    static getOwn(tweets) {
-        return tweets.map((tweet) => tweet.author === controller._feed.user ? true : false);
     }
 }
 
@@ -335,170 +328,89 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(found, tweets, own, all) { // tweets: Array<Tweet>, own: Array<Boolean>
+    display(found, tweets, own, all, filterValues) { // tweets: Array<Tweet>, own: Array<Boolean>
         if(!found) {
-            this._container.innerHTML = '<p style="font-size: 4rem; margin-top: 10rem; text-align: center;">No such tweets were found.</p>';
+            this._container.innerHTML = '<p class="not-found">No such tweets were found.</p>';
             return;
         }
-        this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
-        const tweetsSection = ViewUtils.newTag('section', 'tweets');
-        tweetsSection.innerHTML = `
-        <button class="filters-button">Filters</button>
-        <div id="filter-block">
-            <textarea class="filter" placeholder="Author name" id='author-name-filter'></textarea>
-            <div class="filter" id='date-filter'>
-                <div class="date-filter-block from">
-                    <p class="date-filter-text">From</p>
-                    <div class="date-filter-lists">
-                        <select class="date-filter-list day" name="day-from" id='day-from-filter'>
-                            <option value="1" selected='selected'>1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                            <option value="23">23</option>
-                            <option value="24">24</option>
-                            <option value="25">25</option>
-                            <option value="26">26</option>
-                            <option value="27">27</option>
-                            <option value="28">28</option>
-                            <option value="29">29</option>
-                            <option value="30">30</option>
-                            <option value="31">31</option>
-                        </select>
-                        <select class="date-filter-list month" name="month-from" id='month-from-filter'>
-                            <option value="1" selected='selected'>1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="1">6</option>
-                            <option value="2">7</option>
-                            <option value="3">8</option>
-                            <option value="4">9</option>
-                            <option value="5">10</option>
-                            <option value="1">11</option>
-                            <option value="2">12</option>
-                        </select>
-                        <select class="date-filter-list year" name="year-from" id='year-from-filter'>
-                            <option value="1">2022</option>
-                            <option value="2">2021</option>
-                            <option value="3">2020</option>
-                            <option value="4">2019</option>
-                            <option value="5" selected='selected'>2018</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="date-filter-block to">
-                    <p class="date-filter-text">To</p>
-                    <div class="date-filter-lists">
-                        <select class="date-filter-list day" name="day-to" id='day-to-filter'>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                            <option value="23">23</option>
-                            <option value="24">24</option>
-                            <option value="25">25</option>
-                            <option value="26">26</option>
-                            <option value="27">27</option>
-                            <option value="28">28</option>
-                            <option value="29">29</option>
-                            <option value="30">30</option>
-                            <option value="31" selected='selected'>31</option>
-                        </select>
-                        <select class="date-filter-list month" name="month-to" id='month-to-filter'>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="1">6</option>
-                            <option value="2">7</option>
-                            <option value="3">8</option>
-                            <option value="4">9</option>
-                            <option value="5">10</option>
-                            <option value="1">11</option>
-                            <option value="2" selected='selected'>12</option>
-                        </select>
-                        <select class="date-filter-list year" name="year-to" id='year-to-filter'>
-                            <option value="1" selected='selected'>2022</option>
-                            <option value="2">2021</option>
-                            <option value="3">2020</option>
-                            <option value="4">2019</option>
-                            <option value="5">2018</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <textarea class="filter" placeholder="Tweet text" id='tweet-text-filter'></textarea>
-            <textarea class="filter" placeholder="Hashtags" id='hashtags-filter'></textarea>
-            <button id='filter-submit'>Filter</button>
-        </div>`
+        this._container.innerHTML = '';
+        this._displayNewTweetSection(this._container);
+        const tweetsSection = ViewUtils.newTag('section', { class: 'tweets' });
+        this._appendFilters(tweetsSection, filterValues);
         tweets.forEach((tweet, index) => {
-            const newTweet = ViewUtils.newTag('div', 'tweet');
-            newTweet.setAttribute('data-id', tweet.id);
+            const newTweet = ViewUtils.newTag('div', { class: 'tweet', 'data-id': tweet.id });
             const isOwn = own[index];
-            const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : newTweet;
+            const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : newTweet;
 
             const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-            authorInfoContainer.appendChild(ViewUtils.newTag('p', 'author-info', `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             if(isOwn) { 
-                const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
-                const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-                editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square edit own-tweet-tool'));
-                const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
-                deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash delete own-tweet-tool'));
+                const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
+                const editButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+                editButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-pen-to-square edit own-tweet-tool' }));
+                const deleteButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+                deleteButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-trash delete own-tweet-tool' }));
                 buttonsContainer.appendChild(editButton);
                 buttonsContainer.appendChild(deleteButton);
                 authorInfoContainer.appendChild(buttonsContainer);
                 newTweet.appendChild(authorInfoContainer);
             }
-            newTweet.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
-            newTweet.appendChild(ViewUtils.newTag('p', '', `${tweet.comments.length} replies`));
+            newTweet.appendChild(ViewUtils.newTag('p', { class: 'tweet-text' }, ViewUtils.wrapHashtags(tweet.text)));
+            newTweet.appendChild(ViewUtils.newTag('p', null, `${tweet.comments.length} replies`));
             tweetsSection.appendChild(newTweet);
         });
         if(!all) {
-            const loadMoreButtonContainer = ViewUtils.newTag('div', 'align-fix');
-            loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', 'load-more', 'Load more'));
+            const loadMoreButtonContainer = ViewUtils.newTag('div', { class: 'align-fix' });
+            loadMoreButtonContainer.appendChild(ViewUtils.newTag('button', { class: 'load-more' }, 'Load more'));
             tweetsSection.appendChild(loadMoreButtonContainer);
         }
         this._container.appendChild(tweetsSection);
+    }
+
+    _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
+        parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
+        const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
+        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'author1 author2 ...', id: 'author-name-filter'});
+        authorNameTextarea.value = filterValues.author || '';
+        const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter'});
+        tweetTextTextarea.value = filterValues.text || '';
+        const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: '#hashtag1 #hashtag2 ...', id: 'hashtags-filter' });
+        hashtagsTextarea.value = filterValues.hashtags ? filterValues.hashtags.join(' ') : ''; 
+
+        const dateFilterBlock = ViewUtils.newTag('div', { class: 'filter', id: 'date-filter' });
+        const dateFilterBlockFrom = ViewUtils.newTag('div', { class: 'date-filter-block from' });
+        dateFilterBlockFrom.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'From'));
+        const dateFromInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
+        dateFromInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-from' }));
+        dateFromInputContainer.value = filterValues.dateFrom;
+        dateFilterBlockFrom.appendChild(dateFromInputContainer);
+        const dateFilterBlockTo = ViewUtils.newTag('div', { class: 'date-filter-block to' });
+        dateFilterBlockTo.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'To'));
+        const dateToInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
+        dateToInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-to' }));
+        dateToInputContainer.value = filterValues.dateTo;
+        dateFilterBlockTo.appendChild(dateToInputContainer);
+        dateFilterBlock.appendChild(dateFilterBlockFrom);
+        dateFilterBlock.appendChild(dateFilterBlockTo);
+
+        filterBlock.appendChild(authorNameTextarea);
+        filterBlock.appendChild(dateFilterBlock);
+        filterBlock.appendChild(tweetTextTextarea);
+        filterBlock.appendChild(hashtagsTextarea);
+        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Filter'));
+        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
+
+        parent.appendChild(filterBlock);
+    }
+
+    _displayNewTweetSection(parent) {
+        const newTweetSection = ViewUtils.newTag('section', { class: 'new-tweet' });
+        newTweetSection.appendChild(ViewUtils.newTag('p', null, 'New tweet'));
+        newTweetSection.appendChild(ViewUtils.newTag('textarea', { placeholder: 'Input new tweet', id: 'new-tweet' }));
+        const postButtonContainer = ViewUtils.newTag('div', { class: 'new-tweet-button-container' });
+        postButtonContainer.appendChild(ViewUtils.newTag('button', { id: 'new-tweet-button' }, 'Post'));
+        newTweetSection.appendChild(postButtonContainer);
+        parent.appendChild(newTweetSection);
     }
 }
 
@@ -527,44 +439,43 @@ class TweetView {
 
     display(tweet, isOwn) {
         this._container.innerHTML = '';
-        const tweetContainer = ViewUtils.newTag('section', 'tweet');
-        tweetContainer.setAttribute('data-id', `${tweet.id}`);
-        const authorInfoContainer = isOwn ? ViewUtils.newTag('div', 'author-info-block') : tweetContainer;
+        const tweetContainer = ViewUtils.newTag('section', { class: 'tweet', 'data-id': tweet.id });
+        const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : tweetContainer;
 
         const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
-        authorInfoContainer.appendChild(ViewUtils.newTag('p', 'author-info', `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+        authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
         if(isOwn) { 
-            const buttonsContainer = ViewUtils.newTag('div', 'own-tweet-buttons');
-            const editButton = ViewUtils.newTag('button', 'own-tweet-button');
-            editButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-pen-to-square own-tweet-tool edit'));
-            const deleteButton = ViewUtils.newTag('button', 'own-tweet-button');
-            deleteButton.appendChild(ViewUtils.newTag('i', 'fa-solid fa-trash own-tweet-tool delete'));
+            const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
+            const editButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+            editButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-pen-to-square own-tweet-tool edit' }));
+            const deleteButton = ViewUtils.newTag('button', { class: 'own-tweet-button' });
+            deleteButton.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-trash own-tweet-tool delete' }));
             buttonsContainer.appendChild(editButton);
             buttonsContainer.appendChild(deleteButton);
             authorInfoContainer.appendChild(buttonsContainer);
             authorInfoContainer.style.marginRight = '10%';
             tweetContainer.appendChild(authorInfoContainer);
         }
-        tweetContainer.appendChild(ViewUtils.newTag('p', 'tweet-text', ViewUtils.wrapHashtags(tweet.text)));
+        tweetContainer.appendChild(ViewUtils.newTag('p', { class: 'tweet-text' }, ViewUtils.wrapHashtags(tweet.text)));
         this._container.appendChild(tweetContainer);
 
-        const commentsContainer = ViewUtils.newTag('section', 'comments');
+        const commentsContainer = ViewUtils.newTag('section', { class: 'comments' });
         tweet.comments.forEach((comment) => {
-            const currCommentContainer = ViewUtils.newTag('div', 'comment');
+            const currCommentContainer = ViewUtils.newTag('div', { class: 'comment' });
             const dateNumbers = ViewUtils.getDateNumbers(comment.date);
-            currCommentContainer.appendChild(ViewUtils.newTag('p', 'author-name', `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
-            currCommentContainer.appendChild(ViewUtils.newTag('p', 'comment-text', comment.text));
+            currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'author-name' }, `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
+            currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'comment-text' }, comment.text));
             commentsContainer.appendChild(currCommentContainer);
         });
         this._container.appendChild(commentsContainer);
 
-        const newCommentContainer = ViewUtils.newTag('section', 'new-comment');
-        newCommentContainer.appendChild(ViewUtils.newTag('p', '', 'Leave a comment'));
-        const commentTextarea = ViewUtils.newTag('input');
-        commentTextarea.setAttribute('id', 'new-comment-textarea');
-        commentTextarea.setAttribute('type', 'textarea');
-        commentTextarea.setAttribute('placeholder', 'Input text');
+        const newCommentContainer = ViewUtils.newTag('section', { class: 'new-comment' });
+        newCommentContainer.appendChild(ViewUtils.newTag('p', null, 'Leave a comment'));
+        const commentTextarea = ViewUtils.newTag('textarea', { id: 'new-comment-textarea', placeholder: 'Input comment' });
+        const newCommentButtonContainer = ViewUtils.newTag('div', { class: 'new-comment-button-container' });
+        newCommentButtonContainer.appendChild(ViewUtils.newTag('button', { id: 'new-comment-submit' }, 'Reply'));
         newCommentContainer.appendChild(commentTextarea);
+        newCommentContainer.appendChild(newCommentButtonContainer);
         this._container.appendChild(newCommentContainer);
     }
 }
@@ -594,6 +505,7 @@ class Controller {
 
     setCurrentUser(user) {
         this._feed.user = user;
+        window.localStorage.lastUser = user;
         this._headerView.display(user, false);
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         this._addHeaderEventListeners();
@@ -625,10 +537,11 @@ class Controller {
 
     _initFeed() {
         const tweets = this._feed.getPage();
-        const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+        const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(true, tweets, own);
         this._currShownTweets = 10;
-        this._headerView.display('', false);
+        const user = this._feed.user;
+        this._headerView.display(user, user ? true : false);
     }
     
     getFeed(skip, top, filterConfig) {
@@ -638,9 +551,9 @@ class Controller {
             this._headerView.display(this._feed.user, true);
         }
         else {
-            const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+            const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
-            this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0);
+            this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0, this._currFilterConfig);
             this._headerView.display(this._feed.user, false);
         }
         this._filterView = new FilterView('filter-block');
@@ -672,20 +585,7 @@ class Controller {
     showLoginForm() {
         const self = this;
 
-        document.getElementById('main-container').innerHTML = `
-        <section class="auth-window">
-            <div class="auth-window-header">
-                <p class="auth-window-header-text">Logging In</p>
-            </div>
-            <form class="auth-window-form">
-                <textarea class="auth-window-textarea username" required placeholder="Input username"></textarea>
-                <textarea class="auth-window-textarea password" required placeholder="Input password"></textarea>
-                <button id="auth-window-button">Log In</button>
-            </form>
-            <p class="auth-window-misc-text">Not a user yet? <a id="signup-link" class="link">Sign up</a></p>
-            <p class="auth-window-misc-text"><a id="main-page-link" class="link">Return to main page</a></p>
-        </section>
-        `;
+        self._displayAuthWindow(document.getElementById('main-container'), true);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', (e) => {
@@ -695,6 +595,9 @@ class Controller {
             const possibleUser = { username, password };
             if(userList.has(possibleUser)) {
                 self.setCurrentUser(username);
+            }
+            else {
+                alert('Such a user doesn\'t exist or you have misspelled something.');
             }
         });
 
@@ -710,21 +613,7 @@ class Controller {
     showSignupForm() {
         const self = this;
 
-        document.getElementById('main-container').innerHTML = `
-        <section class="auth-window">
-            <div class="auth-window-header">
-                <p class="auth-window-header-text">Signing Up</p>
-            </div>
-            <form class="auth-window-form">
-                <textarea class="auth-window-textarea username" required placeholder="Input username"></textarea>
-                <textarea class="auth-window-textarea password" reqired placeholder="Input password"></textarea>
-                <textarea class="auth-window-textarea password confirm" required placeholder="Confirm password"></textarea>
-                <button id="auth-window-button">Sign up</button>
-            </form>
-            <p class="auth-window-misc-text">Already a user? <a id="login-link" class="link">Log in</a></p>
-            <p class="auth-window-misc-text"><a id="main-page-link" class="link">Return to main page</a></p>
-        </section>
-        `;
+        self._displayAuthWindow(document.getElementById('main-container'), false);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', (e) => {
@@ -733,7 +622,7 @@ class Controller {
             const password = form.getElementsByClassName('password')[0].value;
             const passwordConfirm = form.getElementsByClassName('confirm')[0].value;
             if(password !== passwordConfirm) {
-                self.showSignupForm();
+                alert('The passwords don\'t match up. Make sure they are identical.');
                 return;
             }
             const newUser = { username, password };
@@ -804,48 +693,24 @@ class Controller {
             });
         }  
 
-        document.getElementById('new-tweet').addEventListener('keyup', (e) => {
-            if(e.keyCode !== 13) return;
-            self.addTweet(e.target.value);
-        });
-
-        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
-            const target = e.target;
-            if(target.tagName !== 'I') return;
-            let parentTweet = target;
-            while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
-            const tweetId = parentTweet.dataset.id;
-            if(target.classList.contains('edit')) {
-                const tweetEditTextarea = ViewUtils.newTag('textarea');
-                tweetEditTextarea.style.position = 'fixed';
-                tweetEditTextarea.style.width = '700px';
-                tweetEditTextarea.style.top = '40%';
-                tweetEditTextarea.style.right = 'calc(50% - 350px)';
-                tweetEditTextarea.style.resize = 'vertical';
-                tweetEditTextarea.style.fontSize = '1.5rem';
-                tweetEditTextarea.value = self._feed.get(tweetId).text;
-                const body = document.body;
-                body.appendChild(tweetEditTextarea);
-                tweetEditTextarea.addEventListener('keyup', (e) => {
-                    const target = e.target;
-                    if(e.keyCode !== 13) return;
-                    self.editTweet(tweetId, target.value);
-                    body.removeChild(target);
-                });
-            }
-            if(target.classList.contains('delete')) {
-                const choice = confirm('Are you sure?');
-                if(choice) {
-                    self.removeTweet(tweetId);
-                    self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
-                }
-            }
-        });
+        // this внутри ивента ссылается не на контроллер, поэтому bind
+        document.getElementsByClassName('tweets')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             const target = e.target
             if(target.tagName !== 'SPAN') return;
-            self.getFeed(0, 10, { hashtags: [target.innerHTML] });
+            self._currFilterConfig = {
+                author: '',
+                dateFrom: new Date(0),
+                dateTo: new Date(),
+                text: '',
+                hashtags: [ target.innerHTML ]
+            }
+            self.getFeed(0, 10, self._currFilterConfig);
+        });
+
+        document.getElementById('new-tweet-button').addEventListener('click', () => {
+            self.addTweet(document.getElementById('new-tweet').value);
         });
     }
 
@@ -861,73 +726,122 @@ class Controller {
             self._createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea);
             self.getFeed(0, 10, self._currFilterConfig);
         });
+
+        document.getElementById('filter-clear').addEventListener('click', () => {
+            authorTextarea.value = '';
+            dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0].children[0].value = '';
+            dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0].children[0].value = '';
+            tweetTextTextarea.value = '';
+            hashtagsTextarea.value = '';
+        });
     }
 
     _addTweetEventListeners() {
         const self = this;
 
         const newCommentTextarea = document.getElementById('new-comment-textarea');
-        newCommentTextarea.addEventListener('keyup', (e) => {
-            if(e.keyCode !== 13) return;
-            const tweet = document.getElementsByClassName('tweet')[0];
-            const tweetId = tweet.dataset.id;
+        document.getElementById('new-comment-submit').addEventListener('click', () => {
+            const tweetId = document.getElementsByClassName('tweet')[0].dataset.id;
             if(!self._feed.addComment(tweetId, newCommentTextarea.value)) return;
             self.showTweet(tweetId);
         });
 
-        document.getElementsByClassName('tweet')[0].addEventListener('click', (e) => {
-            const target = e.target;
-            if(target.tagName !== 'I') return;
-            let parentTweet = target;
-            while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
-            const tweetId = parentTweet.dataset.id;
-            if(target.classList.contains('edit')) {
-                const tweetEditTextarea = ViewUtils.newTag('textarea');
-                tweetEditTextarea.style.position = 'fixed';
-                tweetEditTextarea.style.width = '700px';
-                tweetEditTextarea.style.top = '40%';
-                tweetEditTextarea.style.right = 'calc(50% - 350px)';
-                tweetEditTextarea.style.resize = 'vertical';
-                tweetEditTextarea.style.fontSize = '1.5rem';
-                tweetEditTextarea.value = self._feed.get(tweetId).text;
-                const body = document.body;
-                body.appendChild(tweetEditTextarea);
-                tweetEditTextarea.addEventListener('keyup', (e) => {
-                    const target = e.target;
-                    if(e.keyCode !== 13) return;
-                    self.editTweet(tweetId, target.value);
-                    body.removeChild(target);
-                });
-            }
-            if(target.classList.contains('delete')) {
-                const choice = confirm('Are you sure?');
-                if(choice) {
-                    self.removeTweet(tweetId);
-                    self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
-                }
-            }
-        });
+        document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
     }
 
     _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
         const from = dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0];
-        const choicesFrom = [from.children[1], from.children[0], from.children[2]]; // классу даты нужен сначала месяц, потом день
-        const dateFrom = new Date(choicesFrom.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
+        const dateFrom = from.children[0].valueAsDate;
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
-        const choicesTo = [to.children[1], to.children[0], to.children[2]];
-        const dateTo = new Date(choicesTo.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
+        const dateTo = to.children[0].valueAsDate;
         this._currFilterConfig = {
             'author': authorTextarea.value,
-            dateFrom,
-            dateTo,
+            'dateFrom': dateFrom,
+            'dateTo': dateTo,
             'text': tweetTextTextarea.value,
             'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ').filter((hashtag) => hashtag[0] === '#') : [],
         };
     }
+
+    _setOwnTweetButtonsEventListeners(e) {
+        const target = e.target;
+        if(target.tagName !== 'I') return;
+        let parentTweet = target;
+        while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
+        const tweetId = parentTweet.dataset.id;
+        if(target.classList.contains('edit')) {
+            const tweetEditTextareaContainer = ViewUtils.newTag('div', { id: 'tweet-edit-textarea-container' });
+            const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
+            tweetEditTextarea.value = this._feed.get(tweetId).text;
+            tweetEditTextareaContainer.appendChild(tweetEditTextarea);
+            const doneButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-done' }, 'Done');
+            const cancelButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-cancel' }, 'Cancel');
+            const buttonContainer = ViewUtils.newTag('div', { class: 'tweet-active-edit-button-container' });
+            buttonContainer.appendChild(doneButton);
+            buttonContainer.appendChild(cancelButton);
+            tweetEditTextareaContainer.appendChild(buttonContainer);
+            const body = document.body;
+            body.appendChild(tweetEditTextareaContainer);
+            document.getElementById('tweet-edit-done').addEventListener('click', () => {
+                this.editTweet(tweetId, tweetEditTextarea.value);
+                body.removeChild(tweetEditTextareaContainer);
+            });
+            document.getElementById('tweet-edit-cancel').addEventListener('click', () => {
+                body.removeChild(tweetEditTextareaContainer);
+            })
+        }
+        if(target.classList.contains('delete')) {
+            const choice = confirm('Are you sure?');
+            if(choice) {
+                this.removeTweet(tweetId);
+                this.getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
+            }
+        }
+    }
+
+    _displayAuthWindow(parent, isLogin) {
+        parent.innerHTML = '';
+
+        const authWindow = ViewUtils.newTag('section', { class: 'auth-window' });
+        
+        const authWindowHeader = ViewUtils.newTag('div', { class: 'auth-window-header' });
+        authWindowHeader.appendChild(ViewUtils.newTag('p', { class: 'auth-window-header-text' }, isLogin ? 'Logging in' : 'Signing up'));
+        
+        const form = ViewUtils.newTag('form', { class: 'auth-window-form' });
+        form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea username', required: '', placeholder: 'Input username' }));
+        form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
+        if(!isLogin) form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
+        form.appendChild(ViewUtils.newTag('button', { id: 'auth-window-button' }, isLogin ? 'Log in' : 'Sign up'));
+
+        let otherActionText;
+        
+        if(!isLogin) {
+            otherActionText = ViewUtils.newTag('p', { class: 'auth-window-misc-text' }, 'Already a user? ');
+            otherActionText.appendChild(ViewUtils.newTag('a', { id: 'login-link', class: 'link' }, 'Log in'));
+        }
+        else {
+            otherActionText = ViewUtils.newTag('p', { class: 'auth-window-misc-text' }, 'Not a user yet? ');
+            otherActionText.appendChild(ViewUtils.newTag('a', { id: 'signup-link', class: 'link' }, 'Sign up'));
+        }
+
+        const returnToMainPageText = ViewUtils.newTag('p', { class: 'auth-window-misc-text' });
+        returnToMainPageText.appendChild(ViewUtils.newTag('a', { id: 'main-page-link', class: 'link' }, 'Return to main page'));
+
+        authWindow.appendChild(authWindowHeader);
+        authWindow.appendChild(form);
+        authWindow.appendChild(otherActionText);
+        authWindow.appendChild(returnToMainPageText);
+
+        parent.appendChild(authWindow);
+    }
+
+    _getOwn(tweets) {
+        return tweets.map((tweet) => tweet.author === this._feed.user ? true : false);
+    }
 }
 
 class UserList {
-    _users;
+    _users = [];
 
     constructor() {
         this.restore();
@@ -943,20 +857,18 @@ class UserList {
     }
 
     save() {
-        window.localStorage.users = this._users.map((user) => `${user.username}:${user.password};`).join('');
+        window.localStorage.users = JSON.stringify(this._users);
     }
 
     restore() {
-        this._users = window.localStorage.users.split(';').filter((v) => v !== '').map((userstr) => {
-            const userarr = userstr.split(':');
-            return { username: userarr[0], password: userarr[1] };
-        });
+        this._users = JSON.parse(window.localStorage.users);
     }
 }
 
 function initLocalStorage(usersstr, tweetsstr) {
     window.localStorage.setItem('users', usersstr);
     window.localStorage.setItem('tweets', tweetsstr);
+    window.localStorage.setItem('lastUser', '');
 }
 
 
@@ -1176,300 +1088,10 @@ const tweets = [
     ),
 ];
 
-const usersstr = 'Zoe:pass1;Ulrich:pass2;';
-const tweetsstr = tweets.map((tweet) => tweet.toString()).join('');
+const usersstr = '[{"username":"Zoe","password":"pass"},{"username":"Ulrich","password":"pass"}]';
+const tweetsstr = JSON.stringify(tweets);
 
-if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(usersstr, tweetsstr);
+if(!window.localStorage.users || !window.localStorage.tweets || window.localStorage.lastUser === undefined) initLocalStorage(usersstr, tweetsstr);
 
 const userList = new UserList();
 const controller = new Controller(tweets);
-
-// function tests() {
-//     let testsPassed = 0;
-
-//     const feed = new TweetFeed(tweets);
-//     feed.user = 'TEST_USER';
-//     let expecting;
-//     let actual;
-//     console.log(feed);
-
-//     console.log('test 1: feed.getPage()');
-//     expecting = tweets.slice(14, 24).reverse();
-//     actual = feed.getPage();
-//     if (actual.every((v, i) => actual[i] === expecting[i])) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 2: feed.getPage(0, 10)');
-//     expecting = tweets.slice(14, 24).reverse();
-//     actual = feed.getPage(0, 10);
-//     if (actual.every((v, i) => actual[i] === expecting[i])) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 3: feed.getPage(10, 10)');
-//     expecting = tweets.slice(4, 14).reverse();
-//     actual = feed.getPage(10, 10);
-//     if (actual.every((v, i) => actual[i] === expecting[i])) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 4: feed.getPage(0, 10, {author: \'e\'})');
-//     expecting = [tweets[22], tweets[20], tweets[19], tweets[14], tweets[13], tweets[10], tweets[8], tweets[6], tweets[5], tweets[3], tweets[2], tweets[0]];
-//     actual = feed.getPage(0, 10, {author: 'e'});
-//     if (actual.every((v, i) => actual[i] === expecting[i])) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 5: feed.getPage(0, 5, {hashtags: [\'tweet\']})');
-//     expecting = [tweets[18], tweets[6]];
-//     actual = feed.getPage(0, 5, {hashtags: ['tweet']});
-//     if (actual.every((v, i) => actual[i] === expecting[i])) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 6: feed.get(\'13\')');
-//     expecting = tweets[12];
-//     actual = feed.get('13');
-//     if (expecting === actual) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 7: feed.get(\'not an actual id\')');
-//     expecting = undefined;
-//     actual = feed.get('not an actual id');
-//     if (expecting === actual) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 8: Tweet.validate(new Tweet(\'1\', \'hi there\', new Date(), \'someone\', []))');
-//     if (Tweet.validate(new Tweet('1', 'hi there', new Date(), 'someone', []))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 9: Tweet.validate(feed.get(\'3\'))');
-//     if (Tweet.validate(feed.get('3'))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 10: Tweet.validate(new Tweet(\'id\', \'\', new Date(), \'e\', []))');
-//     if (Tweet.validate(new Tweet('id', '', new Date(), 'e', []))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 11: Tweet.validate(new Tweet(\'\', \'text\', new Date(), \'a beeper perhaps\', []))');
-//     if (!Tweet.validate(new Tweet('', 'text', new Date(), 'a beeper perhaps', []))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 12: Tweet.validate(new Tweet(\'123\', \'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols\', new Date(), \'some very wordy fella\', []))');
-//     if (!Tweet.validate(new Tweet('123', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols', new Date(), 'some very wordy fella', []))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 13: Tweet.validate(new Tweet(\'42\', \'i always say morning instead of good morning\', new Date(), \'some very shady fella\', []))');
-//     if (Tweet.validate(new Tweet('42', 'i always say morning instead of good morning', new Date(), 'some very shady fella', []))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 14: Tweet.validate(new Tweet(\'256\', \'who am I?\', new Date(), \'\', []))');
-//     if (!Tweet.validate(new Tweet('256', 'who am I?', new Date(), '', []))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 15: Tweet.validate(new Tweet(\'512\', \'alrighty then\', new Date(), \'some very agreeable fella\',  {}))');
-//     if (!Tweet.validate(new Tweet('512', 'alrighty then', new Date(), 'some very agreeable fella', {}))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 16: feed.add(\'i\'m a text!\')');
-//     feed.add('i\'m a text!');
-//     actual = feed.getPage(0, 25)[0];
-//     if (
-//         Tweet.validate(actual) &&
-//         actual.id === '25' &&
-//         actual.text === 'i\'m a text!' &&
-//         actual.date &&
-//         actual.author === 'TEST_USER' &&
-//         actual.comments instanceof Array &&
-//         actual.comments.length === 0) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 17: feed.edit(\'25\', \'i\'m still a text, but different!\') (current user is the author)');
-//     feed.edit('25', 'i\'m still a text, but different!');
-//     if (feed.getPage(0, 25)[0].text === 'i\'m still a text, but different!') {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     feed.user = 'OTHER_USER';
-//     console.log('test 18: feed.edit(\'25\', \'i\'m yet another text!\') (current user is not the author)');
-//     feed.edit('25', 'i\'m yet another text!');
-//     if (feed.getPage(0, 25)[0].text === 'i\'m still a text, but different!') {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-//     feed.user = 'TEST_USER';
-
-//     console.log('');
-
-//     console.log('test 19: feed.edit(\'25\', \'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols\')');
-//     if (!feed.edit('25', 'this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols this text is over 280 symbols')) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 20: feed.remove(\'25\') (user is the author)');
-//     if (feed.remove('25')) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 21: feed.remove(\'15\') (user is not he author)');
-//     if (!feed.remove('15')) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 22: feed.remove(\'not an actual id\')');
-//     if (!feed.remove('not an actual id')) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 23: Comment.validate(new Comment(\'c1024\', \'some text\', \'some very unoriginal fella\'))');
-//     if (Comment.validate(new Comment('c1024', 'some text', new Date(), 'some very unoriginal fella'))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 24: Comment.validate(new Comment(\'\', \'\', \'some empty fella\'))');
-//     if (!Comment.validate(new Comment('', '', new Date(), 'some empty fella'))) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 25: feed.addComment(\'2\', \'what a great tweet!\')');
-//     if (feed.addComment('2', 'what a great tweet!')) {
-//         const comment = tweets[1].comments[0];
-//         if (comment.id === 'c56' &&
-//         comment.text === 'what a great tweet!' &&
-//         comment.date &&
-//         comment.author === 'TEST_USER') {
-//             testsPassed++;
-//             console.log('passed');
-//         } else console.log('FAILED');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 26: feed.user = \'OTHER_USER\'');
-//     feed.user = 'OTHER_USER';
-//     if (feed.user === 'OTHER_USER') {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 27: feed.addAll([\n    new Tweet(\'190\', \'tweettext\', new Date(), \'Hans\', []),\n    new Tweet(\'11\', \'anotherTweetText\', new Date(), \'another Hans\', [new Comment(\'c222\', \'morning\', new Date(), \'another Hans\')])\n])');
-//     if (feed.addAll([
-//         new Tweet('190', 'tweettext', new Date(), 'Hans', []),
-//         new Tweet('11', 'anotherTweetText', new Date(), 'another Hans', [new Comment('c222', 'morning', new Date(), 'another Hans')]),
-//     ]).length === 0 && feed.get('190') && feed.get('11')) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 28: feed.addAll([\n    new Tweet([\'\', \'tweettext\', new Date(), \'another Hans\', [])\n    new Tweet(\'188\', \'tweetText\', new Date(), \'another Hans\', [])\n])');
-//     const temp = new Tweet('', 'tweettext', new Date(), 'another Hans', []);
-//     if (feed.addAll([temp, new Tweet('188', 'tweetText', new Date(), 'another Hans', [])])[0] === temp && feed.get('188')) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('test 29: feed.clear()');
-
-//     feed.clear();
-//     if (feed.getPage(0, 10).length === 0) {
-//         testsPassed++;
-//         console.log('passed');
-//     } else console.log('FAILED');
-
-//     console.log('');
-
-//     console.log('');
-//     console.log('==========================================');
-//     console.log('');
-
-//     console.log(`${testsPassed}/29 tests passed`);
-// }
-
-// tests();
