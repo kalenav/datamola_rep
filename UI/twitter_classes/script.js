@@ -913,9 +913,9 @@ class TweetFeedApiService {
         });
     }
 
-    tweet(author, text, dateFrom, dateTo, from, count, hashtags) {
+    getTweets(author, text, dateFrom, dateTo, from, count, hashtags) {
         return fetch(this._serverAddress + '/tweet', {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'accept': 'application/json',
