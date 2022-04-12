@@ -947,7 +947,7 @@ class TweetFeedApiService {
     } 
 
     editTweet(id, auth, text) {
-        return fetch(this._serverAddress + '/tweet', {
+        return fetch(this._serverAddress + `/tweet/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -957,11 +957,19 @@ class TweetFeedApiService {
             body: JSON.stringify({
                 text
             }),
-            path: id,
         });
     }
 
-    removeTweet()
+    removeTweet(id, auth, text) {
+        return fetch(this._serverAddress + `/tweet/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': auth,
+            },
+        });
+    }
 }
 
 
