@@ -261,6 +261,8 @@ class TweetFeed {
                 new Date(com._createdAt),
                 com._author
             ))));
+
+        this._user = window.localStorage.lastUser;
     }
 }
 
@@ -316,10 +318,6 @@ class ViewUtils {
         }
         if(text) tag.innerHTML = text;
         return tag;
-    }
-
-    static getOwn(tweets) {
-        return tweets.map((tweet) => tweet.author === controller._feed.user ? true : false);
     }
 }
 
@@ -536,11 +534,11 @@ class Controller {
 
     _initFeed() {
         const tweets = this._feed.getPage();
-        const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+        const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(true, tweets, own);
         this._currShownTweets = 10;
-        const lastUser = window.localStorage.lastUser;
-        this._headerView.display(lastUser, lastUser ? true : false);
+        const user = this._feed.user;
+        this._headerView.display(user, user ? true : false);
     }
     
     getFeed(skip, top, filterConfig) {
@@ -840,6 +838,10 @@ class Controller {
         authWindow.appendChild(returnToMainPageText);
 
         parent.appendChild(authWindow);
+    }
+
+    _getOwn(tweets) {
+        return tweets.map((tweet) => tweet.author === this._feed.user ? true : false);
     }
 }
 
