@@ -550,26 +550,53 @@ class Controller {
     }
     
     getFeed(skip, top, filterConfig) {
-        const tweets = this._feed.getPage(skip, top, filterConfig);
-        if(tweets.length === 0) {
-            this._tweetFeedView.display(false);
-            this._headerView.display(this._user, true);
-            const self = this;
-            document.getElementById('not-found-link').addEventListener('click', () => {
-                self.getFeed();
-            });
-            return;
-        }
-        else {
-            const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
-            const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
-            this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0, this._currFilterConfig);
-            this._headerView.display(this._user, false);
-        }
-        this._filterView = new FilterView('filter-block');
-        this._addTweetFeedEventListeners();
-        this._addFilterEventListeners();
-        this._currShownTweets = tweets.length;
+        const self = this;
+        const hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
+
+        api.getTweets(
+            filterConfig.author, 
+            filterConfig.text,
+            filterConfig.dateFrom,
+            filterConfig.dateTo,
+            skip,
+            top,
+            hashtagsStr
+        )
+        .then(response => response.json())
+        .then(response => {
+            const tweets = [...response];
+            if(tweets.length === 0) {
+                self._tweetFeedView.display(false);
+                self._headerView.display(self._user, true);
+                document.getElementById('not-found-link').addEventListener('click', () => {
+                    self.getFeed();
+                });
+            }
+            else {
+                const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
+                api.getTweets(
+                    filterConfig.author, 
+                    filterConfig.text,
+                    filterConfig.dateFrom,
+                    filterConfig.dateTo,
+                    skip,
+                    top + 1,
+                    hashtagsStr
+                )
+                .then(response => response.json())
+                .then(response => [...response].length > tweets.length)
+                .then(allTweetsShown => {
+                    self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
+                    self._headerView.display(self._user, false)
+                })
+                .then(() => {
+                    self._filterView = new FilterView('filter-block');
+                    self._addTweetFeedEventListeners();
+                    self._addFilterEventListeners();
+                    self._currShownTweets = tweets.length;
+                });
+            }
+        })
     }
     
     showTweet(id) {
@@ -1183,9 +1210,3 @@ if(window.localStorage.lastUser === undefined) {
 
 const api = new TweetFeedApiService('https://jslabapi.datamola.com');
 const controller = new Controller();
-
-api.getTweets()
-.then(response => response.json())
-.then(response => {
-    console.log(response);
-});
