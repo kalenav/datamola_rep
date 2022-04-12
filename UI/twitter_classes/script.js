@@ -695,11 +695,18 @@ class Controller {
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             const target = e.target
             if(target.tagName !== 'SPAN') return;
-            self.getFeed(0, 10, { hashtags: [target.innerHTML] });
+            self._currFilterConfig = {
+                author: '',
+                dateFrom: new Date(0),
+                dateTo: new Date(),
+                text: '',
+                hashtags: [ target.innerHTML ]
+            }
+            self.getFeed(0, 10, self._currFilterConfig);
         });
 
         document.getElementById('new-tweet-button').addEventListener('click', () => {
-            self.addTweet(document.getElementById('new-tweet').value);
+            self.addTweet(`${document.getElementById('new-tweet').value}`);
         });
     }
 
