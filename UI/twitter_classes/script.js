@@ -739,7 +739,7 @@ class Controller {
             self.showTweet(tweetId);
         });
 
-        document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners);
+        document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
     }
 
     _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
