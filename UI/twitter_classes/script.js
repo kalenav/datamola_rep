@@ -998,6 +998,17 @@ class TweetFeedApiService {
             }),
         });
     }
+
+    removeComment(tweetId, id, auth) {
+        return fetch(this._serverAddress + `/tweet/${tweetId}/comment/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': auth,
+            },
+        });
+    }
 }
 
 
