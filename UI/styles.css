@@ -421,6 +421,17 @@ textarea.filter:focus-visible {
     height: 100vh;
 }
 
+.tweet-active-edit-button {
+    margin: 1rem 2rem 0 0;
+}
+
+.tweet-active-edit-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
 @media all and (max-width: 1400px) {
     .filter {
         width: 24%;

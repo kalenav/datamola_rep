@@ -743,14 +743,27 @@ class Controller {
             const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
             tweetEditTextarea.value = this._feed.get(tweetId).text;
             tweetEditTextareaContainer.appendChild(tweetEditTextarea);
+            const doneButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-done' }, 'Done');
+            const cancelButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-cancel' }, 'Cancel');
+            const buttonContainer = ViewUtils.newTag('div', { class: 'tweet-active-edit-button-container' });
+            buttonContainer.appendChild(doneButton);
+            buttonContainer.appendChild(cancelButton);
+            tweetEditTextareaContainer.appendChild(buttonContainer);
             const body = document.body;
             body.appendChild(tweetEditTextareaContainer);
-            tweetEditTextarea.addEventListener('keyup', (e) => {
-                const target = e.target;
-                if(e.keyCode !== 13) return;
-                this.editTweet(tweetId, target.value);
+            document.getElementById('tweet-edit-done').addEventListener('click', () => {
+                this.editTweet(tweetId, tweetEditTextarea.value);
                 body.removeChild(tweetEditTextareaContainer);
             });
+            document.getElementById('tweet-edit-cancel').addEventListener('click', () => {
+                body.removeChild(tweetEditTextareaContainer);
+            })
+            // tweetEditTextarea.addEventListener('keyup', (e) => {
+            //     const target = e.target;
+            //     if(e.keyCode !== 13) return;
+            //     this.editTweet(tweetId, target.value);
+            //     body.removeChild(tweetEditTextareaContainer);
+            // });
         }
         if(target.classList.contains('delete')) {
             const choice = confirm('Are you sure?');
