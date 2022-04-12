@@ -330,7 +330,9 @@ class TweetFeedView {
 
     display(found, tweets, own, all, filterValues) { // tweets: Array<Tweet>, own: Array<Boolean>
         if(!found) {
-            this._container.innerHTML = '<p class="not-found">No such tweets were found.</p>';
+            this._container.innerHTML = '';
+            this._container.appendChild(ViewUtils.newTag('p', { class: 'not-found' }, 'No such tweets were found.'));
+            this._container.appendChild(ViewUtils.newTag('a', { class: 'not-found link', id: 'not-found-link' }, 'Return to main page'));
             return;
         }
         this._container.innerHTML = '';
@@ -549,6 +551,11 @@ class Controller {
         if(tweets.length === 0) {
             this._tweetFeedView.display(false);
             this._headerView.display(this._feed.user, true);
+            const self = this;
+            document.getElementById('not-found-link').addEventListener('click', () => {
+                self.getFeed();
+            });
+            return;
         }
         else {
             const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);

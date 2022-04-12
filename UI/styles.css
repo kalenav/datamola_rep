@@ -412,6 +412,12 @@ textarea.filter:focus-visible {
     text-align: center;
 }
 
+.not-found.link {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 2rem;
+}
+
 #tweet-edit-textarea {
     width: 700px;
     resize: vertical;
