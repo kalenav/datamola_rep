@@ -344,7 +344,7 @@ class TweetFeedView {
             const isOwn = own[index];
             const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : newTweet;
 
-            const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+            const dateNumbers = ViewUtils.getDateNumbers(new Date(tweet.createdAt));
             authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             if(isOwn) { 
                 const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
@@ -484,6 +484,7 @@ class TweetView {
 
 class Controller {
     _user;
+    _token;
     _headerView;
     _tweetFeedView;
     _filterView;
@@ -507,17 +508,13 @@ class Controller {
 
     setCurrentUser(user) {
         this._user = user;
-        window.localStorage.lastUser = user;
         this._headerView.display(user, false);
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         this._addHeaderEventListeners();
     }
     
     addTweet(text) {
-        if(this._feed.add(text)) {
-            this._currShownTweets++;
-            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
-        }
+        api.addTweet(text);
     }
     
     editTweet(id, text) {
@@ -538,19 +535,23 @@ class Controller {
     }
 
     _initFeed() {
-        const tweets = this._feed.getPage();
-        const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
-        this._tweetFeedView.display(true, tweets, own);
-        this._currShownTweets = 10;
-        const user = this._feed.user;
-        this._headerView.display(user, user ? true : false);
+        api.getTweets()
+        .then(response => response.json())
+        .then(response => {
+            const tweets = [...response];
+            const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
+            this._tweetFeedView.display(true, tweets, own);
+            this._currShownTweets = 10;
+            const user = this._user;
+            this._headerView.display(user, user ? true : false)
+        });
     }
     
     getFeed(skip, top, filterConfig) {
         const tweets = this._feed.getPage(skip, top, filterConfig);
         if(tweets.length === 0) {
             this._tweetFeedView.display(false);
-            this._headerView.display(this._feed.user, true);
+            this._headerView.display(this._user, true);
             const self = this;
             document.getElementById('not-found-link').addEventListener('click', () => {
                 self.getFeed();
@@ -558,10 +559,10 @@ class Controller {
             return;
         }
         else {
-            const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
+            const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
             this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0, this._currFilterConfig);
-            this._headerView.display(this._feed.user, false);
+            this._headerView.display(this._user, false);
         }
         this._filterView = new FilterView('filter-block');
         this._addTweetFeedEventListeners();
@@ -571,11 +572,11 @@ class Controller {
     
     showTweet(id) {
         const tweet = this._feed.get(id);
-        if(tweet) this._tweetView.display(tweet, tweet.author === this._feed.user);
+        if(tweet) this._tweetView.display(tweet, tweet.author === this._user);
         this._addTweetEventListeners();
         this._currShownTweets = 0;
         this._currFilterConfig = {};
-        this._headerView.display(this._feed.user, true);
+        this._headerView.display(this._user, true);
     }
 
     toggleFilters() {
@@ -599,13 +600,18 @@ class Controller {
             e.preventDefault(); // чтобы не переходило на страницу с твитами само по себе
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
-            const possibleUser = { username, password };
-            if(userList.has(possibleUser)) {
-                self.setCurrentUser(username);
-            }
-            else {
-                alert('Such a user doesn\'t exist or you have misspelled something.');
-            }
+            api.login(username, password)
+            .then(response => response.json()) 
+            .then(response => {
+                if(response.ok) {
+                    self.setCurrentUser(username);
+                    window.localStorage.lastUser = username;
+                    window.localStorage.lastUserPassword = password;
+                }
+                else {
+                    alert('Such a user doesn\'t exist or you have misspelled something.');
+                }
+            });
         });
 
         document.getElementById('signup-link').addEventListener('click', () => {
@@ -665,7 +671,7 @@ class Controller {
 
         window.addEventListener('load', () => { 
             document.getElementById('header-login-button').addEventListener('click', (e) => {
-                if(!self._feed.user) {
+                if(!self._user) {
                     self.showLoginForm();
                 }
                 else {
@@ -843,7 +849,7 @@ class Controller {
     }
 
     _getOwn(tweets) {
-        return tweets.map((tweet) => tweet.author === this._feed.user ? true : false);
+        return tweets.map((tweet) => tweet.author === this._user ? true : false);
     }
 
     _displayErrorPage() {
@@ -859,32 +865,16 @@ class Controller {
     }
 
     _restoreUser() {
-        this._user = window.localStorage.lastUser;
-    }
-}
-
-class UserList {
-    _users = [];
-
-    constructor() {
-        this.restore();
-    }
-
-    addUser(user) {
-        this._users.push(user);
-        this.save();
-    }
-
-    has(user) {
-        return this._users.some((el) => el.username === user.username && el.password === user.password);
-    }
-
-    save() {
-        window.localStorage.users = JSON.stringify(this._users);
-    }
-
-    restore() {
-        this._users = JSON.parse(window.localStorage.users);
+        const lastUser = window.localStorage.lastUser;
+        const lastUserPassword = window.localStorage.lastUserPassword;
+        if(api.login(lastUser, lastUserPassword)
+        .then(response => response.json())
+        .then(response => response.ok)) {
+            this._user = lastUser;
+        }
+        else {
+            this._user = '';
+        }
     }
 }
 
@@ -1184,14 +1174,13 @@ const tweets = [
     ),
 ];
 
-const usersstr = '[{"username":"Zoe","password":"pass"},{"username":"Ulrich","password":"pass"}]';
-const tweetsstr = JSON.stringify(tweets);
+if(window.localStorage.lastUser === undefined) {
+    window.localStorage.lastUser = '';
+    window.localStorage.lastUserPassword = '';
+}
 
-if(!window.localStorage.users || !window.localStorage.tweets || window.localStorage.lastUser === undefined) initLocalStorage(usersstr, tweetsstr);
-
-const userList = new UserList();
-const controller = new Controller(tweets);
 const api = new TweetFeedApiService('https://jslabapi.datamola.com');
+const controller = new Controller(tweets);
 
 api.getTweets()
 .then(response => response.json())
