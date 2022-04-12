@@ -955,12 +955,13 @@ class TweetFeedApiService {
                 'Authorization': auth,
             },
             body: JSON.stringify({
-                login,
-                password,
+                text
             }),
             path: id,
         });
     }
+
+    removeTweet()
 }
 
 
