@@ -970,6 +970,20 @@ class TweetFeedApiService {
             },
         });
     }
+
+    addComment(tweetId, auth, text) {
+        return fetch(this._serverAddress + `/tweet/${tweetId}/comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': auth,
+            },
+            body: JSON.stringify({
+                text,
+            }),
+        });
+    }
 }
 
 
