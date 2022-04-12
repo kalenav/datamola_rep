@@ -893,8 +893,8 @@ class TweetFeedApiService {
                 'accept': 'application/json',
             },
             body: JSON.stringify({
-                'login': login,
-                'password': password,
+                login,
+                password,
             }),
         });
     }
@@ -907,8 +907,27 @@ class TweetFeedApiService {
                 'accept': 'application/json',
             },
             body: JSON.stringify({
-                'login': login,
-                'password': password,
+                login,
+                password,
+            }),
+        });
+    }
+
+    tweet(author, text, dateFrom, dateTo, from, count, hashtags) {
+        return fetch(this._serverAddress + '/tweet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+            },
+            body: JSON.stringify({
+                author,
+                text,
+                dateFrom,
+                dateTo,
+                from,
+                count,
+                hashtags,
             }),
         });
     }
