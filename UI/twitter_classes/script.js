@@ -153,7 +153,7 @@ class TweetFeed {
     getPage(skip = 0, top = 10, filterConfig) {
         let result = this._tweets.slice();
         if (filterConfig) {
-            if (filterConfig.author) result = result.filter((tweet) => tweet.author.includes(filterConfig.author));
+            if (filterConfig.author) result = result.filter((tweet) => filterConfig.author.split(' ').some((auth) => tweet.author.includes(auth)));
             if (filterConfig.dateFrom) result = result.filter((tweet) => tweet.date >= filterConfig.dateFrom);
             if (filterConfig.dateTo) result = result.filter((tweet) => tweet.date <= filterConfig.dateTo);
             if (filterConfig.hashtags) {
@@ -718,11 +718,9 @@ class Controller {
 
     _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
         const from = dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0];
-        const choicesFrom = [from.children[1], from.children[0], from.children[2]]; // классу даты нужен сначала месяц, потом день
-        const dateFrom = new Date(choicesFrom.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
+        const dateFrom = from.children[0].valueAsDate;
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
-        const choicesTo = [to.children[1], to.children[0], to.children[2]];
-        const dateTo = new Date(choicesTo.map((choice) => choice.options[choice.selectedIndex].text).join('.'));
+        const dateTo = to.children[0].valueAsDate;
         this._currFilterConfig = {
             'author': authorTextarea.value,
             'dateFrom': dateFrom,
