@@ -931,6 +931,20 @@ class TweetFeedApiService {
             }),
         });
     }
+
+    createTweet(text) {
+        return fetch(this._serverAddress + '/tweet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+            },
+            body: JSON.stringify({
+                login,
+                password,
+            }),
+        });
+    }
 }
 
 
