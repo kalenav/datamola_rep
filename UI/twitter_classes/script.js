@@ -960,7 +960,7 @@ class TweetFeedApiService {
         });
     }
 
-    removeTweet(id, auth, text) {
+    removeTweet(id, auth) {
         return fetch(this._serverAddress + `/tweet/${id}`, {
             method: 'DELETE',
             headers: {
