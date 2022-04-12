@@ -932,9 +932,23 @@ class TweetFeedApiService {
         });
     }
 
-    createTweet(text) {
+    addTweet(auth, text) {
         return fetch(this._serverAddress + '/tweet', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+            },
+            body: JSON.stringify({
+                login,
+                password,
+            }),
+        });
+    } 
+
+    editTweet(id, auth, text) {
+        return fetch(this._serverAddress + '/tweet', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'accept': 'application/json',
