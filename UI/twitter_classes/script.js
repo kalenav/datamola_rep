@@ -503,6 +503,7 @@ class Controller {
 
     setCurrentUser(user) {
         this._feed.user = user;
+        window.localStorage.lastUser = user;
         this._headerView.display(user, false);
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         this._addHeaderEventListeners();
@@ -537,7 +538,8 @@ class Controller {
         const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
         this._tweetFeedView.display(true, tweets, own);
         this._currShownTweets = 10;
-        this._headerView.display('', false);
+        const lastUser = window.localStorage.lastUser;
+        this._headerView.display(lastUser, lastUser ? true : false);
     }
     
     getFeed(skip, top, filterConfig) {
@@ -868,6 +870,7 @@ class UserList {
 function initLocalStorage(usersstr, tweetsstr) {
     window.localStorage.setItem('users', usersstr);
     window.localStorage.setItem('tweets', tweetsstr);
+    window.localStorage.setItem('lastUser', '');
 }
 
 
@@ -1090,7 +1093,7 @@ const tweets = [
 const usersstr = '[{"username":"Zoe","password":"pass"},{"username":"Ulrich","password":"pass"}]';
 const tweetsstr = JSON.stringify(tweets);
 
-if(!window.localStorage.users || !window.localStorage.tweets) initLocalStorage(usersstr, tweetsstr);
+if(!window.localStorage.users || !window.localStorage.tweets || window.localStorage.lastUser === undefined) initLocalStorage(usersstr, tweetsstr);
 
 const userList = new UserList();
 const controller = new Controller(tweets);
