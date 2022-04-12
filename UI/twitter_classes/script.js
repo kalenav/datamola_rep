@@ -880,134 +880,74 @@ function initLocalStorage(usersstr, tweetsstr) {
 
 class TweetFeedApiService {
     _serverAddress;
+    _defaultHeaders = {
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+    };
 
     constructor(address) {
         this._serverAddress = address;
     }
 
     login(login, password) {
-        return fetch(this._serverAddress + '/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-            },
-            body: JSON.stringify({
-                login,
-                password,
-            }),
-        });
+        return this._createRequest('/login', 'POST', {}, {
+            login,
+            password,
+        })
     }
 
     register(login, password) {
-        return fetch(this._serverAddress + '/registration', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-            },
-            body: JSON.stringify({
-                login,
-                password,
-            }),
+        return this._createRequest('/registration', 'POST', {}, {
+            login,
+            password,
         });
     }
 
     getTweets(author, text, dateFrom, dateTo, from, count, hashtags) {
-        return fetch(this._serverAddress + '/tweet', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-            },
-            body: JSON.stringify({
-                author,
-                text,
-                dateFrom,
-                dateTo,
-                from,
-                count,
-                hashtags,
-            }),
+        return this._createRequest('/tweet', 'GET', {}, {
+            author,
+            text,
+            dateFrom,
+            dateTo,
+            from,
+            count,
+            hashtags,
         });
     }
 
     addTweet(auth, text) {
-        return fetch(this._serverAddress + '/tweet', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-                'Authorization': auth,
-            },
-            body: JSON.stringify({
-                text,
-            }),
-        });
+        return this._createRequest('/tweet', 'POST', { 'Authorization': auth }, text);
     } 
 
     editTweet(id, auth, text) {
-        return fetch(this._serverAddress + `/tweet/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-                'Authorization': auth,
-            },
-            body: JSON.stringify({
-                text
-            }),
-        });
+        return this._createRequest(`/tweet/${id}`, 'PUT', { 'Authorization': auth }, text);
     }
 
     removeTweet(id, auth) {
-        return fetch(this._serverAddress + `/tweet/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-                'Authorization': auth,
-            },
-        });
+        return this._createRequest(`/tweet/${id}`, 'DELETE', { 'Authorization': auth });
     }
 
     addComment(tweetId, auth, text) {
-        return fetch(this._serverAddress + `/tweet/${tweetId}/comment`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-                'Authorization': auth,
-            },
-            body: JSON.stringify({
-                text,
-            }),
-        });
+        return this._createRequest(`/tweet/${tweetId}/comment`, 'POST', { 'Authorization': auth }, text); 
     }
 
     editComment(tweetId, id, auth, text) {
-        return fetch(this._serverAddress + `/tweet/${tweetId}/comment/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-                'Authorization': auth,
-            },
-            body: JSON.stringify({
-                text,
-            }),
-        });
+        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'PUT', { 'Authorization': auth }, text);
     }
 
     removeComment(tweetId, id, auth) {
-        return fetch(this._serverAddress + `/tweet/${tweetId}/comment/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-                'Authorization': auth,
-            },
-        });
+        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'DELETE', { 'Authorization': auth })
+    }
+
+    _createRequest(path, method, extraHeaders = {}, bodyobj = '') {
+        const headers = {};
+        for(let header in this._defaultHeaders) headers[header] = this._defaultHeaders[header];
+        for(let header in extraHeaders) headers[header] = extraHeaders[header];
+        return fetch(this._serverAddress + path, {
+            method,
+            headers,
+            body: JSON.stringify(bodyobj),
+        })
     }
 }
 
