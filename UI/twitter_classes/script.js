@@ -938,10 +938,10 @@ class TweetFeedApiService {
             headers: {
                 'Content-Type': 'application/json',
                 'accept': 'application/json',
+                'Authorization': auth,
             },
             body: JSON.stringify({
-                login,
-                password,
+                text,
             }),
         });
     } 
@@ -952,11 +952,13 @@ class TweetFeedApiService {
             headers: {
                 'Content-Type': 'application/json',
                 'accept': 'application/json',
+                'Authorization': auth,
             },
             body: JSON.stringify({
                 login,
                 password,
             }),
+            path: id,
         });
     }
 }
