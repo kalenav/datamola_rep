@@ -548,7 +548,7 @@ class Controller {
             this._headerView.display(this._feed.user, true);
         }
         else {
-            const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
+            const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
             this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0, this._currFilterConfig);
             this._headerView.display(this._feed.user, false);
