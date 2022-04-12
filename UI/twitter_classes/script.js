@@ -740,10 +740,8 @@ class Controller {
         const self = this;
 
         const newCommentTextarea = document.getElementById('new-comment-textarea');
-        newCommentTextarea.addEventListener('keyup', (e) => {
-            if(e.keyCode !== 13) return;
-            const tweet = document.getElementsByClassName('tweet')[0];
-            const tweetId = tweet.dataset.id;
+        document.getElementById('new-comment-submit').addEventListener('click', () => {
+            const tweetId = document.getElementsByClassName('tweet')[0].dataset.id;
             if(!self._feed.addComment(tweetId, newCommentTextarea.value)) return;
             self.showTweet(tweetId);
         });
@@ -791,12 +789,6 @@ class Controller {
             document.getElementById('tweet-edit-cancel').addEventListener('click', () => {
                 body.removeChild(tweetEditTextareaContainer);
             })
-            // tweetEditTextarea.addEventListener('keyup', (e) => {
-            //     const target = e.target;
-            //     if(e.keyCode !== 13) return;
-            //     this.editTweet(tweetId, target.value);
-            //     body.removeChild(tweetEditTextareaContainer);
-            // });
         }
         if(target.classList.contains('delete')) {
             const choice = confirm('Are you sure?');
