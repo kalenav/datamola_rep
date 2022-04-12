@@ -316,7 +316,7 @@ class ViewUtils {
         for(let attribute in attributes) {
             tag.setAttribute(attribute, attributes[attribute]);
         }
-        if(text) tag.innerHTML = text;
+        if(text) tag.innerHTML = text.split('\n').join('<br>');
         return tag;
     }
 }
@@ -707,7 +707,7 @@ class Controller {
         });
 
         document.getElementById('new-tweet-button').addEventListener('click', () => {
-            self.addTweet(`${document.getElementById('new-tweet').value}`);
+            self.addTweet(document.getElementById('new-tweet').value);
         });
     }
 
