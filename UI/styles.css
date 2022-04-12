@@ -276,7 +276,7 @@ section.new-comment {
     display: flex;
     flex-direction: column;
     max-width: 35rem;
-    margin-top: 15rem;
+    margin-top: 10rem;
     border-radius: 0.5rem;
     font-size: 1.2rem;
     margin-bottom: 5rem;
