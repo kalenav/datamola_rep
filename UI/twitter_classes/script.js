@@ -334,7 +334,8 @@ class TweetFeedView {
             this._container.innerHTML = '<p class="not-found">No such tweets were found.</p>';
             return;
         }
-        this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
+        this._container.innerHTML = '';
+        this._displayNewTweetSection(this._container);
         const tweetsSection = ViewUtils.newTag('section', { class: 'tweets' });
         this._appendFilters(tweetsSection, filterValues);
         tweets.forEach((tweet, index) => {
@@ -402,6 +403,16 @@ class TweetFeedView {
 
         parent.appendChild(filterBlock);
     }
+
+    _displayNewTweetSection(parent) {
+        const newTweetSection = ViewUtils.newTag('section', { class: 'new-tweet' });
+        newTweetSection.appendChild(ViewUtils.newTag('p', null, 'New tweet'));
+        newTweetSection.appendChild(ViewUtils.newTag('textarea', { placeholder: 'Input new tweet', id: 'new-tweet' }));
+        const postButtonContainer = ViewUtils.newTag('div', { class: 'new-tweet-button-container' });
+        postButtonContainer.appendChild(ViewUtils.newTag('button', { id: 'new-tweet-button' }, 'Post'));
+        newTweetSection.appendChild(postButtonContainer);
+        parent.appendChild(newTweetSection);
+    }
 }
 
 class FilterView {
@@ -461,7 +472,7 @@ class TweetView {
 
         const newCommentContainer = ViewUtils.newTag('section', { class: 'new-comment' });
         newCommentContainer.appendChild(ViewUtils.newTag('p', null, 'Leave a comment'));
-        const commentTextarea = ViewUtils.newTag('input', { id: 'new-comment-textarea', type: 'textarea', placeholder: 'Input comment' });
+        const commentTextarea = ViewUtils.newTag('textarea', { id: 'new-comment-textarea', placeholder: 'Input comment' });
         newCommentContainer.appendChild(commentTextarea);
         this._container.appendChild(newCommentContainer);
     }
@@ -678,11 +689,6 @@ class Controller {
             });
         }  
 
-        document.getElementById('new-tweet').addEventListener('keyup', (e) => {
-            if(e.keyCode !== 13) return;
-            self.addTweet(e.target.value);
-        });
-
         // this внутри ивента ссылается не на контроллер, поэтому bind
         document.getElementsByClassName('tweets')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         
@@ -690,6 +696,10 @@ class Controller {
             const target = e.target
             if(target.tagName !== 'SPAN') return;
             self.getFeed(0, 10, { hashtags: [target.innerHTML] });
+        });
+
+        document.getElementById('new-tweet-button').addEventListener('click', () => {
+            self.addTweet(document.getElementById('new-tweet').value);
         });
     }
 

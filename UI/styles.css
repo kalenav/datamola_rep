@@ -104,13 +104,21 @@ section.new-tweet p, section.new-comment p {
     margin-left: 15%;
 }
 
-section.new-tweet input, section.new-comment input {
+section.new-tweet textarea, section.new-comment textarea {
     font-weight: 300;
     padding: 10px;
     width: 80%;
     margin: 0 auto;
     border: solid var(--lightgray-2) 1px;
     border-radius: 2px;
+    resize: none;
+}
+
+.new-tweet-button-container {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin: 1rem 10% 0 0;
 }
 
 section.tweets {
