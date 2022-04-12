@@ -329,14 +329,14 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(found, tweets, own, all) { // tweets: Array<Tweet>, own: Array<Boolean>
+    display(found, tweets, own, all, filterValues) { // tweets: Array<Tweet>, own: Array<Boolean>
         if(!found) {
             this._container.innerHTML = '<p class="not-found">No such tweets were found.</p>';
             return;
         }
         this._container.innerHTML = '<section class="new-tweet"><p>New tweet</p><input type="textarea" placeholder="Input text" id="new-tweet"></section>';
         const tweetsSection = ViewUtils.newTag('section', { class: 'tweets' });
-        this._appendFilters(tweetsSection);
+        this._appendFilters(tweetsSection, filterValues);
         tweets.forEach((tweet, index) => {
             const newTweet = ViewUtils.newTag('div', { class: 'tweet', 'data-id': tweet.id });
             const isOwn = own[index];
@@ -367,23 +367,28 @@ class TweetFeedView {
         this._container.appendChild(tweetsSection);
     }
 
-    _appendFilters(parent) {
+    _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
         parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
         const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
-        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'author1 author2 ...', id: 'author-name-filter' });
-        const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter' });
+        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'author1 author2 ...', id: 'author-name-filter'});
+        authorNameTextarea.value = filterValues.author || '';
+        const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter'});
+        tweetTextTextarea.value = filterValues.text || '';
         const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: '#hashtag1 #hashtag2 ...', id: 'hashtags-filter' });
+        hashtagsTextarea.value = filterValues.hashtags ? filterValues.hashtags.join(' ') : ''; 
 
         const dateFilterBlock = ViewUtils.newTag('div', { class: 'filter', id: 'date-filter' });
         const dateFilterBlockFrom = ViewUtils.newTag('div', { class: 'date-filter-block from' });
         dateFilterBlockFrom.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'From'));
         const dateFromInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
         dateFromInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-from' }));
+        dateFromInputContainer.value = filterValues.dateFrom;
         dateFilterBlockFrom.appendChild(dateFromInputContainer);
         const dateFilterBlockTo = ViewUtils.newTag('div', { class: 'date-filter-block to' });
         dateFilterBlockTo.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'To'));
         const dateToInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
         dateToInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-to' }));
+        dateToInputContainer.value = filterValues.dateTo;
         dateFilterBlockTo.appendChild(dateToInputContainer);
         dateFilterBlock.appendChild(dateFilterBlockFrom);
         dateFilterBlock.appendChild(dateFilterBlockTo);
@@ -393,6 +398,7 @@ class TweetFeedView {
         filterBlock.appendChild(tweetTextTextarea);
         filterBlock.appendChild(hashtagsTextarea);
         filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Filter'));
+        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
 
         parent.appendChild(filterBlock);
     }
@@ -532,7 +538,7 @@ class Controller {
         else {
             const own = this._feed.user ? ViewUtils.getOwn(tweets) : new Array(tweets.length).fill(false);
             const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
-            this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0);
+            this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0, this._currFilterConfig);
             this._headerView.display(this._feed.user, false);
         }
         this._filterView = new FilterView('filter-block');
@@ -698,6 +704,10 @@ class Controller {
         document.getElementById('filter-submit').addEventListener('click', () => {
             self._createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea);
             self.getFeed(0, 10, self._currFilterConfig);
+        });
+
+        document.getElementById('filter-clear').addEventListener('click', () => {
+
         });
     }
 
