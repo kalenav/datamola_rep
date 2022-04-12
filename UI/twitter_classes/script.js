@@ -483,7 +483,7 @@ class TweetView {
 }
 
 class Controller {
-    _feed;
+    _user;
     _headerView;
     _tweetFeedView;
     _filterView;
@@ -494,7 +494,7 @@ class Controller {
     _currFilterConfig;
 
     constructor() {
-        this._feed = new TweetFeed();
+        this._restoreUser();
         this._headerView = new HeaderView('username');
         this._addHeaderEventListeners();
         this._tweetFeedView = new TweetFeedView('main-container');
@@ -506,7 +506,7 @@ class Controller {
     }
 
     setCurrentUser(user) {
-        this._feed.user = user;
+        this._user = user;
         window.localStorage.lastUser = user;
         this._headerView.display(user, false);
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
@@ -856,6 +856,10 @@ class Controller {
             self.getFeed();
         });
         mainContainer.appendChild(linkToMainPage);
+    }
+
+    _restoreUser() {
+        this._user = window.localStorage.lastUser;
     }
 }
 
