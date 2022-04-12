@@ -704,32 +704,7 @@ class Controller {
             self.addTweet(e.target.value);
         });
 
-        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
-            const target = e.target;
-            if(target.tagName !== 'I') return;
-            let parentTweet = target;
-            while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
-            const tweetId = parentTweet.dataset.id;
-            if(target.classList.contains('edit')) {
-                const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
-                tweetEditTextarea.value = self._feed.get(tweetId).text;
-                const body = document.body;
-                body.appendChild(tweetEditTextarea);
-                tweetEditTextarea.addEventListener('keyup', (e) => {
-                    const target = e.target;
-                    if(e.keyCode !== 13) return;
-                    self.editTweet(tweetId, target.value);
-                    body.removeChild(target);
-                });
-            }
-            if(target.classList.contains('delete')) {
-                const choice = confirm('Are you sure?');
-                if(choice) {
-                    self.removeTweet(tweetId);
-                    self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
-                }
-            }
-        });
+        document.getElementsByClassName('tweets')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             const target = e.target
@@ -764,32 +739,7 @@ class Controller {
             self.showTweet(tweetId);
         });
 
-        document.getElementsByClassName('tweet')[0].addEventListener('click', (e) => {
-            const target = e.target;
-            if(target.tagName !== 'I') return;
-            let parentTweet = target;
-            while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
-            const tweetId = parentTweet.dataset.id;
-            if(target.classList.contains('edit')) {
-                const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea', value: self._feed.get(tweetId).text });
-                tweetEditTextarea.value = self._feed.get(tweetId).text;
-                const body = document.body;
-                body.appendChild(tweetEditTextarea);
-                tweetEditTextarea.addEventListener('keyup', (e) => {
-                    const target = e.target;
-                    if(e.keyCode !== 13) return;
-                    self.editTweet(tweetId, target.value);
-                    body.removeChild(target);
-                });
-            }
-            if(target.classList.contains('delete')) {
-                const choice = confirm('Are you sure?');
-                if(choice) {
-                    self.removeTweet(tweetId);
-                    self.getFeed(0, self._currShownTweets - 1, self._currFilterConfig);
-                }
-            }
-        });
+        document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners);
     }
 
     _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
@@ -806,6 +756,33 @@ class Controller {
             'text': tweetTextTextarea.value,
             'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ').filter((hashtag) => hashtag[0] === '#') : [],
         };
+    }
+
+    _setOwnTweetButtonsEventListeners(e) {
+        const target = e.target;
+        if(target.tagName !== 'I') return;
+        let parentTweet = target;
+        while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
+        const tweetId = parentTweet.dataset.id;
+        if(target.classList.contains('edit')) {
+            const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
+            tweetEditTextarea.value = this._feed.get(tweetId).text;
+            const body = document.body;
+            body.appendChild(tweetEditTextarea);
+            tweetEditTextarea.addEventListener('keyup', (e) => {
+                const target = e.target;
+                if(e.keyCode !== 13) return;
+                this.editTweet(tweetId, target.value);
+                body.removeChild(target);
+            });
+        }
+        if(target.classList.contains('delete')) {
+            const choice = confirm('Are you sure?');
+            if(choice) {
+                this.removeTweet(tweetId);
+                this.getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
+            }
+        }
     }
 }
 
