@@ -18,7 +18,7 @@ const englishAlphabetRightBound = 122;
 const russianAlphabetLeftBound = 1040;
 const russianAlpahbetRightBound = 1103;
 
-class Tweet {
+/* class Tweet {
     _id;
     _createdAt;
     _author;
@@ -264,7 +264,7 @@ class TweetFeed {
 
         this._user = window.localStorage.lastUser;
     }
-}
+} */
 
 class HeaderView {
     _container;
@@ -499,11 +499,13 @@ class Controller {
         this._headerView = new HeaderView('username');
         this._addHeaderEventListeners();
         this._tweetFeedView = new TweetFeedView('main-container');
-        this._initFeed();
-        this._filterView = new FilterView('filter-block');
-        this._addTweetFeedEventListeners();
-        this._addFilterEventListeners();
-        this._tweetView = new TweetView('main-container');
+        this._initFeed()
+        .then(() => {
+            this._filterView = new FilterView('filter-block');
+            this._addTweetFeedEventListeners();
+            this._addFilterEventListeners();
+            this._tweetView = new TweetView('main-container');
+        });
     }
 
     setCurrentUser(user) {
@@ -535,7 +537,7 @@ class Controller {
     }
 
     _initFeed() {
-        api.getTweets()
+        return api.getTweets()
         .then(response => response.json())
         .then(response => {
             const tweets = [...response];
@@ -958,7 +960,7 @@ class TweetFeedApiService {
 }
 
 
-const tweets = [
+/* const tweets = [
     new Tweet(
         '1',
         'Some text here',
@@ -1172,7 +1174,7 @@ const tweets = [
         'Konstantin',
         [],
     ),
-];
+]; */
 
 if(window.localStorage.lastUser === undefined) {
     window.localStorage.lastUser = '';
@@ -1180,7 +1182,7 @@ if(window.localStorage.lastUser === undefined) {
 }
 
 const api = new TweetFeedApiService('https://jslabapi.datamola.com');
-const controller = new Controller(tweets);
+const controller = new Controller();
 
 api.getTweets()
 .then(response => response.json())
