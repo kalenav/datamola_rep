@@ -707,7 +707,11 @@ class Controller {
         });
 
         document.getElementById('filter-clear').addEventListener('click', () => {
-
+            authorTextarea.value = '';
+            dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0].children[0].value = '';
+            dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0].children[0].value = '';
+            tweetTextTextarea.value = '';
+            hashtagsTextarea.value = '';
         });
     }
 
