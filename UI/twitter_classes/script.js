@@ -275,11 +275,12 @@ class HeaderView {
         this._container.innerHTML = user ?? '';
         const loginButton = document.getElementById("header-login-button");
         loginButton.innerHTML = user ? "Log Out" : "Log In";
+        const homeButton = document.getElementById('header-home-button');
         if(displayHomeButton) {
-            document.getElementById('header-home-button').style.display = 'inline-block';
+            homeButton.style.display = 'inline-block';
         }
         else {
-            document.getElementById('header-home-button').style.display = 'none';
+            homeButton.style.display = 'none';
         }
     }
 }
