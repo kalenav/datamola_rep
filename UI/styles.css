@@ -406,7 +406,7 @@ textarea.filter:focus-visible {
     margin-bottom: 0.5rem;
 }
 
-.not-found {
+.not-found, .error {
     font-size: 4rem; 
     margin-top: 10rem; 
     text-align: center;

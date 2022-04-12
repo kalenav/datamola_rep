@@ -845,6 +845,18 @@ class Controller {
     _getOwn(tweets) {
         return tweets.map((tweet) => tweet.author === this._feed.user ? true : false);
     }
+
+    _displayErrorPage() {
+        const mainContainer = document.getElementById('main-container')
+        mainContainer.innerHTML = '';
+        mainContainer.appendChild(ViewUtils.newTag('p', { class: 'error' }, 'Oh no! An error seems to have occurred.'));
+        const linkToMainPage = ViewUtils.newTag('a', { class: 'not-found link', id: 'not-found-link' }, 'Return to main page');
+        const self = this;
+        linkToMainPage.addEventListener('click', () => {
+            self.getFeed();
+        });
+        mainContainer.appendChild(linkToMainPage);
+    }
 }
 
 class UserList {
