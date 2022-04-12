@@ -472,7 +472,10 @@ class TweetView {
         const newCommentContainer = ViewUtils.newTag('section', { class: 'new-comment' });
         newCommentContainer.appendChild(ViewUtils.newTag('p', null, 'Leave a comment'));
         const commentTextarea = ViewUtils.newTag('textarea', { id: 'new-comment-textarea', placeholder: 'Input comment' });
+        const newCommentButtonContainer = ViewUtils.newTag('div', { class: 'new-comment-button-container' });
+        newCommentButtonContainer.appendChild(ViewUtils.newTag('button', { id: 'new-comment-submit' }, 'Reply'));
         newCommentContainer.appendChild(commentTextarea);
+        newCommentContainer.appendChild(newCommentButtonContainer);
         this._container.appendChild(newCommentContainer);
     }
 }

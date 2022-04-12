@@ -114,7 +114,7 @@ section.new-tweet textarea, section.new-comment textarea {
     resize: none;
 }
 
-.new-tweet-button-container {
+.new-tweet-button-container, .new-comment-button-container {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
