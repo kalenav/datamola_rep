@@ -588,6 +588,9 @@ class Controller {
             if(userList.has(possibleUser)) {
                 self.setCurrentUser(username);
             }
+            else {
+                alert('Such a user doesn\'t exist or you have misspelled something.');
+            }
         });
 
         document.getElementById('signup-link').addEventListener('click', () => {
@@ -625,7 +628,7 @@ class Controller {
             const password = form.getElementsByClassName('password')[0].value;
             const passwordConfirm = form.getElementsByClassName('confirm')[0].value;
             if(password !== passwordConfirm) {
-                self.showSignupForm();
+                alert('The passwords don\'t match up. Make sure they are identical.');
                 return;
             }
             const newUser = { username, password };
