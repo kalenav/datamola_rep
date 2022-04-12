@@ -739,15 +739,17 @@ class Controller {
         while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
         const tweetId = parentTweet.dataset.id;
         if(target.classList.contains('edit')) {
+            const tweetEditTextareaContainer = ViewUtils.newTag('div', { id: 'tweet-edit-textarea-container' });
             const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
             tweetEditTextarea.value = this._feed.get(tweetId).text;
+            tweetEditTextareaContainer.appendChild(tweetEditTextarea);
             const body = document.body;
-            body.appendChild(tweetEditTextarea);
+            body.appendChild(tweetEditTextareaContainer);
             tweetEditTextarea.addEventListener('keyup', (e) => {
                 const target = e.target;
                 if(e.keyCode !== 13) return;
                 this.editTweet(tweetId, target.value);
-                body.removeChild(target);
+                body.removeChild(tweetEditTextareaContainer);
             });
         }
         if(target.classList.contains('delete')) {
@@ -761,7 +763,7 @@ class Controller {
 
     _displayAuthWindow(parent, isLogin) {
         parent.innerHTML = '';
-        
+
         const authWindow = ViewUtils.newTag('section', { class: 'auth-window' });
         
         const authWindowHeader = ViewUtils.newTag('div', { class: 'auth-window-header' });
