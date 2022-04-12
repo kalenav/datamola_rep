@@ -984,6 +984,20 @@ class TweetFeedApiService {
             }),
         });
     }
+
+    editComment(tweetId, id, auth, text) {
+        return fetch(this._serverAddress + `/tweet/${tweetId}/comment/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+                'Authorization': auth,
+            },
+            body: JSON.stringify({
+                text,
+            }),
+        });
+    }
 }
 
 
