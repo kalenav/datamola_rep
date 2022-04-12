@@ -878,6 +878,42 @@ function initLocalStorage(usersstr, tweetsstr) {
     window.localStorage.setItem('lastUser', '');
 }
 
+class TweetFeedApiService {
+    _serverAddress;
+
+    constructor(address) {
+        this._serverAddress = address;
+    }
+
+    login(login, password) {
+        return fetch(this._serverAddress + '/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+            },
+            body: JSON.stringify({
+                'login': login,
+                'password': password,
+            }),
+        });
+    }
+
+    register(login, password) {
+        return fetch(this._serverAddress + '/registration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+            },
+            body: JSON.stringify({
+                'login': login,
+                'password': password,
+            }),
+        });
+    }
+}
+
 
 const tweets = [
     new Tweet(
@@ -1102,3 +1138,4 @@ if(!window.localStorage.users || !window.localStorage.tweets || window.localStor
 
 const userList = new UserList();
 const controller = new Controller(tweets);
+const api = new TweetFeedApiService('https://jslabapi.datamola.com');
