@@ -564,20 +564,7 @@ class Controller {
     showLoginForm() {
         const self = this;
 
-        document.getElementById('main-container').innerHTML = `
-        <section class="auth-window">
-            <div class="auth-window-header">
-                <p class="auth-window-header-text">Logging In</p>
-            </div>
-            <form class="auth-window-form">
-                <textarea class="auth-window-textarea username" required placeholder="Input username"></textarea>
-                <textarea class="auth-window-textarea password" required placeholder="Input password"></textarea>
-                <button id="auth-window-button">Log In</button>
-            </form>
-            <p class="auth-window-misc-text">Not a user yet? <a id="signup-link" class="link">Sign up</a></p>
-            <p class="auth-window-misc-text"><a id="main-page-link" class="link">Return to main page</a></p>
-        </section>
-        `;
+        self._displayAuthWindow(document.getElementById('main-container'), true);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', (e) => {
@@ -605,21 +592,7 @@ class Controller {
     showSignupForm() {
         const self = this;
 
-        document.getElementById('main-container').innerHTML = `
-        <section class="auth-window">
-            <div class="auth-window-header">
-                <p class="auth-window-header-text">Signing Up</p>
-            </div>
-            <form class="auth-window-form">
-                <textarea class="auth-window-textarea username" required placeholder="Input username"></textarea>
-                <textarea class="auth-window-textarea password" reqired placeholder="Input password"></textarea>
-                <textarea class="auth-window-textarea password confirm" required placeholder="Confirm password"></textarea>
-                <button id="auth-window-button">Sign up</button>
-            </form>
-            <p class="auth-window-misc-text">Already a user? <a id="login-link" class="link">Log in</a></p>
-            <p class="auth-window-misc-text"><a id="main-page-link" class="link">Return to main page</a></p>
-        </section>
-        `;
+        self._displayAuthWindow(document.getElementById('main-container'), false);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', (e) => {
@@ -704,6 +677,7 @@ class Controller {
             self.addTweet(e.target.value);
         });
 
+        // this внутри ивента ссылается не на контроллер, поэтому bind
         document.getElementsByClassName('tweets')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
@@ -783,6 +757,42 @@ class Controller {
                 this.getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
             }
         }
+    }
+
+    _displayAuthWindow(parent, isLogin) {
+        parent.innerHTML = '';
+        
+        const authWindow = ViewUtils.newTag('section', { class: 'auth-window' });
+        
+        const authWindowHeader = ViewUtils.newTag('div', { class: 'auth-window-header' });
+        authWindowHeader.appendChild(ViewUtils.newTag('p', { class: 'auth-window-header-text' }, isLogin ? 'Logging in' : 'Signing up'));
+        
+        const form = ViewUtils.newTag('form', { class: 'auth-window-form' });
+        form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea username', required: '', placeholder: 'Input username' }));
+        form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
+        if(!isLogin) form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
+        form.appendChild(ViewUtils.newTag('button', { id: 'auth-window-button' }, 'Sign up'));
+
+        let otherActionText;
+        
+        if(!isLogin) {
+            otherActionText = ViewUtils.newTag('p', { class: 'auth-window-misc-text' }, 'Already a user? ');
+            otherActionText.appendChild(ViewUtils.newTag('a', { id: 'login-link', class: 'link' }, 'Log in'));
+        }
+        else {
+            otherActionText = ViewUtils.newTag('p', { class: 'auth-window-misc-text' }, 'Not a user yet? ');
+            otherActionText.appendChild(ViewUtils.newTag('a', { id: 'signup-link', class: 'link' }, 'Sign up'));
+        }
+
+        const returnToMainPageText = ViewUtils.newTag('p', { class: 'auth-window-misc-text' });
+        returnToMainPageText.appendChild(ViewUtils.newTag('a', { id: 'main-page-link', class: 'link' }, 'Return to main page'));
+
+        authWindow.appendChild(authWindowHeader);
+        authWindow.appendChild(form);
+        authWindow.appendChild(otherActionText);
+        authWindow.appendChild(returnToMainPageText);
+
+        parent.appendChild(authWindow);
     }
 }
 
