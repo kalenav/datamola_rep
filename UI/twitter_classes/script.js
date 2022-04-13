@@ -246,6 +246,7 @@ class Controller {
         this._restoreUser()
         .then(() => {
             this._headerView = new HeaderView('username');
+            this._headerView.display(this._user, false);
             this._addHeaderEventListeners();
             this._tweetFeedView = new TweetFeedView('main-container');
             this._initFeed()
@@ -263,25 +264,30 @@ class Controller {
 
     setCurrentUser(user) {
         this._user = user;
+        if(!user) this._token = '';
         this._headerView.display(user, false);
         this._addHeaderEventListeners();
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
     }
     
     addTweet(text) {
+        if(text.length > 280) {
+            alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
+            return;
+        }
         api.addTweet(this._token, text)
         .then(response => response.json())
         .then(response => {
             if(response.id) {
                 this.getFeed();
             }
-            else {
-                alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
+            else if(response.statusCode === 401) {
+                this.showLoginForm();
             }
         })
         .catch(() => {
             this._displayErrorPage();
-        });;
+        });
     }
     
     editTweet(id, text) {
@@ -301,13 +307,19 @@ class Controller {
                     this.showTweet(response.id);
                 }
             }
-            else {
-                alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
+            else if(response.statusCode === 401) {
+                this.showLoginForm();
             }
+            else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
         })
-        .catch(() => {
-            this._displayErrorPage();
-        });;
+        .catch(reason => {
+            if(reason.statusCode === 401) {
+                this.showLoginForm();
+            }
+            else {
+                this._displayErrorPage();
+            }
+        });
     }
     
     removeTweet(id) {
@@ -315,9 +327,13 @@ class Controller {
         .then(response => {
             if(response.ok) {
                 this.getFeed();
-            };
+            }
+            else if(response.statusCode === 401) {
+                this.showLoginForm();
+            }
+            else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
         })
-        .catch(() => {
+        .catch(reason => {
             this._displayErrorPage();
         });
     }
@@ -332,7 +348,7 @@ class Controller {
             this._currShownTweets = 10;
             this._currFeed = tweets.slice();
             const user = this._user;
-            this._headerView.display(user, user ? true : false)
+            this._headerView.display(user, false)
         })
         .catch(() => {
             this._displayErrorPage();
@@ -397,10 +413,15 @@ class Controller {
     
     showTweet(id) {
         const tweet = this._currFeed.find((tweet) => tweet.id === id);
-        this._tweetView.display(tweet, tweet.author === this._user);
-        this._addTweetEventListeners();
-        this._currShownTweets = 0;
-        this._headerView.display(this._user, true);
+        if(tweet) {
+            this._tweetView.display(tweet, tweet.author === this._user);
+            this._addTweetEventListeners();
+            this._currShownTweets = 0;
+            this._headerView.display(this._user, true);
+        }
+        else {
+            this._displayErrorPage();
+        }
     }
 
     toggleFilters() {
@@ -437,7 +458,7 @@ class Controller {
                     alert('Such a user doesn\'t exist or you have misspelled something.');
                 }
             })
-            .catch(() => {
+            .catch(reason => {
                 this._displayErrorPage();
             });;
         });
@@ -579,13 +600,17 @@ class Controller {
         const newCommentTextarea = document.getElementById('new-comment-textarea');
         document.getElementById('new-comment-submit').addEventListener('click', () => {
             const tweetId = document.getElementsByClassName('tweet')[0].dataset.id;
-            api.addComment(tweetId, self._token, newCommentTextarea.value)
-            .then(() => self.getFeed())
-            .then(() => {
-                self.showTweet(tweetId);
-            })
-            .catch(() => {
-                self._displayErrorPage();
+            const commentText = newCommentTextarea.value;
+            if(commentText.length > 280) {
+                alert('There is something wrong with your comment. Make sure it has no more than 280 symbols.');
+                return;
+            }
+            api.addComment(tweetId, self._token, commentText)
+            .then(() => self.getFeed(), reason => { throw reason }) // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+            .then(() => self.showTweet(tweetId))
+            .catch(reason => {
+                if(reason.statusCode === 401) self.showLoginForm();
+                else self._displayErrorPage();
             });
         });
 
