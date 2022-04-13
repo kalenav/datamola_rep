@@ -273,7 +273,7 @@ class Controller {
         .then(response => response.json())
         .then(response => {
             if(response.id) {
-                this.getFeed(0, 10, this._currFilterConfig);
+                this.getFeed();
             }
             else {
                 alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
@@ -289,7 +289,7 @@ class Controller {
         .then(response => response.json())
         .then(response => {
             if(response.id) {
-                if(document.getElementsByClassName('tweets')[0]) this.getFeed(0, 10, this._currFilterConfig);
+                if(document.getElementsByClassName('tweets')[0]) this.getFeed();
                 else {
                     this._currFeed.unshift({ 
                         id: response.id,
@@ -314,7 +314,7 @@ class Controller {
         api.removeTweet(id, this._token)
         .then(response => {
             if(response.ok) {
-                this.getFeed(0, 10, this._currFilterConfig);
+                this.getFeed();
             };
         })
         .catch(() => {
@@ -339,7 +339,7 @@ class Controller {
         });;
     }
     
-    getFeed(skip, top, filterConfig) {
+    getFeed(skip = 0, top = 10, filterConfig = this._currFilterConfig) {
         const self = this;
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
@@ -383,6 +383,7 @@ class Controller {
                     self._addTweetFeedEventListeners();
                     self._addFilterEventListeners();
                     self._currShownTweets = tweets.length;
+                    self._currFeed = tweets.slice();
                 })
                 .catch(() => {
                     this._displayErrorPage();
@@ -396,7 +397,7 @@ class Controller {
     
     showTweet(id) {
         const tweet = this._currFeed.find((tweet) => tweet.id === id);
-        if(tweet) this._tweetView.display(tweet, tweet.author === this._user);
+        this._tweetView.display(tweet, tweet.author === this._user);
         this._addTweetEventListeners();
         this._currShownTweets = 0;
         this._currFilterConfig = {};
@@ -447,7 +448,7 @@ class Controller {
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self.getFeed(0, 10, self._currFilterConfig);
+            self.getFeed();
         });
     }
 
@@ -483,7 +484,7 @@ class Controller {
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self.getFeed(0, 10, self._currFilterConfig);
+            self.getFeed();
         });
     }
 
@@ -491,7 +492,7 @@ class Controller {
         const self = this;
 
         document.getElementById('header-home-button').addEventListener('click', () => {
-            self.getFeed(0, 10, self._currFilterConfig);
+            self.getFeed();
         });
 
         document.getElementById('header-login-button').addEventListener('click', (e) => {
@@ -543,7 +544,7 @@ class Controller {
                 text: '',
                 hashtags: [ target.innerHTML ]
             }
-            self.getFeed(0, 10, self._currFilterConfig);
+            self.getFeed();
         });
 
         document.getElementById('new-tweet-button').addEventListener('click', () => {
@@ -561,7 +562,7 @@ class Controller {
 
         document.getElementById('filter-submit').addEventListener('click', () => {
             self._createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea);
-            self.getFeed(0, 10, self._currFilterConfig);
+            self.getFeed();
         });
 
         document.getElementById('filter-clear').addEventListener('click', () => {
