@@ -270,7 +270,7 @@ class Controller {
         if(!user) this._token = '';
         this._headerView.display(user, false);
         this._addHeaderEventListeners();
-        this.getFeed(0, this._currShownTweets, this._currFilterConfig);
+        this._getFeed(0, this._currShownTweets, this._currFilterConfig);
     }
     
     async _addTweet(text) {
@@ -281,10 +281,10 @@ class Controller {
         try {
             const response = await (await api.addTweet(this._token, text)).json();
             if(response.id) {
-                this.getFeed();
+                this._getFeed();
             }
             else if(response.statusCode === 401) {
-                this.showLoginForm();
+                this._showLoginForm();
             }
         }
         catch(e) {
@@ -296,7 +296,7 @@ class Controller {
         const response = await (await api.editTweet(id, this._token, text)).json();
         try {
             if(response.id) {
-                if(document.getElementsByClassName('tweets')[0]) this.getFeed();
+                if(document.getElementsByClassName('tweets')[0]) this._getFeed();
                 else {
                     this._currFeed.unshift({ 
                         id: response.id,
@@ -309,7 +309,7 @@ class Controller {
                 }
             }
             else if(response.statusCode === 401) {
-                this.showLoginForm();
+                this._showLoginForm();
             }
             else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
         }
@@ -322,10 +322,10 @@ class Controller {
         const response = await api.removeTweet(id, this._token);
         try {
             if(response.ok) {
-                this.getFeed();
+                this._getFeed();
             }
             else if(response.statusCode === 401) {
-                this.showLoginForm();
+                this._showLoginForm();
             }
             else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
         }
@@ -378,7 +378,7 @@ class Controller {
                 self._tweetFeedView.display(false);
                 self._headerView.display(self._user, true);
                 document.getElementById('not-found-link').addEventListener('click', () => {
-                    self.getFeed();
+                    self._getFeed();
                 });
             }
             else {
@@ -401,8 +401,12 @@ class Controller {
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
                 document.getElementById('new-tweet').value = currText;
+
+                // насильно переключил фильтры в противоположное
+                // состояние, чтобы "переключить" их в то состояние,
+                // в котором они были до загрузки ленты
                 self._filtersDisplayed = !self._filtersDisplayed;
-                self.toggleFilters();
+                self._toggleFilters();
             }
         }
         catch(e) {
@@ -468,7 +472,7 @@ class Controller {
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self.getFeed();
+            self._getFeed();
             clearInterval(this._shortPollingIntervalId);
             this._createNewShortPollingInterval();
         });
@@ -509,7 +513,7 @@ class Controller {
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self.getFeed();
+            self._getFeed();
             clearInterval(this._shortPollingIntervalId);
             this._createNewShortPollingInterval();
         });
@@ -519,7 +523,7 @@ class Controller {
         const self = this;
 
         document.getElementById('header-home-button').addEventListener('click', () => {
-            self.getFeed();
+            self._getFeed();
             self._createNewShortPollingInterval();
         });
 
@@ -540,7 +544,7 @@ class Controller {
         const self = this;
 
         document.getElementsByClassName('filters-button')[0].addEventListener('click', () => {
-            self.toggleFilters();
+            self._toggleFilters();
         });
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
@@ -558,7 +562,7 @@ class Controller {
         const loadMoreButton = document.getElementsByClassName('load-more')[0];
         if(loadMoreButton) {
             loadMoreButton.addEventListener('click', () => {
-                self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
+                self._getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
             });
         }  
 
@@ -575,7 +579,7 @@ class Controller {
                 text: '',
                 hashtags: [ target.innerHTML ]
             }
-            self.getFeed();
+            self._getFeed();
         });
 
         document.getElementById('new-tweet-button').addEventListener('click', () => {
@@ -593,7 +597,7 @@ class Controller {
 
         document.getElementById('filter-submit').addEventListener('click', () => {
             self._createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea);
-            self.getFeed();
+            self._getFeed();
         });
 
         document.getElementById('filter-clear').addEventListener('click', () => {
@@ -620,7 +624,7 @@ class Controller {
                 const response = await api.addComment(tweetId, self._token, commentText);
                 if(response.ok) 
                 {
-                    await self.getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+                    await self._getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
                     self._showTweet(tweetId);
                 }
                 else {
@@ -689,7 +693,7 @@ class Controller {
             const choice = confirm('Are you sure?');
             if(choice) {
                 this._removeTweet(tweetId);
-                this.getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
+                this._getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
             }
         }
     }
@@ -743,7 +747,7 @@ class Controller {
         const linkToMainPage = ViewUtils.newTag('a', { class: 'not-found link', id: 'not-found-link' }, 'Return to main page');
         const self = this;
         linkToMainPage.addEventListener('click', () => {
-            self.getFeed();
+            self._getFeed();
         });
         mainContainer.appendChild(linkToMainPage);
     }
@@ -769,7 +773,7 @@ class Controller {
     }
 
     _createNewShortPollingInterval() {
-        this._shortPollingIntervalId = setInterval(() => { this.getFeed(0, this._currShownTweets) }, 20000);
+        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 20000);
     }
 }
 
