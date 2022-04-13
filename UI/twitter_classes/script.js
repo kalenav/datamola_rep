@@ -609,14 +609,19 @@ class Controller {
             }
             api.addComment(tweetId, self._token, commentText)
             .then(response => {
-                console.log(response);
                 if(response.ok) return self.getFeed() // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
-                else return new Promise((resolve, reject) => { throw response.statusCode });
+                else return new Promise((resolve, reject) => { throw response.status });
             }) 
             .then(() => self.showTweet(tweetId))
             .catch(reasonCode => {
-                console.log(reasonCode);
-                if(reasonCode === 401) self.showLoginForm();
+                // по какой бы то ни было причине, сервер возвращает 
+                // ошибку 500, если человек не залогинен, хотя должен
+                // возвращать 401. на сваггере тоже проверял, дело, как
+                // я понимаю, не в неправильном запросе, да и при попытке
+                // написать твит, будучи незалогиненным, всё работает, как
+                // нужно, хотя там та же логика, но сервер в случае чего 
+                // возвращает 401 (строка 284)
+                if(reasonCode === 500) self.showLoginForm();
                 else self._displayErrorPage();
             });
         });
