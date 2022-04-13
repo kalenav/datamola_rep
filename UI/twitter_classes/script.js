@@ -334,10 +334,9 @@ class Controller {
         }
     }
 
-    _initFeed() {
-        return api.getTweets()
-        .then(response => response.json())
-        .then(response => {
+    async _initFeed() {
+        const response = await (await api.getTweets()).json();
+        try {
             const tweets = [...response];
             const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
             this._tweetFeedView.display(true, tweets, own);
@@ -346,10 +345,10 @@ class Controller {
             const user = this._user;
             this._headerView.display(user, false);
             this._createNewShortPollingInterval();
-        })
-        .catch(() => {
+        }
+        catch(e) {
             this._displayErrorPage();
-        });;
+        }
     }
     
     getFeed(skip = 0, top = 10, filterConfig = this._currFilterConfig) {
