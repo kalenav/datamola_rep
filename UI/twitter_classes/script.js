@@ -938,16 +938,18 @@ class TweetFeedApiService {
         });
     }
 
-    getTweets(author, text, dateFrom, dateTo, from, count, hashtags) {
-        return this._createRequest('/tweet', 'GET', { params: {
-            author,
-            text,
-            dateFrom,
-            dateTo,
-            from,
-            count,
-            hashtags,
-        }} );
+    getTweets(author, text, dateFrom, dateTo, from = 0, count = 10, hashtags) {
+        let url = new URL(this._serverAddress + '/tweet');
+        const filters = {};
+        if(author) filters['author'] = author;
+        if(text) filters['text'] = text;
+        filters['dateFrom'] = (dateFrom || new Date(0)).toISOString();
+        filters['dateTo'] = (dateTo || new Date()).toISOString();
+        filters['from'] = from;
+        filters['count'] = count;
+        if(hashtags) filters['hashtags'] = hashtags;
+        url.search = new URLSearchParams(filters).toString();
+        return fetch(url);
     }
 
     addTweet(auth, text) {
@@ -985,223 +987,6 @@ class TweetFeedApiService {
         })
     }
 }
-
-
-/* const tweets = [
-    new Tweet(
-        '1',
-        'Some text here',
-        new Date('2022-03-09T22:22:22'),
-        'Alice',
-        [],
-    ),
-
-    new Tweet(
-        '2',
-        'Some other text here',
-        new Date('2022-03-09T23:22:00'),
-        'Bob',
-        [],
-    ),
-
-    new Tweet(
-        '3',
-        'Text with a #hashtag here',
-        new Date('2022-03-10T20:20:00'),
-        'Charlie',
-        [],
-    ),
-
-    new Tweet(
-        '4',
-        'Another #text with a #hashtag here',
-        new Date('2022-03-11T12:03:05'),
-        'Daniel',
-        [],
-    ),
-
-    new Tweet(
-        '5',
-        'Text is what this is',
-        new Date('2022-03-11T13:05:01'),
-        'Ethan',
-        [],
-    ),
-
-    new Tweet(
-        '6',
-        'Let your #imagination run wild, don\'t limit yourself. You can do much better than this.',
-        new Date('2022-03-12T19:25:00'),
-        'Felicia',
-        [
-            new Comment('c42', 'Thanks for the insipiration! I will do my best not to let you down.', new Date('2022-03-12T19:25:25'), 'Konstantin'),
-        ],
-    ),
-
-    new Tweet(
-        '7',
-        'Wow, check out the #tweet below! I would never think it would be this easy to make that guy #write sensible tweets. Cheers, Felix!',
-        new Date('2022-03-12T19:30:42'),
-        'George',
-        [
-            new Comment('c43', 'And I took that personally. Sheesh. You didn\'t even #try talking to me to think that it would be difficult. Oh well.', new Date('2022-03-12T19:30:50'), 'Konstantin'),
-        ],
-    ),
-
-    new Tweet(
-        '8',
-        'Ahem... With that out of the way, let\'s get into the #tweets. Eight done, twelve more to go. Just going to get myself a cup of #tea and I\'ll get right into it.',
-        new Date('2022-03-12T19:32:21'),
-        'Konstantin',
-        [],
-    ),
-
-    new Tweet(
-        '9',
-        'Guys, anyone #online?',
-        new Date('2022-03-12T19:33:33'),
-        'Leonard',
-        [],
-    ),
-
-    new Tweet(
-        '10',
-        'Yeah, I am, what is it?',
-        new Date('2022-03-12T19:33:50'),
-        'Miranda',
-        [
-            new Comment('c44', 'FYI, there is a comment section under each tweet. Oh well. A friend of mine will continue my thought in the text tweet.', new Date('2022-03-12T19:34:24'), 'Leonard'),
-        ],
-    ),
-
-    new Tweet(
-        '11',
-        'Hey everyone! Leonard and I wish to write the remaining nine #tweets so this Konstantin guy doesn\'t need to.',
-        new Date('2022-03-12T19:35:00'),
-        'Natalie',
-        [],
-    ),
-
-    new Tweet(
-        '12',
-        'What an #idea! I\'m in.',
-        new Date('2022-03-12T19:35:50'),
-        'Olivia',
-        [],
-    ),
-
-    new Tweet(
-        '13',
-        'I\'d like to #join too!',
-        new Date('2022-03-12T19:36:14'),
-        'Patrick',
-        [],
-    ),
-
-    new Tweet(
-        '14',
-        'Wow, that a #community! I want to be a part of it too! And screw the #comments - write as much #tweets as you can!',
-        new Date('2022-03-12T19:36:42'),
-        'Quentin',
-        [
-            new Comment('c45', 'Come on now. He needs to have comments or his mentors won\'t be happy. Did you even read the homework task? Duh.', new Date('2022-03-12T19:37:03'), 'Leonard'),
-            new Comment('c46', 'Oh, right, right, sorry. And some comments too.', new Date('2022-03-12T19:37:30'), 'Quentin'),
-        ],
-    ),
-
-    new Tweet(
-        '15',
-        'I don\'t have the slightest #idea why we are doing this, but I guess we are!',
-        new Date('2022-03-12T19:37:54'),
-        'Rose',
-        [],
-    ),
-
-    new Tweet(
-        '16',
-        'Almost there, guys, keep it up! Post those #tweets like there\'s no tomorrow!',
-        new Date('2022-03-12T19:38:22'),
-        'Simon',
-        [],
-    ),
-
-    new Tweet(
-        '17',
-        'Has anyone noticed that the names of #tweets posters are in alphabetic order yet?',
-        new Date('2022-03-12T19:38:51'),
-        'Timothy',
-        [
-            new Comment('c47', 'No.', new Date('2022-03-12T19:39:10'), 'Anonymous'),
-        ],
-    ),
-
-    new Tweet(
-        '18',
-        'Wow, Timothy\'s right! We must keep it going like this! Everyone, quick, think of a #friend whose name starts with letters after U!',
-        new Date('2022-03-12T19:39:33'),
-        'Ulrich',
-        [
-            new Comment('c48', 'Do acquaintances count?', new Date('2022-03-12T19:39:55'), 'Victoria'),
-            new Comment('c49', 'Think later, you have the next letter! Quick, make a tweet before someone ruins it!', new Date('2022-03-12T19:40:12'), 'Ulrich'),
-            new Comment('c50', 'Oh god... I\'m late, aren\'t I?', new Date('2022-03-12T19:44:42'), 'Victoria'),
-            new Comment('c51', 'No you aren\'t! Yet!', new Date('2022-03-12T19:44:50'), 'Ulrich'),
-            new Comment('c52', 'You sure? I\'m pretty certain someone has already posted a tweet.', new Date('2022-03-12T19:45:13'), 'Victoria'),
-            new Comment('c53', 'JUST POST THE DAMN TWEET!', new Date('2022-03-12T19:45:20'), 'Ulrich'),
-        ],
-    ),
-
-    new Tweet(
-        '19',
-        'Okay, okay, I posted a #tweet. Jeez.',
-        new Date('2022-03-12T19:45:44'),
-        'Victoria',
-        [
-            new Comment('c54', 'Could you have waited a little longer?', new Date('2022-03-12T19:45:53'), 'Ulrich'),
-        ],
-    ),
-
-    new Tweet(
-        '20',
-        'Okay, even though there were some issues back there, I hereby declare our #feat accomplished. WITH the alphabetical order kept.',
-        new Date('2022-03-12T19:46:22'),
-        'Wendy',
-        [],
-    ),
-
-    new Tweet(
-        '21',
-        'Wow, now that\'s a \'good morning\'. That was quite a ride. Too bad I wasn\'t here then.',
-        new Date('2022-03-13T08:46:31'),
-        'Xavier',
-        [],
-    ),
-
-    new Tweet(
-        '22',
-        'Just who do you think you are? He was supposed to do it by himself!',
-        new Date('2022-03-13T13:43:21'),
-        'Yana',
-        [
-            new Comment('c55', 'I\'m more concerned by the fact that it takes him more than a day to get a cup of tea...', new Date('2022-03-13T21:28:03'), 'Leonard'),
-        ],
-    ),
-
-    new Tweet(
-        '23',
-        'I don\'t think he\'s coming back... You did well, guys. Go do #something else.',
-        new Date('2022-03-14T22:26:01'),
-        'Zoe',
-        [],
-    ),
-
-    new Tweet(
-        '24',
-        'Uh, hey, everyone! Sorry for the late arrival! Uhm... I have uh... Another task I need to do... Does anyone want to #help me out?',
-        new Date('2022-03-19T22:22:22'),
-        'Konstantin',
-        [],
-    ),
-]; */
 
 if(window.localStorage.lastUser === undefined) {
     window.localStorage.lastUser = '';
