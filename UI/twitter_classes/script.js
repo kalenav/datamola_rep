@@ -484,6 +484,7 @@ class TweetView {
 
 class Controller {
     _user;
+    _token;
     _currFeed;
     _headerView;
     _tweetFeedView;
@@ -516,7 +517,17 @@ class Controller {
     }
     
     addTweet(text) {
-        api.addTweet(text);
+        api.addTweet(this._token, text)
+        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+            if(response.id) {
+                this.getFeed(0, 10, this._currFilterConfig);
+            }
+            else {
+                alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
+            }
+        });
     }
     
     editTweet(id, text) {
@@ -636,6 +647,7 @@ class Controller {
             .then(response => {
                 if(response.token) {
                     self.setCurrentUser(username);
+                    self._token = response.token;
                     window.localStorage.lastUser = username;
                     window.localStorage.lastUserPassword = password;
                 }
