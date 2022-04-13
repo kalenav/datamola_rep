@@ -520,7 +520,6 @@ class Controller {
         api.addTweet(this._token, text)
         .then(response => response.json())
         .then(response => {
-            console.log(response);
             if(response.id) {
                 this.getFeed(0, 10, this._currFilterConfig);
             }
@@ -531,13 +530,16 @@ class Controller {
     }
     
     editTweet(id, text) {
-        if(this._feed.edit(id, text)) {
-            this._currShownTweets++;
-            if(document.getElementById('new-comment-textarea')) {
-                this.showTweet(document.getElementsByClassName('tweet')[0].dataset.id);
+        api.editTweet(id, this._token, text)
+        .then(response => response.json())
+        .then(response => {
+            if(response.id) {
+                this.getFeed(0, 10, this._currFilterConfig);
             }
-            else this.getFeed(0, this._currShownTweets, this._currFilterConfig);
-        }
+            else {
+                alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
+            }
+        });
     }
     
     removeTweet(id) {
@@ -835,7 +837,7 @@ class Controller {
         if(target.classList.contains('edit')) {
             const tweetEditTextareaContainer = ViewUtils.newTag('div', { id: 'tweet-edit-textarea-container' });
             const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
-            tweetEditTextarea.value = this._feed.get(tweetId).text;
+            tweetEditTextarea.value = this._currFeed.find((tweet) => tweet.id === tweetId).text;
             tweetEditTextareaContainer.appendChild(tweetEditTextarea);
             const doneButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-done' }, 'Done');
             const cancelButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-cancel' }, 'Cancel');
@@ -917,14 +919,19 @@ class Controller {
     _restoreUser() {
         const lastUser = window.localStorage.lastUser;
         const lastUserPassword = window.localStorage.lastUserPassword;
-        if(api.login(lastUser, lastUserPassword)
+        api.login(lastUser, lastUserPassword)
         .then(response => response.json())
-        .then(response => response.ok)) {
-            this._user = lastUser;
-        }
-        else {
-            this._user = '';
-        }
+        .then(response => response.token) 
+        .then(token => {
+            if(token) {
+                this._user = lastUser;
+                this._token = token;
+            }
+            else {
+                this._user = '';
+                this._token = '';
+            }
+        })
     }
 }
 
