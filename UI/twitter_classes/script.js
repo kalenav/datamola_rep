@@ -521,6 +521,8 @@ class Controller {
             }
             else {
                 self.setCurrentUser('');
+                window.localStorage.lastUser = '';
+                window.localStorage.lastUserPassword = '';
             }
         });
     }
