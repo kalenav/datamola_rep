@@ -344,6 +344,7 @@ class Controller {
             this._currFeed = tweets.slice();
             const user = this._user;
             this._headerView.display(user, false);
+            clearInterval(this._shortPollingIntervalId);
             this._createNewShortPollingInterval();
         }
         catch(e) {
@@ -435,8 +436,6 @@ class Controller {
     }
 
     showLoginForm() {
-        clearInterval(this._shortPollingIntervalId);
-
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), true);
@@ -464,18 +463,18 @@ class Controller {
         });
 
         document.getElementById('signup-link').addEventListener('click', () => {
+            clearInterval(this._shortPollingIntervalId);
             self.showSignupForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
             self.getFeed();
+            clearInterval(this._shortPollingIntervalId);
             this._createNewShortPollingInterval();
         });
     }
 
     showSignupForm() {
-        clearInterval(this._shortPollingIntervalId);
-
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), false);
@@ -491,9 +490,13 @@ class Controller {
                 return;
             }
             try {
-                const responseId = (await (await api.register(username, password)).json()).id;
-                if(responseId) {
+                const response = await api.register(username, password);
+                if(response.ok) {
                     alert('Registered successfully!');
+                    self.showLoginForm();
+                }
+                else if(response.status === 409) {
+                    alert('Such a user already exists.');
                 }
             }
             catch(e) {
@@ -507,6 +510,7 @@ class Controller {
 
         document.getElementById('main-page-link').addEventListener('click', () => {
             self.getFeed();
+            clearInterval(this._shortPollingIntervalId);
             this._createNewShortPollingInterval();
         });
     }
@@ -516,10 +520,11 @@ class Controller {
 
         document.getElementById('header-home-button').addEventListener('click', () => {
             self.getFeed();
-            this._createNewShortPollingInterval();
+            self._createNewShortPollingInterval();
         });
 
         document.getElementById('header-login-button').addEventListener('click', (e) => {
+            clearInterval(this._shortPollingIntervalId);
             if(!self._user) {
                 self.showLoginForm();
             }
