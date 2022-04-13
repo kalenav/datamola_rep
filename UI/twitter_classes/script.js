@@ -242,6 +242,8 @@ class Controller {
     _currShownTweets;
     _currFilterConfig = {};
 
+    _shortPollingIntervalId;
+
     constructor() {
         this._restoreUser()
         .then(() => {
@@ -348,7 +350,8 @@ class Controller {
             this._currShownTweets = 10;
             this._currFeed = tweets.slice();
             const user = this._user;
-            this._headerView.display(user, false)
+            this._headerView.display(user, false);
+            this._createNewShortPollingInterval();
         })
         .catch(() => {
             this._displayErrorPage();
@@ -359,6 +362,7 @@ class Controller {
         const self = this;
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
+        this._createNewShortPollingInterval();
 
         return api.getTweets(
             filterConfig.author, 
@@ -412,6 +416,7 @@ class Controller {
     }
     
     showTweet(id) {
+        clearInterval(this._shortPollingIntervalId);
         const tweet = this._currFeed.find((tweet) => tweet.id === id);
         if(tweet) {
             this._tweetView.display(tweet, tweet.author === this._user);
@@ -436,6 +441,8 @@ class Controller {
     }
 
     showLoginForm() {
+        clearInterval(this._shortPollingIntervalId);
+
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), true);
@@ -473,6 +480,8 @@ class Controller {
     }
 
     showSignupForm() {
+        clearInterval(this._shortPollingIntervalId);
+
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), false);
@@ -720,6 +729,8 @@ class Controller {
     }
 
     _displayErrorPage() {
+        clearInterval(this._shortPollingIntervalId);
+        
         const mainContainer = document.getElementById('main-container')
         mainContainer.innerHTML = '';
         mainContainer.appendChild(ViewUtils.newTag('p', { class: 'error' }, 'Oh no! An error seems to have occurred.'));
@@ -750,6 +761,10 @@ class Controller {
         .catch(() => {
             this._displayErrorPage();
         });
+    }
+
+    _createNewShortPollingInterval() {
+        this._shortPollingIntervalId = setInterval(() => { this.getFeed() }, 5000);
     }
 }
 
