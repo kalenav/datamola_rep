@@ -444,7 +444,7 @@ class TweetView {
         const tweetContainer = ViewUtils.newTag('section', { class: 'tweet', 'data-id': tweet.id });
         const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : tweetContainer;
 
-        const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+        const dateNumbers = ViewUtils.getDateNumbers(new Date(tweet.createdAt));
         authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
         if(isOwn) { 
             const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
@@ -464,7 +464,7 @@ class TweetView {
         const commentsContainer = ViewUtils.newTag('section', { class: 'comments' });
         tweet.comments.forEach((comment) => {
             const currCommentContainer = ViewUtils.newTag('div', { class: 'comment' });
-            const dateNumbers = ViewUtils.getDateNumbers(comment.date);
+            const dateNumbers = ViewUtils.getDateNumbers(new Date(comment.createdAt));
             currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'author-name' }, `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'comment-text' }, comment.text));
             commentsContainer.appendChild(currCommentContainer);
@@ -484,7 +484,7 @@ class TweetView {
 
 class Controller {
     _user;
-    _token;
+    _currFeed;
     _headerView;
     _tweetFeedView;
     _filterView;
@@ -544,6 +544,7 @@ class Controller {
             const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
             this._tweetFeedView.display(true, tweets, own);
             this._currShownTweets = 10;
+            this._currFeed = tweets.slice();
             const user = this._user;
             this._headerView.display(user, user ? true : false)
         });
@@ -601,7 +602,7 @@ class Controller {
     }
     
     showTweet(id) {
-        const tweet = this._feed.get(id);
+        const tweet = this._currFeed.find((tweet) => tweet.id === id);
         if(tweet) this._tweetView.display(tweet, tweet.author === this._user);
         this._addTweetEventListeners();
         this._currShownTweets = 0;
@@ -693,7 +694,7 @@ class Controller {
         const self = this;
 
         document.getElementById('header-home-button').addEventListener('click', () => {
-            self.getFeed();
+            self.getFeed(0, 10, self._currFilterConfig);
         });
 
         // как я понял, при логауте и перерисовке хидера кнопка
