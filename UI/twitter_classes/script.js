@@ -480,7 +480,7 @@ class Controller {
         self._displayAuthWindow(document.getElementById('main-container'), false);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
@@ -489,16 +489,15 @@ class Controller {
                 alert('The passwords don\'t match up. Make sure they are identical.');
                 return;
             }
-            api.register(username, password)
-            .then(response => response.json())
-            .then(response => {
-                if(response.id) {
+            try {
+                const responseId = (await (await api.register(username, password)).json()).id;
+                if(responseId) {
                     alert('Registered successfully!');
                 }
-            })
-            .catch(() => {
+            }
+            catch(e) {
                 this._displayErrorPage();
-            });
+            }
         });
 
         document.getElementById('login-link').addEventListener('click', () => {
@@ -604,30 +603,32 @@ class Controller {
         const self = this;
 
         const newCommentTextarea = document.getElementById('new-comment-textarea');
-        document.getElementById('new-comment-submit').addEventListener('click', () => {
+        document.getElementById('new-comment-submit').addEventListener('click', async function() {
             const tweetId = document.getElementsByClassName('tweet')[0].dataset.id;
             const commentText = newCommentTextarea.value;
             if(commentText.length > 280) {
                 alert('There is something wrong with your comment. Make sure it has no more than 280 symbols long.');
                 return;
             }
-            api.addComment(tweetId, self._token, commentText)
-            .then(response => {
-                if(response.ok) return self.getFeed() // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
-                else return new Promise((resolve, reject) => { throw response.status });
-            }) 
-            .then(() => self.showTweet(tweetId))
-            .catch(reasonCode => {
-                // по какой бы то ни было причине, сервер возвращает 
-                // ошибку 500, если человек не залогинен, хотя должен
-                // возвращать 401. на сваггере тоже проверял, дело, как
-                // я понимаю, не в неправильном запросе, да и при попытке
-                // написать твит, будучи незалогиненным, всё работает, как
-                // нужно, хотя там та же логика, но сервер в случае чего 
-                // возвращает 401 (строка 284)
-                if(reasonCode === 500) self.showLoginForm();
-                else self._displayErrorPage();
-            });
+            try {
+                const response = await (await api.addComment(tweetId, self._token, commentText)).json();
+                if(response.ok) await self.getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+                else {
+                    // по какой бы то ни было причине, сервер возвращает 
+                    // ошибку 500, если человек не залогинен, хотя должен
+                    // возвращать 401. на сваггере тоже проверял, дело, как
+                    // я понимаю, не в неправильном запросе, да и при попытке
+                    // написать твит, будучи незалогиненным, всё работает, как
+                    // нужно, хотя там та же логика, но сервер в случае чего 
+                    // возвращает 401 (строка 284)
+
+                    if(response.status === 500) self.showLoginForm();
+                    else self._displayErrorPage();
+                }
+            }
+            catch(e) {
+                this._displayErrorPage();
+            }
         });
 
         document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
