@@ -362,7 +362,6 @@ class Controller {
         const self = this;
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
-        this._createNewShortPollingInterval();
 
         return api.getTweets(
             filterConfig.author, 
@@ -476,6 +475,7 @@ class Controller {
 
         document.getElementById('main-page-link').addEventListener('click', () => {
             self.getFeed();
+            this._createNewShortPollingInterval();
         });
     }
 
@@ -514,6 +514,7 @@ class Controller {
 
         document.getElementById('main-page-link').addEventListener('click', () => {
             self.getFeed();
+            this._createNewShortPollingInterval();
         });
     }
 
@@ -522,6 +523,7 @@ class Controller {
 
         document.getElementById('header-home-button').addEventListener('click', () => {
             self.getFeed();
+            this._createNewShortPollingInterval();
         });
 
         document.getElementById('header-login-button').addEventListener('click', (e) => {
@@ -730,7 +732,7 @@ class Controller {
 
     _displayErrorPage() {
         clearInterval(this._shortPollingIntervalId);
-        
+
         const mainContainer = document.getElementById('main-container')
         mainContainer.innerHTML = '';
         mainContainer.appendChild(ViewUtils.newTag('p', { class: 'error' }, 'Oh no! An error seems to have occurred.'));
