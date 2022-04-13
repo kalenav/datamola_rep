@@ -376,6 +376,8 @@ class Controller {
         .then(response => {
             const tweets = [...response];
             if(tweets.length === 0) {
+                clearInterval(self._shortPollingIntervalId);
+                self._currFilterConfig = {};
                 self._tweetFeedView.display(false);
                 self._headerView.display(self._user, true);
                 document.getElementById('not-found-link').addEventListener('click', () => {
@@ -773,7 +775,7 @@ class Controller {
                 document.getElementById('new-tweet').value = currText; 
             });
             // не вынес в константу т.к. это разные textarea
-         }, 10000);
+         }, 20000);
     }
 }
 
