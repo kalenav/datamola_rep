@@ -344,7 +344,7 @@ class Controller {
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
 
-        api.getTweets(
+        return api.getTweets(
             filterConfig.author, 
             filterConfig.text,
             filterConfig.dateFrom,
