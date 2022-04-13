@@ -363,6 +363,8 @@ class Controller {
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
 
+        const currText = document.getElementById('new-tweet').value || '';
+
         return api.getTweets(
             filterConfig.author, 
             filterConfig.text,
@@ -405,6 +407,7 @@ class Controller {
                     self._addFilterEventListeners();
                     self._currShownTweets = tweets.length;
                     self._currFeed = tweets.slice();
+                    document.getElementById('new-tweet').value = currText;
                 })
                 .catch(() => {
                     this._displayErrorPage();
@@ -768,14 +771,7 @@ class Controller {
     }
 
     _createNewShortPollingInterval() {
-        this._shortPollingIntervalId = setInterval(() => {
-            const currText = document.getElementById('new-tweet').value;
-            this.getFeed()
-            .then(() => {
-                document.getElementById('new-tweet').value = currText; 
-            });
-            // не вынес в константу т.к. это разные textarea
-         }, 20000);
+        this._shortPollingIntervalId = setInterval(() => { this.getFeed() }, 20000);
     }
 }
 
