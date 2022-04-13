@@ -496,16 +496,18 @@ class Controller {
     _currFilterConfig = {};
 
     constructor() {
-        this._restoreUser();
-        this._headerView = new HeaderView('username');
-        this._addHeaderEventListeners();
-        this._tweetFeedView = new TweetFeedView('main-container');
-        this._initFeed()
+        this._restoreUser()
         .then(() => {
-            this._filterView = new FilterView('filter-block');
-            this._addTweetFeedEventListeners();
-            this._addFilterEventListeners();
-            this._tweetView = new TweetView('main-container');
+            this._headerView = new HeaderView('username');
+            this._addHeaderEventListeners();
+            this._tweetFeedView = new TweetFeedView('main-container');
+            this._initFeed()
+            .then(() => {
+                this._filterView = new FilterView('filter-block');
+                this._addTweetFeedEventListeners();
+                this._addFilterEventListeners();
+                this._tweetView = new TweetView('main-container');
+            });
         });
     }
 
@@ -543,10 +545,11 @@ class Controller {
     }
     
     removeTweet(id) {
-        if(this._feed.remove(id)) {
-            this._currShownTweets++;
-            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
-        }
+        api.removeTweet(id, this._token)
+        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+        });
     }
 
     _initFeed() {
@@ -919,7 +922,7 @@ class Controller {
     _restoreUser() {
         const lastUser = window.localStorage.lastUser;
         const lastUserPassword = window.localStorage.lastUserPassword;
-        api.login(lastUser, lastUserPassword)
+        return api.login(lastUser, lastUserPassword)
         .then(response => response.json())
         .then(response => response.token) 
         .then(token => {
