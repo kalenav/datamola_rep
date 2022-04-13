@@ -363,9 +363,9 @@ class Controller {
                     self.getFeed();
                 });
             }
-            else {
+            else return new Promise((resolve, reject) => {
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
-                api.getTweets(
+                resolve(api.getTweets(
                     filterConfig.author, 
                     filterConfig.text,
                     filterConfig.dateFrom,
@@ -387,8 +387,8 @@ class Controller {
                 })
                 .catch(() => {
                     this._displayErrorPage();
-                });;
-            }
+                }));
+            })
         })
         .catch(() => {
             this._displayErrorPage();
@@ -400,7 +400,6 @@ class Controller {
         this._tweetView.display(tweet, tweet.author === this._user);
         this._addTweetEventListeners();
         this._currShownTweets = 0;
-        this._currFilterConfig = {};
         this._headerView.display(this._user, true);
     }
 
@@ -580,8 +579,14 @@ class Controller {
         const newCommentTextarea = document.getElementById('new-comment-textarea');
         document.getElementById('new-comment-submit').addEventListener('click', () => {
             const tweetId = document.getElementsByClassName('tweet')[0].dataset.id;
-            if(!self._feed.addComment(tweetId, newCommentTextarea.value)) return;
-            self.showTweet(tweetId);
+            api.addComment(tweetId, self._token, newCommentTextarea.value)
+            .then(() => self.getFeed())
+            .then(() => {
+                self.showTweet(tweetId);
+            })
+            .catch(() => {
+                self._displayErrorPage();
+            });
         });
 
         document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
