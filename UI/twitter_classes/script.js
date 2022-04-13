@@ -517,7 +517,8 @@ class Controller {
             target.tagName === 'I' ||
             target.tagName === 'SELECT' ||
             target.tagName === 'OPTION' ||
-            target.tagName === 'TEXTAREA') return;    
+            target.tagName === 'TEXTAREA' ||
+            target.tagName === 'SPAN') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self.showTweet(target.dataset.id);
         });
