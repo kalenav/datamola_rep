@@ -738,13 +738,11 @@ class Controller {
         mainContainer.appendChild(linkToMainPage);
     }
 
-    _restoreUser() {
+    async _restoreUser() {
         const lastUser = window.localStorage.lastUser;
         const lastUserPassword = window.localStorage.lastUserPassword;
-        return api.login(lastUser, lastUserPassword)
-        .then(response => response.json())
-        .then(response => response.token) 
-        .then(token => {
+        try {
+            const token = (await (await api.login(lastUser, lastUserPassword)).json()).token;
             if(token) {
                 this._user = lastUser;
                 this._token = token;
@@ -753,10 +751,11 @@ class Controller {
                 this._user = '';
                 this._token = '';
             }
-        })
-        .catch(() => {
+            return Promise.resolve();
+        }
+        catch(e) {
             this._displayErrorPage();
-        });
+        }
     }
 
     _createNewShortPollingInterval() {
