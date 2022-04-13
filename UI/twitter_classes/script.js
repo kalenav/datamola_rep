@@ -279,7 +279,7 @@ class Controller {
             return;
         }
         try {
-            const response = (await api.addTweet(this._token, text)).json();
+            const response = await (await api.addTweet(this._token, text)).json();
             if(response.id) {
                 this.getFeed();
             }
@@ -293,7 +293,7 @@ class Controller {
     }
     
     async editTweet(id, text) {
-        const response = (await api.editTweet(id, this._token, text)).json();
+        const response = await (await api.editTweet(id, this._token, text)).json();
         try {
             if(response.id) {
                 if(document.getElementsByClassName('tweets')[0]) this.getFeed();
@@ -319,8 +319,8 @@ class Controller {
     }
     
     async removeTweet(id) {
-        api.removeTweet(id, this._token)
-        /*.then(response => {
+        const response = await (await api.removeTweet(id, this._token)).json();
+        try {
             if(response.ok) {
                 this.getFeed();
             }
@@ -328,10 +328,10 @@ class Controller {
                 this.showLoginForm();
             }
             else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
-        })
-        .catch(reason => {
+        }
+        catch(e) {
             this._displayErrorPage();
-        });*/
+        }
     }
 
     _initFeed() {
