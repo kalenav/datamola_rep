@@ -363,7 +363,8 @@ class Controller {
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
 
-        const currText = document.getElementById('new-tweet').value || '';
+        const newTweetTextarea = document.getElementById('new-tweet');
+        const currText = newTweetTextarea ? newTweetTextarea.value : '';
 
         return api.getTweets(
             filterConfig.author, 
@@ -408,6 +409,8 @@ class Controller {
                     self._currShownTweets = tweets.length;
                     self._currFeed = tweets.slice();
                     document.getElementById('new-tweet').value = currText;
+                    self._filtersDisplayed = !self._filtersDisplayed;
+                    self.toggleFilters();
                 })
                 .catch(() => {
                     this._displayErrorPage();
@@ -771,7 +774,7 @@ class Controller {
     }
 
     _createNewShortPollingInterval() {
-        this._shortPollingIntervalId = setInterval(() => { this.getFeed() }, 20000);
+        this._shortPollingIntervalId = setInterval(() => { this.getFeed(0, this._currShownTweets) }, 20000);
     }
 }
 
