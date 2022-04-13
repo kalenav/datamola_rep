@@ -458,7 +458,7 @@ class Controller {
                 }
             }
             catch(e) {
-                this._displayErrorPage();
+                self._displayErrorPage();
             }
         });
 
@@ -496,7 +496,7 @@ class Controller {
                 }
             }
             catch(e) {
-                this._displayErrorPage();
+                self._displayErrorPage();
             }
         });
 
@@ -627,7 +627,7 @@ class Controller {
                 }
             }
             catch(e) {
-                this._displayErrorPage();
+                self._displayErrorPage();
             }
         });
 
