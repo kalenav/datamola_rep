@@ -319,7 +319,7 @@ class Controller {
     }
     
     async removeTweet(id) {
-        const response = await (await api.removeTweet(id, this._token)).json();
+        const response = await api.removeTweet(id, this._token);
         try {
             if(response.ok) {
                 this.getFeed();
@@ -381,6 +381,7 @@ class Controller {
                 });
             }
             else {
+                const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
                 const responseTopPlusone = await (await api.getTweets(
                     filterConfig.author, 
                     filterConfig.text,
@@ -449,7 +450,7 @@ class Controller {
                 const token = (await (await api.login(username, password)).json()).token;
                 if(token) {
                     self.setCurrentUser(username);
-                    self._token = response.token;
+                    self._token = token;
                     window.localStorage.lastUser = username;
                     window.localStorage.lastUserPassword = password;
                 }
