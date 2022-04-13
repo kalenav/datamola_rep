@@ -612,8 +612,12 @@ class Controller {
                 return;
             }
             try {
-                const response = await (await api.addComment(tweetId, self._token, commentText)).json();
-                if(response.ok) await self.getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+                const response = await api.addComment(tweetId, self._token, commentText);
+                if(response.ok) 
+                {
+                    await self.getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+                    self.showTweet(tweetId);
+                }
                 else {
                     // по какой бы то ни было причине, сервер возвращает 
                     // ошибку 500, если человек не залогинен, хотя должен
