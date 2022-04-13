@@ -546,10 +546,11 @@ class Controller {
     
     removeTweet(id) {
         api.removeTweet(id, this._token)
-        .then(response => response.json())
         .then(response => {
-            console.log(response);
-        });
+            if(response.ok) {
+                this.getFeed(0, 10, this._currFilterConfig);
+            };
+        })
     }
 
     _initFeed() {
