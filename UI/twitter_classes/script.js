@@ -536,7 +536,17 @@ class Controller {
         .then(response => response.json())
         .then(response => {
             if(response.id) {
-                this.getFeed(0, 10, this._currFilterConfig);
+                if(document.getElementsByClassName('tweets')[0]) this.getFeed(0, 10, this._currFilterConfig);
+                else {
+                    this._currFeed.unshift({ 
+                        id: response.id,
+                        author: response.author,
+                        createdAt: response.createdAt,
+                        text: response.text,
+                        comments: response.comments.slice() 
+                    });
+                    this.showTweet(response.id);
+                }
             }
             else {
                 alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
@@ -606,9 +616,7 @@ class Controller {
                 .then(response => [...response].length >= tweets.length)
                 .then(allTweetsShown => {
                     self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
-                    self._headerView.display(self._user, false)
-                })
-                .then(() => {
+                    self._headerView.display(self._user, false);
                     self._filterView = new FilterView('filter-block');
                     self._addTweetFeedEventListeners();
                     self._addFilterEventListeners();
