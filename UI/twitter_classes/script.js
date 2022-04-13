@@ -766,7 +766,14 @@ class Controller {
     }
 
     _createNewShortPollingInterval() {
-        this._shortPollingIntervalId = setInterval(() => { this.getFeed() }, 60000);
+        this._shortPollingIntervalId = setInterval(() => {
+            const currText = document.getElementById('new-tweet').value;
+            this.getFeed()
+            .then(() => {
+                document.getElementById('new-tweet').value = currText; 
+            });
+            // не вынес в константу т.к. это разные textarea
+         }, 10000);
     }
 }
 
