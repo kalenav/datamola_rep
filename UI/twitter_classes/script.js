@@ -351,7 +351,7 @@ class Controller {
         }
     }
     
-    getFeed(skip = 0, top = 10, filterConfig = this._currFilterConfig) {
+    async getFeed(skip = 0, top = 10, filterConfig = this._currFilterConfig) {
         const self = this;
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
@@ -359,7 +359,7 @@ class Controller {
         const newTweetTextarea = document.getElementById('new-tweet');
         const currText = newTweetTextarea ? newTweetTextarea.value : '';
 
-        return api.getTweets(
+        const response = await (await api.getTweets(
             filterConfig.author, 
             filterConfig.text,
             filterConfig.dateFrom,
@@ -367,52 +367,40 @@ class Controller {
             skip,
             top,
             hashtagsStr
-        )
-        .then(response => response.json())
-        .then(response => {
-            const tweets = [...response];
-            if(tweets.length === 0) {
-                clearInterval(self._shortPollingIntervalId);
-                self._currFilterConfig = {};
-                self._tweetFeedView.display(false);
-                self._headerView.display(self._user, true);
-                document.getElementById('not-found-link').addEventListener('click', () => {
-                    self.getFeed();
-                });
-            }
-            else return new Promise((resolve, reject) => {
-                const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
-                resolve(api.getTweets(
-                    filterConfig.author, 
-                    filterConfig.text,
-                    filterConfig.dateFrom,
-                    filterConfig.dateTo,
-                    skip,
-                    top + 1,
-                    hashtagsStr
-                )
-                .then(response => response.json())
-                .then(response => [...response].length === tweets.length)
-                .then(allTweetsShown => {
-                    self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
-                    self._headerView.display(self._user, false);
-                    self._filterView = new FilterView('filter-block');
-                    self._addTweetFeedEventListeners();
-                    self._addFilterEventListeners();
-                    self._currShownTweets = tweets.length;
-                    self._currFeed = tweets.slice();
-                    document.getElementById('new-tweet').value = currText;
-                    self._filtersDisplayed = !self._filtersDisplayed;
-                    self.toggleFilters();
-                })
-                .catch(() => {
-                    this._displayErrorPage();
-                }));
-            })
-        })
-        .catch(() => {
-            this._displayErrorPage();
-        });
+        )).json();
+
+        const tweets = [...response];
+        if(tweets.length === 0) {
+            clearInterval(self._shortPollingIntervalId);
+            self._currFilterConfig = {};
+            self._tweetFeedView.display(false);
+            self._headerView.display(self._user, true);
+            document.getElementById('not-found-link').addEventListener('click', () => {
+                self.getFeed();
+            });
+        }
+        else {
+            const responseTopPlusone = await (await api.getTweets(
+                filterConfig.author, 
+                filterConfig.text,
+                filterConfig.dateFrom,
+                filterConfig.dateTo,
+                skip,
+                top + 1,
+                hashtagsStr
+            )).json();
+            const allTweetsShown = [...responseTopPlusone].length === tweets.length;
+            self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
+            self._headerView.display(self._user, false);
+            self._filterView = new FilterView('filter-block');
+            self._addTweetFeedEventListeners();
+            self._addFilterEventListeners();
+            self._currShownTweets = tweets.length;
+            self._currFeed = tweets.slice();
+            document.getElementById('new-tweet').value = currText;
+            self._filtersDisplayed = !self._filtersDisplayed;
+            self.toggleFilters();
+        }
     }
     
     showTweet(id) {
