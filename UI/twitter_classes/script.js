@@ -709,12 +709,6 @@ class Controller {
     }
 }
 
-function initLocalStorage(usersstr, tweetsstr) {
-    window.localStorage.setItem('users', usersstr);
-    window.localStorage.setItem('tweets', tweetsstr);
-    window.localStorage.setItem('lastUser', '');
-}
-
 class TweetFeedApiService {
     _serverAddress;
     _defaultHeaders = {
