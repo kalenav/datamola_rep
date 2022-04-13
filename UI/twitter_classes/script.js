@@ -359,47 +359,52 @@ class Controller {
         const newTweetTextarea = document.getElementById('new-tweet');
         const currText = newTweetTextarea ? newTweetTextarea.value : '';
 
-        const response = await (await api.getTweets(
-            filterConfig.author, 
-            filterConfig.text,
-            filterConfig.dateFrom,
-            filterConfig.dateTo,
-            skip,
-            top,
-            hashtagsStr
-        )).json();
-
-        const tweets = [...response];
-        if(tweets.length === 0) {
-            clearInterval(self._shortPollingIntervalId);
-            self._currFilterConfig = {};
-            self._tweetFeedView.display(false);
-            self._headerView.display(self._user, true);
-            document.getElementById('not-found-link').addEventListener('click', () => {
-                self.getFeed();
-            });
-        }
-        else {
-            const responseTopPlusone = await (await api.getTweets(
+        try {
+            const response = await (await api.getTweets(
                 filterConfig.author, 
                 filterConfig.text,
                 filterConfig.dateFrom,
                 filterConfig.dateTo,
                 skip,
-                top + 1,
+                top,
                 hashtagsStr
             )).json();
-            const allTweetsShown = [...responseTopPlusone].length === tweets.length;
-            self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
-            self._headerView.display(self._user, false);
-            self._filterView = new FilterView('filter-block');
-            self._addTweetFeedEventListeners();
-            self._addFilterEventListeners();
-            self._currShownTweets = tweets.length;
-            self._currFeed = tweets.slice();
-            document.getElementById('new-tweet').value = currText;
-            self._filtersDisplayed = !self._filtersDisplayed;
-            self.toggleFilters();
+
+            const tweets = [...response];
+            if(tweets.length === 0) {
+                clearInterval(self._shortPollingIntervalId);
+                self._currFilterConfig = {};
+                self._tweetFeedView.display(false);
+                self._headerView.display(self._user, true);
+                document.getElementById('not-found-link').addEventListener('click', () => {
+                    self.getFeed();
+                });
+            }
+            else {
+                const responseTopPlusone = await (await api.getTweets(
+                    filterConfig.author, 
+                    filterConfig.text,
+                    filterConfig.dateFrom,
+                    filterConfig.dateTo,
+                    skip,
+                    top + 1,
+                    hashtagsStr
+                )).json();
+                const allTweetsShown = [...responseTopPlusone].length === tweets.length;
+                self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
+                self._headerView.display(self._user, false);
+                self._filterView = new FilterView('filter-block');
+                self._addTweetFeedEventListeners();
+                self._addFilterEventListeners();
+                self._currShownTweets = tweets.length;
+                self._currFeed = tweets.slice();
+                document.getElementById('new-tweet').value = currText;
+                self._filtersDisplayed = !self._filtersDisplayed;
+                self.toggleFilters();
+            }
+        }
+        catch(e) {
+            this._displayErrorPage();
         }
     }
     
@@ -436,14 +441,13 @@ class Controller {
         self._displayAuthWindow(document.getElementById('main-container'), true);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault(); // чтобы не переходило на страницу с твитами само по себе
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
-            api.login(username, password)
-            .then(response => response.json()) 
-            .then(response => {
-                if(response.token) {
+            try {
+                const token = (await (await api.login(username, password)).json()).token;
+                if(token) {
                     self.setCurrentUser(username);
                     self._token = response.token;
                     window.localStorage.lastUser = username;
@@ -452,10 +456,10 @@ class Controller {
                 else {
                     alert('Such a user doesn\'t exist or you have misspelled something.');
                 }
-            })
-            .catch(reason => {
+            }
+            catch(e) {
                 this._displayErrorPage();
-            });;
+            }
         });
 
         document.getElementById('signup-link').addEventListener('click', () => {
