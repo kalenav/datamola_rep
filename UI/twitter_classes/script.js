@@ -391,7 +391,7 @@ class Controller {
                     hashtagsStr
                 )
                 .then(response => response.json())
-                .then(response => [...response].length >= tweets.length)
+                .then(response => [...response].length === tweets.length)
                 .then(allTweetsShown => {
                     self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
                     self._headerView.display(self._user, false);
