@@ -766,7 +766,7 @@ class Controller {
     }
 
     _createNewShortPollingInterval() {
-        this._shortPollingIntervalId = setInterval(() => { this.getFeed() }, 5000);
+        this._shortPollingIntervalId = setInterval(() => { this.getFeed() }, 60000);
     }
 }
 
