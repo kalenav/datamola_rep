@@ -492,7 +492,7 @@ class Controller {
 
     _filtersDisplayed = false;
     _currShownTweets;
-    _currFilterConfig;
+    _currFilterConfig = {};
 
     constructor() {
         this._restoreUser();
@@ -551,7 +551,8 @@ class Controller {
     
     getFeed(skip, top, filterConfig) {
         const self = this;
-        const hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
+        let hashtagsStr;
+        if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
 
         api.getTweets(
             filterConfig.author, 
@@ -584,7 +585,7 @@ class Controller {
                     hashtagsStr
                 )
                 .then(response => response.json())
-                .then(response => [...response].length > tweets.length)
+                .then(response => [...response].length >= tweets.length)
                 .then(allTweetsShown => {
                     self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
                     self._headerView.display(self._user, false)
@@ -632,7 +633,7 @@ class Controller {
             api.login(username, password)
             .then(response => response.json()) 
             .then(response => {
-                if(response.ok) {
+                if(response.token) {
                     self.setCurrentUser(username);
                     window.localStorage.lastUser = username;
                     window.localStorage.lastUserPassword = password;
@@ -667,9 +668,16 @@ class Controller {
                 alert('The passwords don\'t match up. Make sure they are identical.');
                 return;
             }
-            const newUser = { username, password };
-            if(!userList.has(newUser)) userList.addUser(newUser);
-            self.getFeed();
+            api.register(username, password)
+            .then(response => response.json())
+            .then(response => {
+                if(response.id) {
+                    alert('Registered successfully!');
+                }
+            })
+            // const newUser = { username, password };
+            // if(!userList.has(newUser)) userList.addUser(newUser);
+            // self.getFeed();
         });
 
         document.getElementById('login-link').addEventListener('click', () => {
