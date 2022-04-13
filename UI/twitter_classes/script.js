@@ -604,14 +604,19 @@ class Controller {
             const tweetId = document.getElementsByClassName('tweet')[0].dataset.id;
             const commentText = newCommentTextarea.value;
             if(commentText.length > 280) {
-                alert('There is something wrong with your comment. Make sure it has no more than 280 symbols.');
+                alert('There is something wrong with your comment. Make sure it has no more than 280 symbols long.');
                 return;
             }
             api.addComment(tweetId, self._token, commentText)
-            .then(() => self.getFeed(), reason => { throw reason }) // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+            .then(response => {
+                console.log(response);
+                if(response.ok) return self.getFeed() // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+                else return new Promise((resolve, reject) => { throw response.statusCode });
+            }) 
             .then(() => self.showTweet(tweetId))
-            .catch(reason => {
-                if(reason.statusCode === 401) self.showLoginForm();
+            .catch(reasonCode => {
+                console.log(reasonCode);
+                if(reasonCode === 401) self.showLoginForm();
                 else self._displayErrorPage();
             });
         });
