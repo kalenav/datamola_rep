@@ -244,6 +244,7 @@ class Controller {
 
     _shortPollingIntervalId;
 
+    // пришлось оставить then, т.к. конструктор не может быть асинхронным
     constructor() {
         this._restoreUser()
         .then(() => {
@@ -277,19 +278,18 @@ class Controller {
             alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
             return;
         }
-        api.addTweet(this._token, text)
-        .then(response => response.json())
-        .then(response => {
+        try {
+            const response = (await api.addTweet(this._token, text)).json();
             if(response.id) {
                 this.getFeed();
             }
             else if(response.statusCode === 401) {
                 this.showLoginForm();
             }
-        })
-        .catch(() => {
+        }
+        catch(e) {
             this._displayErrorPage();
-        });
+        }
     }
     
     editTweet(id, text) {
