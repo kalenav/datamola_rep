@@ -265,7 +265,7 @@ class Controller {
         });
     }
 
-    setCurrentUser(user) {
+    _setCurrentUser(user) {
         this._user = user;
         if(!user) this._token = '';
         this._headerView.display(user, false);
@@ -273,7 +273,7 @@ class Controller {
         this.getFeed(0, this._currShownTweets, this._currFilterConfig);
     }
     
-    async addTweet(text) {
+    async _addTweet(text) {
         if(text.length > 280) {
             alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
             return;
@@ -292,7 +292,7 @@ class Controller {
         }
     }
     
-    async editTweet(id, text) {
+    async _editTweet(id, text) {
         const response = await (await api.editTweet(id, this._token, text)).json();
         try {
             if(response.id) {
@@ -305,7 +305,7 @@ class Controller {
                         text: response.text,
                         comments: response.comments.slice() 
                     });
-                    this.showTweet(response.id);
+                    this._showTweet(response.id);
                 }
             }
             else if(response.statusCode === 401) {
@@ -318,7 +318,7 @@ class Controller {
         }
     }
     
-    async removeTweet(id) {
+    async _removeTweet(id) {
         const response = await api.removeTweet(id, this._token);
         try {
             if(response.ok) {
@@ -352,7 +352,7 @@ class Controller {
         }
     }
     
-    async getFeed(skip = 0, top = 10, filterConfig = this._currFilterConfig) {
+    async _getFeed(skip = 0, top = 10, filterConfig = this._currFilterConfig) {
         const self = this;
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
@@ -410,7 +410,7 @@ class Controller {
         }
     }
     
-    showTweet(id) {
+    _showTweet(id) {
         clearInterval(this._shortPollingIntervalId);
         const tweet = this._currFeed.find((tweet) => tweet.id === id);
         if(tweet) {
@@ -424,7 +424,7 @@ class Controller {
         }
     }
 
-    toggleFilters() {
+    _toggleFilters() {
         if(this._filtersDisplayed) {
             this._filterView.hide();
             this._filtersDisplayed = false;
@@ -435,7 +435,7 @@ class Controller {
         }
     }
 
-    showLoginForm() {
+    _showLoginForm() {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), true);
@@ -448,7 +448,7 @@ class Controller {
             try {
                 const token = (await (await api.login(username, password)).json()).token;
                 if(token) {
-                    self.setCurrentUser(username);
+                    self._setCurrentUser(username);
                     self._token = token;
                     window.localStorage.lastUser = username;
                     window.localStorage.lastUserPassword = password;
@@ -464,7 +464,7 @@ class Controller {
 
         document.getElementById('signup-link').addEventListener('click', () => {
             clearInterval(this._shortPollingIntervalId);
-            self.showSignupForm();
+            self._showSignupForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
@@ -474,7 +474,7 @@ class Controller {
         });
     }
 
-    showSignupForm() {
+    _showSignupForm() {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), false);
@@ -493,7 +493,7 @@ class Controller {
                 const response = await api.register(username, password);
                 if(response.ok) {
                     alert('Registered successfully!');
-                    self.showLoginForm();
+                    self._showLoginForm();
                 }
                 else if(response.status === 409) {
                     alert('Such a user already exists.');
@@ -505,7 +505,7 @@ class Controller {
         });
 
         document.getElementById('login-link').addEventListener('click', () => {
-            self.showLoginForm();
+            self._showLoginForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
@@ -526,10 +526,10 @@ class Controller {
         document.getElementById('header-login-button').addEventListener('click', (e) => {
             clearInterval(this._shortPollingIntervalId);
             if(!self._user) {
-                self.showLoginForm();
+                self._showLoginForm();
             }
             else {
-                self.setCurrentUser('');
+                self._setCurrentUser('');
                 window.localStorage.lastUser = '';
                 window.localStorage.lastUserPassword = '';
             }
@@ -552,7 +552,7 @@ class Controller {
             target.tagName === 'TEXTAREA' ||
             target.tagName === 'SPAN') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
-            self.showTweet(target.dataset.id);
+            self._showTweet(target.dataset.id);
         });
 
         const loadMoreButton = document.getElementsByClassName('load-more')[0];
@@ -579,7 +579,7 @@ class Controller {
         });
 
         document.getElementById('new-tweet-button').addEventListener('click', () => {
-            self.addTweet(document.getElementById('new-tweet').value);
+            self._addTweet(document.getElementById('new-tweet').value);
         });
     }
 
@@ -621,7 +621,7 @@ class Controller {
                 if(response.ok) 
                 {
                     await self.getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
-                    self.showTweet(tweetId);
+                    self._showTweet(tweetId);
                 }
                 else {
                     // по какой бы то ни было причине, сервер возвращает 
@@ -632,7 +632,7 @@ class Controller {
                     // нужно, хотя там та же логика, но сервер в случае чего 
                     // возвращает 401 (строка 284)
 
-                    if(response.status === 500) self.showLoginForm();
+                    if(response.status === 500) self._showLoginForm();
                     else self._displayErrorPage();
                 }
             }
@@ -678,7 +678,7 @@ class Controller {
             const body = document.body;
             body.appendChild(tweetEditTextareaContainer);
             document.getElementById('tweet-edit-done').addEventListener('click', () => {
-                this.editTweet(tweetId, tweetEditTextarea.value);
+                this._editTweet(tweetId, tweetEditTextarea.value);
                 body.removeChild(tweetEditTextareaContainer);
             });
             document.getElementById('tweet-edit-cancel').addEventListener('click', () => {
@@ -688,7 +688,7 @@ class Controller {
         if(target.classList.contains('delete')) {
             const choice = confirm('Are you sure?');
             if(choice) {
-                this.removeTweet(tweetId);
+                this._removeTweet(tweetId);
                 this.getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
             }
         }
