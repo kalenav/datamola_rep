@@ -254,6 +254,9 @@ class Controller {
                 this._addTweetFeedEventListeners();
                 this._addFilterEventListeners();
                 this._tweetView = new TweetView('main-container');
+            })
+            .catch(() => {
+                this._displayErrorPage();
             });
         });
     }
@@ -261,8 +264,8 @@ class Controller {
     setCurrentUser(user) {
         this._user = user;
         this._headerView.display(user, false);
-        this.getFeed(0, this._currShownTweets, this._currFilterConfig);
         this._addHeaderEventListeners();
+        this.getFeed(0, this._currShownTweets, this._currFilterConfig);
     }
     
     addTweet(text) {
@@ -275,7 +278,10 @@ class Controller {
             else {
                 alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
             }
-        });
+        })
+        .catch(() => {
+            this._displayErrorPage();
+        });;
     }
     
     editTweet(id, text) {
@@ -298,7 +304,10 @@ class Controller {
             else {
                 alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
             }
-        });
+        })
+        .catch(() => {
+            this._displayErrorPage();
+        });;
     }
     
     removeTweet(id) {
@@ -308,6 +317,9 @@ class Controller {
                 this.getFeed(0, 10, this._currFilterConfig);
             };
         })
+        .catch(() => {
+            this._displayErrorPage();
+        });
     }
 
     _initFeed() {
@@ -321,7 +333,10 @@ class Controller {
             this._currFeed = tweets.slice();
             const user = this._user;
             this._headerView.display(user, user ? true : false)
-        });
+        })
+        .catch(() => {
+            this._displayErrorPage();
+        });;
     }
     
     getFeed(skip, top, filterConfig) {
@@ -368,9 +383,15 @@ class Controller {
                     self._addTweetFeedEventListeners();
                     self._addFilterEventListeners();
                     self._currShownTweets = tweets.length;
-                });
+                })
+                .catch(() => {
+                    this._displayErrorPage();
+                });;
             }
         })
+        .catch(() => {
+            this._displayErrorPage();
+        });
     }
     
     showTweet(id) {
@@ -415,7 +436,10 @@ class Controller {
                 else {
                     alert('Such a user doesn\'t exist or you have misspelled something.');
                 }
-            });
+            })
+            .catch(() => {
+                this._displayErrorPage();
+            });;
         });
 
         document.getElementById('signup-link').addEventListener('click', () => {
@@ -449,9 +473,9 @@ class Controller {
                     alert('Registered successfully!');
                 }
             })
-            // const newUser = { username, password };
-            // if(!userList.has(newUser)) userList.addUser(newUser);
-            // self.getFeed();
+            .catch(() => {
+                this._displayErrorPage();
+            });
         });
 
         document.getElementById('login-link').addEventListener('click', () => {
@@ -679,6 +703,9 @@ class Controller {
                 this._token = '';
             }
         })
+        .catch(() => {
+            this._displayErrorPage();
+        });
     }
 }
 
