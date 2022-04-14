@@ -252,7 +252,13 @@ class Controller {
 
     _filtersDisplayed = false;
     _currShownTweets;
-    _currFilterConfig = {};
+    _currFilterConfig = {
+        author: '',
+        dateFrom: new Date(0),
+        dateTo: new Date(),
+        text: '',
+        hashtags: [],
+    };
 
     _shortPollingIntervalId;
 
