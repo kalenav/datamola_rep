@@ -430,6 +430,9 @@ class Controller {
                     resolve();
                 });
                 const allTweetsShown = tweetsTopPlusOne.length === tweets.length;
+                tweets.sort((tweet1, tweet2) => {
+                    return tweet1.createdAt < tweet2.createdAt ? 1 : -1;
+                });
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
                 self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
                 self._headerView.display(self._user, false);
