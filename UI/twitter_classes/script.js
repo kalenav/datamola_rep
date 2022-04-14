@@ -175,7 +175,7 @@ class FilterView {
     }
 
     hide() {
-        this._container.style.left = 'calc(-100% - 2rem)';
+        this._container.style.left = 'calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding))';
     }
 }
 
@@ -403,8 +403,8 @@ class Controller {
                 document.getElementById('new-tweet').value = currText;
 
                 // насильно переключил фильтры в противоположное
-                // состояние, чтобы "переключить" их в то состояние,
-                // в котором они были до загрузки ленты
+                // состояние, чтобы ненасильно переключить их в то 
+                // состояние, в котором они были до загрузки ленты
                 self._filtersDisplayed = !self._filtersDisplayed;
                 self._toggleFilters();
             }

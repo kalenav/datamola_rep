@@ -3,6 +3,11 @@
     --secondary-color: #464646;
     --lightgray: #F2F2F2;
     --lightgray-2: #C0C0C0;
+    --default-button-height: 37px;
+    --filter-block-padding: 1rem;
+    --filter-block-desktop-width: 20%;
+    --filter-block-mobile-width: 30rem;
+    --filter-block-feed-clearance: 1rem;
 }
 
 * {
@@ -54,7 +59,7 @@ button:not(.own-tweet-button) {
     border: none;
     border-radius: 5px;
     padding: 0 16px;
-    height: 37px;
+    height: var(--default-button-height);
 }
 
 button:not(.own-tweet-button):hover {
@@ -138,7 +143,8 @@ section.tweets > *:not(button) {
 button.filters-button {
     position: absolute;
     left: 10%;
-    top: calc(1.3rem + 20px);
+    top: 0;
+    display: none;
 }
 
 div.tweet {
@@ -347,16 +353,16 @@ section.new-comment {
 
 #filter-block {
     position: absolute;
-    top: -4rem;
-    left: calc(-100% - 2rem);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    height: auto;
+    top: 1rem;
+    width: calc(var(--filter-block-desktop-width) - 2 * var(--filter-block-padding) - var(--filter-block-feed-clearance));
+    left: 0;
     justify-content: space-around;
     align-items: center;
     font-size: 1.2rem;
-    height: 4rem;
     background-color: var(--lightgray);
-    width: 100%;
     padding: 1rem;
 }
 
@@ -365,13 +371,14 @@ section.new-comment {
 }
 
 #filter-block > * {
-    margin-right: 1rem;
+    margin-bottom: 1rem;
 }
 
 .filter {
     resize: none;
-    width: 15%;
     border-radius: 0.5rem;
+    width: 80%;
+    max-width: 80%;
 }
 
 textarea.filter {
@@ -447,17 +454,29 @@ textarea.filter:focus-visible {
     justify-content: center;
 }
 
-@media all and (max-width: 1400px) {
-    .filter {
-        width: 24%;
+@media all and (min-width: 1300px) {
+    #filter-block {
+        
     }
+}
 
+@media all and (max-width: 1300px) {
     .date-filter-lists {
         width: 75%;
     }
 
     .date-filter-list {
         margin-left: 0.2rem;
+    }
+
+    button.filters-button {
+        display: flex;
+    }
+
+    #filter-block {
+        top: calc(var(--default-button-height) + 1rem);
+        width: 30rem;
+        left: calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding));
     }
 }
 
@@ -478,24 +497,6 @@ textarea.filter:focus-visible {
 
     div.footer-info {
         flex-direction: column;
-    }
-
-    #filter-block {
-        flex-direction: column;
-        height: auto;
-        top: calc(1.3rem + 20px + 37px + 1rem);
-        width: 30rem;
-        left: -32rem;
-    }
-
-    #filter-block > * {
-        margin-right: 0;
-        margin-bottom: 1rem;
-    }
-    
-    .filter {
-        width: 80%;
-        max-width: 80%;
     }
 }
 
