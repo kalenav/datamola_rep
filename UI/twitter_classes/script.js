@@ -424,7 +424,7 @@ class Controller {
                 self._addFilterEventListeners();
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
-                self._restoreFeedInfo(newTweetText, authorTextareaText, selectedAuthorsStr, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtagsStr);
+                self._restoreFeedState(newTweetText, authorTextareaText, selectedAuthorsStr, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtagsStr);
                 if(window.innerWidth >= 1300) { 
                     // если на десктопе - показываем фильтры в любом случае
 
@@ -452,7 +452,7 @@ class Controller {
         return element ? element[field] : defaultValue;
     }
 
-    _restoreFeedInfo(newTweetText, authorTextareaText, selectedAuthors, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtags) {
+    _restoreFeedState(newTweetText, authorTextareaText, selectedAuthors, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtags) {
         document.getElementById('new-tweet').value = newTweetText;
         document.getElementById('author-name-filter').value = authorTextareaText;
         document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
@@ -460,12 +460,14 @@ class Controller {
 
         if(selectedAuthors) {
             const selectedAuthorsList = document.getElementById('selected-authors-list');
+            selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             selectedAuthors.split(' ').forEach((author) => {
                 selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
             })
         }
         if(selectedHashtags) {
             const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+            selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
             selectedHashtags.split(' ').forEach((hashtag) => {
                 selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
             })
@@ -671,7 +673,7 @@ class Controller {
         authorTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
             if(selectedAuthorsList.children.length === 0) {
-                selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', {}, 'Click on an author name to remove it from the filter list!'));
+                selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             }
             selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, authorTextarea.value));
             authorTextarea.value = '';
@@ -683,20 +685,31 @@ class Controller {
                 alert('The first symbol of this textarea must be a hashtag (#).');
                 return;
             }
+            if(selectedHashtagsList.children.length === 0) {
+                selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
+            }
             selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtagsTextarea.value));
             hashtagsTextarea.value = '';
         });
 
-        document.getElementById('selected-authors-list').addEventListener('click', (e) => {
+        selectedAuthorsList.addEventListener('click', (e) => {
             const target = e.target;
             if(target.tagName !== 'LI') return;
             target.parentNode.removeChild(target);
+            if(selectedAuthorsList.children.length === 0) {
+                console.log(selectedAuthorsList);
+                console.log(selectedAuthorsList.parentNode);
+                selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
+            }
         });
 
-        document.getElementById('selected-hashtags-list').addEventListener('click', (e) => {
+        selectedHashtagsList.addEventListener('click', (e) => {
             const target = e.target;
             if(target.tagName !== 'LI') return;
             target.parentNode.removeChild(target);
+            if(selectedHashtagsList.children.length === 0) {
+                selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
+            }
         });
 
         document.getElementById('filter-submit').addEventListener('click', () => {
