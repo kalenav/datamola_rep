@@ -408,11 +408,22 @@ class Controller {
                 self._currFeed = tweets.slice();
                 document.getElementById('new-tweet').value = currText;
 
-                // насильно переключил фильтры в противоположное
-                // состояние, чтобы ненасильно переключить их в то 
-                // состояние, в котором они были до загрузки ленты
-                self._filtersDisplayed = !self._filtersDisplayed;
-                self._toggleFilters();
+                if(window.innerWidth >= 1300) { 
+                    // если на десктопе - показываем фильтры в любом случае
+
+                    this._filterView.display();
+                    this._filtersDisplayed = true;
+                }
+                else {
+                    // если на мобильной версии - показываем то, что было
+                    
+                    // насильно переключил фильтры в противоположное
+                    // состояние, чтобы ненасильно переключить их в то 
+                    // состояние, в котором они были до загрузки ленты
+
+                    self._filtersDisplayed = !self._filtersDisplayed;
+                    self._toggleFilters();
+                }
             }
         }
         catch(e) {
