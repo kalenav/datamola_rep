@@ -384,17 +384,23 @@ class Controller {
         const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
 
         try {
-            const response = await (await api.getTweets(
-                filterConfig.author, 
-                filterConfig.text,
-                filterConfig.dateFrom,
-                filterConfig.dateTo,
-                skip,
-                top,
-                hashtagsStr
-            )).json();
-
-            const tweets = [...response];
+            const authors = filterConfig.author.split(',');
+            let tweets = [];
+            await new Promise(async function(resolve, reject) {
+                for(let i = 0; i < authors.length; i++) {
+                    const response = await (await api.getTweets(
+                        authors[i],
+                        filterConfig.text,
+                        filterConfig.dateFrom,
+                        filterConfig.dateTo,
+                        skip,
+                        top,
+                        hashtagsStr,
+                    )).json();
+                    tweets = tweets.concat(response);
+                }
+                resolve();
+            });
             if(tweets.length === 0) {
                 clearInterval(self._shortPollingIntervalId);
                 self._currFilterConfig = {};
@@ -407,17 +413,24 @@ class Controller {
                 });
             }
             else {
+                let tweetsTopPlusOne = [];
+                await new Promise(async function (resolve, reject) {
+                    for(let i = 0; i < authors.length; i++) {
+                        const response = await (await api.getTweets(
+                            authors[i],
+                            filterConfig.text,
+                            filterConfig.dateFrom,
+                            filterConfig.dateTo,
+                            skip,
+                            top + 1,
+                            hashtagsStr,
+                        )).json();
+                        tweetsTopPlusOne = tweetsTopPlusOne.concat(response);
+                    }
+                    resolve();
+                });
+                const allTweetsShown = tweetsTopPlusOne.length === tweets.length;
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
-                const responseTopPlusone = await (await api.getTweets(
-                    filterConfig.author, 
-                    filterConfig.text,
-                    filterConfig.dateFrom,
-                    filterConfig.dateTo,
-                    skip,
-                    top + 1,
-                    hashtagsStr
-                )).json();
-                const allTweetsShown = [...responseTopPlusone].length === tweets.length;
                 self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
                 self._headerView.display(self._user, false);
                 self._filterView = new FilterView('filter-block');
