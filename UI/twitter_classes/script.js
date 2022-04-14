@@ -684,6 +684,18 @@ class Controller {
             hashtagsTextarea.value = '';
         });
 
+        document.getElementById('selected-authors-list').addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'LI') return;
+            target.parentNode.removeChild(target);
+        });
+
+        document.getElementById('selected-hashtags-list').addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'LI') return;
+            target.parentNode.removeChild(target);
+        });
+
         document.getElementById('filter-submit').addEventListener('click', () => {
             self._createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList);
             self._getFeed();
