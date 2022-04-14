@@ -262,7 +262,6 @@ class Controller {
 
     _shortPollingIntervalId;
 
-    // пришлось оставить then, т.к. конструктор не может быть асинхронным
     constructor() {
         return (async () => {
             try {
@@ -282,24 +281,6 @@ class Controller {
                 this._displayErrorPage();
             }
         })();
-        /*this._restoreUser()
-        .then(() => {
-            this._headerView = new HeaderView('username');
-            this._headerView.display(this._user, false);
-            this._addHeaderEventListeners();
-            this._tweetFeedView = new TweetFeedView('main-container');
-            this._initFeed()
-            .then(() => {
-                this._filterView = new FilterView('filter-block');
-                if(window.innerWidth >= 1300) this._toggleFilters();
-                this._addTweetFeedEventListeners();
-                this._addFilterEventListeners();
-                this._tweetView = new TweetView('main-container');
-            })
-            .catch(() => {
-                this._displayErrorPage();
-            });
-        });*/
     }
 
     _setCurrentUser(user) {
