@@ -294,6 +294,7 @@ class Controller {
         try {
             const response = await (await api.addTweet(this._token, text)).json();
             if(response.id) {
+                document.getElementById('new-tweet').value = '';
                 this._getFeed();
             }
             else if(response.statusCode === 401) {
