@@ -670,6 +670,9 @@ class Controller {
 
         authorTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
+            if(selectedAuthorsList.children.length === 0) {
+                selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', {}, 'Click on an author name to remove it from the filter list!'));
+            }
             selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, authorTextarea.value));
             authorTextarea.value = '';
         });

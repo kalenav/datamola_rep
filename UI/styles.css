@@ -391,8 +391,8 @@ textarea.filter:focus-visible {
 
 .selected-filters-list-container {
     display: flex;
-    flex-direction: row;
-    justify-content: start;
+    flex-direction: column-reverse;
+    align-items: flex-start;
     width: 80%;
 }
 
