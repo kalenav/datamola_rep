@@ -38,9 +38,10 @@ class ViewUtils {
     static getDateNumbers(date) {
         const day = Math.floor(date.getDate() / 10) === 0 ? `0${date.getDate()}` : date.getDate();
         const month = Math.floor(date.getMonth() / 10) === 0 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+        const year = date.getFullYear();
         const hours = Math.floor(date.getHours() / 10) === 0 ? `0${date.getHours()}` : date.getHours();
         const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
-        return {day, month, hours, minutes};
+        return {day, month, year, hours, minutes};
     }
     
     static wrapHashtags(text) {
@@ -370,7 +371,18 @@ class Controller {
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
 
         const newTweetTextarea = document.getElementById('new-tweet');
-        const currText = newTweetTextarea ? newTweetTextarea.value : '';
+        const newTweetText = newTweetTextarea ? newTweetTextarea.value : '';
+
+        const authorTextarea = document.getElementById('author-name-filter');
+        const authorTextareaText = authorTextarea ? authorTextarea.value : '';
+        const tweetTextTextarea = document.getElementById('tweet-text-filter');
+        const tweetTextTextareaText = tweetTextTextarea ? tweetTextTextarea.value : '';
+        const hashtagsTextarea = document.getElementById('hashtags-filter');
+        const hashtagsTextareaText = hashtagsTextarea ? hashtagsTextarea.value : '';
+
+        const dateFrom = document.getElementById('date-from').valueAsDate();
+        const dateTo = document.getElementById('date-To').valueAsDate();
+
 
         try {
             const response = await (await api.getTweets(
@@ -412,8 +424,7 @@ class Controller {
                 self._addFilterEventListeners();
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
-                document.getElementById('new-tweet').value = currText;
-
+                self._restoreFeedInfo();
                 if(window.innerWidth >= 1300) { 
                     // если на десктопе - показываем фильтры в любом случае
 
@@ -435,6 +446,9 @@ class Controller {
         catch(e) {
             this._displayErrorPage();
         }
+    }
+
+    _restoreFeedInfo(newTweetText, authorTextareaText, selectedAuthors, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtags) {
     }
     
     _showTweet(id) {
