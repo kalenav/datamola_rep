@@ -645,7 +645,8 @@ class Controller {
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             let target = e.target;
-            if(target.tagName !== 'DIV') return;    
+            if(target.tagName !== 'DIV' &&
+            target.tagName !== 'P') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self._showTweet(target.dataset.id);
         });
@@ -786,8 +787,16 @@ class Controller {
                 self._displayErrorPage();
             }
         });
+        
+        const tweet = document.getElementsByClassName('tweet')[0];
 
-        document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
+        tweet.addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
+        tweet.addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'SPAN') return;
+            self._currFilterConfig.hashtags = [ target.innerHTML ];
+            self._getFeed();
+        });
     }
 
     _createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList) {
