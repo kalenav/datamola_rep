@@ -168,6 +168,11 @@ class FilterView {
 
     constructor(containerId) {
         this._container = document.getElementById(containerId);
+        window.addEventListener('resize', () => {
+            if(window.innerWidth >= 1300) {
+                this.display();
+            }
+        });
     }
 
     display() {

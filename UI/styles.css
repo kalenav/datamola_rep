@@ -356,9 +356,6 @@ section.new-comment {
     display: flex;
     flex-direction: column;
     height: auto;
-    top: 1rem;
-    width: calc(var(--filter-block-desktop-width) - 2 * var(--filter-block-padding) - var(--filter-block-feed-clearance));
-    left: 0;
     justify-content: space-around;
     align-items: center;
     font-size: 1.2rem;
@@ -456,7 +453,9 @@ textarea.filter:focus-visible {
 
 @media all and (min-width: 1300px) {
     #filter-block {
-        
+        top: 1rem;
+        width: calc(var(--filter-block-desktop-width) - 2 * var(--filter-block-padding) - var(--filter-block-feed-clearance));
+        left: 0;
     }
 }
 
