@@ -389,6 +389,17 @@ textarea.filter:focus-visible {
     background-color: white;
 }
 
+.selected-filters-list-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    width: 80%;
+}
+
+.selected-filters-list {
+    margin: 0 auto 0 0;
+}
+
 .date-filter-text {
     margin: 0 1rem 0 0;
 }

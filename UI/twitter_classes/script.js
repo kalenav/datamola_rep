@@ -121,10 +121,14 @@ class TweetFeedView {
         const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
         const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'author1 author2 ...', id: 'author-name-filter'});
         authorNameTextarea.value = filterValues.author || '';
+        const selectedAuthorsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
+        selectedAuthorsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-authors-list' }));
         const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter'});
         tweetTextTextarea.value = filterValues.text || '';
         const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: '#hashtag1 #hashtag2 ...', id: 'hashtags-filter' });
         hashtagsTextarea.value = filterValues.hashtags ? filterValues.hashtags.join(' ') : ''; 
+        const selectedHashtagsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
+        selectedHashtagsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-hashtags-list' }));
 
         const dateFilterBlock = ViewUtils.newTag('div', { class: 'filter', id: 'date-filter' });
         const dateFilterBlockFrom = ViewUtils.newTag('div', { class: 'date-filter-block from' });
@@ -143,9 +147,11 @@ class TweetFeedView {
         dateFilterBlock.appendChild(dateFilterBlockTo);
 
         filterBlock.appendChild(authorNameTextarea);
+        filterBlock.appendChild(selectedAuthorsContainer);
         filterBlock.appendChild(dateFilterBlock);
         filterBlock.appendChild(tweetTextTextarea);
         filterBlock.appendChild(hashtagsTextarea);
+        filterBlock.appendChild(selectedHashtagsContainer);
         filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Filter'));
         filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
 
@@ -416,7 +422,7 @@ class Controller {
                 }
                 else {
                     // если на мобильной версии - показываем то, что было
-                    
+
                     // насильно переключил фильтры в противоположное
                     // состояние, чтобы ненасильно переключить их в то 
                     // состояние, в котором они были до загрузки ленты
@@ -612,8 +618,27 @@ class Controller {
         const tweetTextTextarea = document.getElementById('tweet-text-filter');
         const hashtagsTextarea = document.getElementById('hashtags-filter');
 
+        const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+
+        authorTextarea.addEventListener('keyup', (e) => {
+            if(e.keyCode !== 13) return;
+            selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, authorTextarea.value));
+            authorTextarea.value = '';
+        });
+
+        hashtagsTextarea.addEventListener('keyup', (e) => {
+            if(e.keyCode !== 13) return;
+            if(hashtagsTextarea.value[0] !== '#') {
+                alert('The first symbol of this textarea must be a hashtag (#).');
+                return;
+            }
+            selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtagsTextarea.value));
+            hashtagsTextarea.value = '';
+        });
+
         document.getElementById('filter-submit').addEventListener('click', () => {
-            self._createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea);
+            self._createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList);
             self._getFeed();
         });
 
@@ -665,17 +690,21 @@ class Controller {
         document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
     }
 
-    _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
+    _createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList) {
         const from = dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0];
         const dateFrom = from.children[0].valueAsDate;
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
         const dateTo = to.children[0].valueAsDate;
+
+        const authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ');
+        const hashtagsArr = [...selectedHashtagsList.children].map((li) => li.childNodes[0].data);
+
         this._currFilterConfig = {
-            'author': authorTextarea.value,
+            'author': authorStr,
             'dateFrom': dateFrom,
             'dateTo': dateTo,
             'text': tweetTextTextarea.value,
-            'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ').filter((hashtag) => hashtag[0] === '#') : [],
+            'hashtags': hashtagsArr,
         };
     }
 
