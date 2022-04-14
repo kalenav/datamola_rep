@@ -287,8 +287,7 @@ class Controller {
         this._user = user;
         if(!user) this._token = '';
         this._headerView.display(user, false);
-        this._addHeaderEventListeners();
-        this._getFeed(0, this._currShownTweets, this._currFilterConfig);
+        this._getFeed();
     }
     
     async _addTweet(text) {
