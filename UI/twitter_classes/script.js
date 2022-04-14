@@ -492,7 +492,7 @@ class Controller {
                 selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
             })
         }
-        if(this._currFilterConfig.hashtags) {
+        if(this._currFilterConfig.hashtags.length > 0) {
             const selectedHashtagsList = document.getElementById('selected-hashtags-list');
             selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
             this._currFilterConfig.hashtags.forEach((hashtag) => {
@@ -719,9 +719,10 @@ class Controller {
             if(target.tagName !== 'LI') return;
             target.parentNode.removeChild(target);
             if(selectedAuthorsList.children.length === 0) {
-                console.log(selectedAuthorsList);
-                console.log(selectedAuthorsList.parentNode);
                 selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
+                if(selectedAuthorsList.children.length === 0) {
+                    selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
+                }
             }
         });
 
@@ -731,6 +732,9 @@ class Controller {
             target.parentNode.removeChild(target);
             if(selectedHashtagsList.children.length === 0) {
                 selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
+                if(selectedHashtagsList.children.length === 0) {
+                    selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
+                }
             }
         });
 
