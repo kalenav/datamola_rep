@@ -359,7 +359,7 @@ section.new-comment {
     justify-content: space-around;
     align-items: center;
     font-size: 1.2rem;
-    background-color: var(--lightgray);
+    background-color: white;
     padding: 1rem;
 }
 
@@ -491,6 +491,7 @@ textarea.filter:focus-visible {
         top: calc(var(--default-button-height) + 1rem);
         width: 30rem;
         left: calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding));
+        background-color: var(--lightgray);
     }
 }
 
