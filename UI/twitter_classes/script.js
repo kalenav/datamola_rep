@@ -554,7 +554,7 @@ class Controller {
                     window.localStorage.lastUserPassword = password;
                 }
                 else {
-                    alert('Such a user doesn\'t exist or you have misspelled something.');
+                    alert('Incorrect username or password.');
                 }
             }
             catch(e) {
@@ -668,8 +668,8 @@ class Controller {
             if(target.tagName !== 'SPAN') return;
             self._currFilterConfig = {
                 author: '',
-                dateFrom: new Date(0),
-                dateTo: new Date(),
+                dateFrom: null,
+                dateTo: null,
                 text: '',
                 hashtags: [ target.innerHTML ]
             }
@@ -704,7 +704,6 @@ class Controller {
 
         authorTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
-            e.preventDefault();
             if(selectedAuthorsList.children.length === 0) {
                 selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             }
@@ -815,7 +814,15 @@ class Controller {
         tweet.addEventListener('click', (e) => {
             const target = e.target;
             if(target.tagName !== 'SPAN') return;
-            self._currFilterConfig.hashtags = [ target.innerHTML ];
+            self._currFilterConfig = {
+                author: '',
+                dateFrom: null,
+                dateTo: null,
+                text: '',
+                hashtags: [ target.innerHTML ],
+            };
+            clearInterval(self._shortPollingIntervalId);
+            self._createNewShortPollingInterval();
             self._getFeed();
         });
     }
@@ -869,7 +876,7 @@ class Controller {
             const choice = confirm('Are you sure?');
             if(choice) {
                 this._removeTweet(tweetId);
-                this._getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
+                this._getFeed(0, this._currShownTweets - 1);
             }
         }
     }
@@ -949,7 +956,7 @@ class Controller {
     }
 
     _createNewShortPollingInterval() {
-        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 20000);
+        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 15000);
     }
 }
 
