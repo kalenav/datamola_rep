@@ -260,6 +260,7 @@ class Controller {
             this._initFeed()
             .then(() => {
                 this._filterView = new FilterView('filter-block');
+                if(window.innerWidth >= 1300) this._toggleFilters();
                 this._addTweetFeedEventListeners();
                 this._addFilterEventListeners();
                 this._tweetView = new TweetView('main-container');
