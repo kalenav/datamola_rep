@@ -120,13 +120,13 @@ class TweetFeedView {
     _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
         parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
         const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
-        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'author1 author2 ...', id: 'author-name-filter'});
+        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to author filter list', id: 'author-name-filter'});
         authorNameTextarea.value = filterValues.author || '';
         const selectedAuthorsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
         selectedAuthorsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-authors-list' }));
         const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter'});
         tweetTextTextarea.value = filterValues.text || '';
-        const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: '#hashtag1 #hashtag2 ...', id: 'hashtags-filter' });
+        const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to hashtag filter list', id: 'hashtags-filter' });
         hashtagsTextarea.value = filterValues.hashtags ? filterValues.hashtags.join(' ') : ''; 
         const selectedHashtagsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
         selectedHashtagsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-hashtags-list' }));
