@@ -264,7 +264,25 @@ class Controller {
 
     // пришлось оставить then, т.к. конструктор не может быть асинхронным
     constructor() {
-        this._restoreUser()
+        return (async () => {
+            try {
+                await this._restoreUser();
+                this._headerView = new HeaderView('username');
+                this._headerView.display(this._user, false);
+                this._addHeaderEventListeners();
+                this._tweetFeedView = new TweetFeedView('main-container');
+                await this._initFeed();
+                this._filterView = new FilterView('filter-block');
+                if(window.innerWidth >= 1300) this._toggleFilters();
+                this._addTweetFeedEventListeners();
+                this._addFilterEventListeners();
+                this._tweetView = new TweetView('main-container');
+            }
+            catch(e) {
+                this._displayErrorPage();
+            }
+        })();
+        /*this._restoreUser()
         .then(() => {
             this._headerView = new HeaderView('username');
             this._headerView.display(this._user, false);
@@ -281,7 +299,7 @@ class Controller {
             .catch(() => {
                 this._displayErrorPage();
             });
-        });
+        });*/
     }
 
     _setCurrentUser(user) {
