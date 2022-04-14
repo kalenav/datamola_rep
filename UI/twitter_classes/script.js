@@ -451,7 +451,7 @@ class Controller {
                 self._addFilterEventListeners();
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
-                self._restoreFeedState(newTweetText, authorTextareaText, selectedAuthorsStr, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtagsStr);
+                self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
                 if(window.innerWidth >= 1300) { 
                     // если на десктопе - показываем фильтры в любом случае
 
@@ -479,33 +479,33 @@ class Controller {
         return element ? element[field] : defaultValue;
     }
 
-    _restoreFeedState(newTweetText, authorTextareaText, selectedAuthors, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtags) {
+    _restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText) {
         document.getElementById('new-tweet').value = newTweetText;
         document.getElementById('author-name-filter').value = authorTextareaText;
         document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
         document.getElementById('hashtags-filter').value = hashtagsTextareaText;
 
-        if(selectedAuthors) {
+        if(this._currFilterConfig.author) {
             const selectedAuthorsList = document.getElementById('selected-authors-list');
             selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
-            selectedAuthors.split(' ').forEach((author) => {
+            this._currFilterConfig.author.split(' ').forEach((author) => {
                 selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
             })
         }
-        if(selectedHashtags) {
+        if(this._currFilterConfig.hashtags) {
             const selectedHashtagsList = document.getElementById('selected-hashtags-list');
             selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
-            selectedHashtags.split(' ').forEach((hashtag) => {
+            this._currFilterConfig.hashtags.forEach((hashtag) => {
                 selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
             })
         }
 
-        if(dateFrom) {
-            const dateFromNumbers = ViewUtils.getDateNumbers(dateFrom);
+        if(this._currFilterConfig.dateFrom) {
+            const dateFromNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateFrom);
             document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
         }
-        if(dateTo) {
-            const dateToNumbers = ViewUtils.getDateNumbers(dateTo);
+        if(this._currFilterConfig.dateTo) {
+            const dateToNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateTo);
             document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
         }
     }
@@ -643,7 +643,9 @@ class Controller {
             self._toggleFilters();
         });
         
-        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+        const tweetsSection = document.getElementsByClassName('tweets')[0];
+
+        tweetsSection.addEventListener('click', (e) => {
             let target = e.target;
             if(target.tagName !== 'DIV' &&
             target.tagName !== 'P') return;    
@@ -659,9 +661,9 @@ class Controller {
         }  
 
         // this внутри ивента ссылается не на контроллер, поэтому bind
-        document.getElementsByClassName('tweets')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
+        tweetsSection.addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         
-        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+        tweetsSection.addEventListener('click', (e) => {
             const target = e.target
             if(target.tagName !== 'SPAN') return;
             self._currFilterConfig = {
