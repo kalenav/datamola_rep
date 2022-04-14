@@ -370,19 +370,17 @@ class Controller {
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
 
-        const newTweetTextarea = document.getElementById('new-tweet');
-        const newTweetText = newTweetTextarea ? newTweetTextarea.value : '';
+        const newTweetText = this._getValueToSave(document.getElementById('new-tweet'), 'value');
+        const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
+        const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
+        const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
+        const dateFrom = this._getValueToSave(document.getElementById('date-from'), 'valueAsDate');
+        const dateTo = this._getValueToSave(document.getElementById('date-to'), 'valueAsDate');
 
-        const authorTextarea = document.getElementById('author-name-filter');
-        const authorTextareaText = authorTextarea ? authorTextarea.value : '';
-        const tweetTextTextarea = document.getElementById('tweet-text-filter');
-        const tweetTextTextareaText = tweetTextTextarea ? tweetTextTextarea.value : '';
-        const hashtagsTextarea = document.getElementById('hashtags-filter');
-        const hashtagsTextareaText = hashtagsTextarea ? hashtagsTextarea.value : '';
-
-        const dateFrom = document.getElementById('date-from').valueAsDate();
-        const dateTo = document.getElementById('date-To').valueAsDate();
-
+        const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedAuthorsStr = selectedAuthorsList ? [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
+        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+        const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
 
         try {
             const response = await (await api.getTweets(
@@ -403,6 +401,8 @@ class Controller {
                 self._headerView.display(self._user, true);
                 document.getElementById('not-found-link').addEventListener('click', () => {
                     self._getFeed();
+                    clearInterval(self._shortPollingIntervalId);
+                    self._createNewShortPollingInterval();
                 });
             }
             else {
@@ -424,7 +424,7 @@ class Controller {
                 self._addFilterEventListeners();
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
-                self._restoreFeedInfo();
+                self._restoreFeedInfo(newTweetText, authorTextareaText, selectedAuthorsStr, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtagsStr);
                 if(window.innerWidth >= 1300) { 
                     // если на десктопе - показываем фильтры в любом случае
 
@@ -448,7 +448,37 @@ class Controller {
         }
     }
 
+    _getValueToSave(element, field, defaultValue = '') {
+        return element ? element[field] : defaultValue;
+    }
+
     _restoreFeedInfo(newTweetText, authorTextareaText, selectedAuthors, dateFrom, dateTo, tweetTextTextareaText, hashtagsTextareaText, selectedHashtags) {
+        document.getElementById('new-tweet').value = newTweetText;
+        document.getElementById('author-name-filter').value = authorTextareaText;
+        document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
+        document.getElementById('hashtags-filter').value = hashtagsTextareaText;
+
+        if(selectedAuthors !== '') {
+            const selectedAuthorsList = document.getElementById('selected-authors-list');
+            selectedAuthors.split(' ').forEach((author) => {
+                selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
+            })
+        }
+        if(selectedHashtags !== '') {
+            const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+            selectedHashtags.split(' ').forEach((hashtag) => {
+                selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
+            })
+        }
+
+        if(dateFrom !== '') {
+            const dateFromNumbers = ViewUtils.getDateNumbers(dateFrom);
+            document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
+        }
+        if(dateTo !== null) {
+            const dateToNumbers = ViewUtils.getDateNumbers(dateTo);
+            document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
+        }
     }
     
     _showTweet(id) {
@@ -591,7 +621,10 @@ class Controller {
             target.tagName === 'SELECT' ||
             target.tagName === 'OPTION' ||
             target.tagName === 'TEXTAREA' ||
-            target.tagName === 'SPAN') return;    
+            target.tagName === 'SPAN' ||
+            target.tagName === 'UL' ||
+            target.tagName === 'LI' ||
+            target.tagName === 'INPUT') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self._showTweet(target.dataset.id);
         });
