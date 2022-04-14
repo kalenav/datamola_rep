@@ -254,8 +254,8 @@ class Controller {
     _currShownTweets;
     _currFilterConfig = {
         author: '',
-        dateFrom: new Date(0),
-        dateTo: new Date(),
+        dateFrom: null,
+        dateTo: null,
         text: '',
         hashtags: [],
     };
@@ -409,8 +409,8 @@ class Controller {
                 clearInterval(self._shortPollingIntervalId);
                 self._currFilterConfig = {
                     author: '',
-                    dateFrom: new Date(0),
-                    dateTo: new Date(),
+                    dateFrom: null,
+                    dateTo: null,
                     text: '',
                     hashtags: [],
                 };
