@@ -397,7 +397,11 @@ textarea.filter:focus-visible {
 }
 
 .selected-filters-list {
-    margin: 0 auto 0 0;
+    margin: 0 0 1rem 0;
+}
+
+.filter-hint-text {
+    margin: 1rem 0;
 }
 
 .date-filter-text {
