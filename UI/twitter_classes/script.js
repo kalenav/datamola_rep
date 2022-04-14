@@ -407,7 +407,13 @@ class Controller {
             });
             if(tweets.length === 0) {
                 clearInterval(self._shortPollingIntervalId);
-                self._currFilterConfig = {};
+                self._currFilterConfig = {
+                    author: '',
+                    dateFrom: new Date(0),
+                    dateTo: new Date(),
+                    text: '',
+                    hashtags: [],
+                };
                 self._tweetFeedView.display(false);
                 self._headerView.display(self._user, true);
                 document.getElementById('not-found-link').addEventListener('click', () => {
@@ -639,15 +645,7 @@ class Controller {
         
         document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
             let target = e.target;
-            if(target.tagName === 'BUTTON' ||
-            target.tagName === 'I' ||
-            target.tagName === 'SELECT' ||
-            target.tagName === 'OPTION' ||
-            target.tagName === 'TEXTAREA' ||
-            target.tagName === 'SPAN' ||
-            target.tagName === 'UL' ||
-            target.tagName === 'LI' ||
-            target.tagName === 'INPUT') return;    
+            if(target.tagName !== 'DIV') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
             self._showTweet(target.dataset.id);
         });
