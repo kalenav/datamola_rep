@@ -723,8 +723,12 @@ class Controller {
             dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0].children[0].value = '';
             tweetTextTextarea.value = '';
             hashtagsTextarea.value = '';
-            document.getElementById('selected-authors-list').textContent = '';
-            document.getElementById('selected-hashtags-list').textContent = '';
+            selectedAuthorsList.textContent = '';
+            selectedHashtagsList.textContent = '';
+            const authorsHintText = document.getElementById('selected-authors-list-hint-text');
+            if(authorsHintText) selectedAuthorsList.parentNode.removeChild(authorsHintText);
+            const hashtagsHintText = document.getElementById('selected-hashtags-list-hint-text');
+            if(hashtagsHintText) selectedHashtagsList.parentNode.removeChild(hashtagsHintText);
         });
     }
 
@@ -773,7 +777,7 @@ class Controller {
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
         const dateTo = to.children[0].valueAsDate;
 
-        const authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ');
+        const authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(',');
         const hashtagsArr = [...selectedHashtagsList.children].map((li) => li.childNodes[0].data);
 
         this._currFilterConfig = {
