@@ -692,8 +692,19 @@ class Controller {
         const selectedAuthorsList = document.getElementById('selected-authors-list');
         const selectedHashtagsList = document.getElementById('selected-hashtags-list');
 
+        authorTextarea.addEventListener('keydown', (e) => {
+            if(e.keyCode === 13) e.preventDefault();
+        });
+
+        hashtagsTextarea.addEventListener('keydown', (e) => {
+            if(e.keyCode === 13) e.preventDefault();
+        });
+
+        const forbiddenSymbols = [ ' ', ',', '.', ';', '\n' ];
+
         authorTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
+            e.preventDefault();
             if(selectedAuthorsList.children.length === 0) {
                 selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             }
@@ -705,6 +716,10 @@ class Controller {
             if(e.keyCode !== 13) return;
             if(hashtagsTextarea.value[0] !== '#') {
                 alert('The first symbol of this textarea must be a hashtag (#).');
+                return;
+            }
+            if(forbiddenSymbols.some((sym) => hashtagsTextarea.value.includes(sym))) {
+                alert('Your hashtag contains a prohibited symbol.');
                 return;
             }
             if(selectedHashtagsList.children.length === 0) {
