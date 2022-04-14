@@ -458,24 +458,24 @@ class Controller {
         document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
         document.getElementById('hashtags-filter').value = hashtagsTextareaText;
 
-        if(selectedAuthors !== '') {
+        if(selectedAuthors) {
             const selectedAuthorsList = document.getElementById('selected-authors-list');
             selectedAuthors.split(' ').forEach((author) => {
                 selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
             })
         }
-        if(selectedHashtags !== '') {
+        if(selectedHashtags) {
             const selectedHashtagsList = document.getElementById('selected-hashtags-list');
             selectedHashtags.split(' ').forEach((hashtag) => {
                 selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
             })
         }
 
-        if(dateFrom !== '') {
+        if(dateFrom) {
             const dateFromNumbers = ViewUtils.getDateNumbers(dateFrom);
             document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
         }
-        if(dateTo !== null) {
+        if(dateTo) {
             const dateToNumbers = ViewUtils.getDateNumbers(dateTo);
             document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
         }
@@ -695,6 +695,8 @@ class Controller {
             dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0].children[0].value = '';
             tweetTextTextarea.value = '';
             hashtagsTextarea.value = '';
+            document.getElementById('selected-authors-list').textContent = '';
+            document.getElementById('selected-hashtags-list').textContent = '';
         });
     }
 
