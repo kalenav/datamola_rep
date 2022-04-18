@@ -13,259 +13,6 @@
 /* eslint indent: 'error' */
 /* eslint max-len: ['error', { 'code': 500 }] */
 
-const englishAlphabetLeftBound = 65;
-const englishAlphabetRightBound = 122;
-const russianAlphabetLeftBound = 1040;
-const russianAlpahbetRightBound = 1103;
-
-class Tweet {
-    _id;
-    _createdAt;
-    _author;
-
-    constructor(id, text, date, author, comments) {
-        this._id = id;
-        this.text = text;
-        this._createdAt = date;
-        this._author = author;
-        this.comments = comments;
-    }
-
-    get id() {
-        return this._id;
-    }
-    set id(newId) {
-        this._id = newId;
-    }
-
-    get date() {
-        return this._createdAt;
-    }
-    set date(newDate) {
-        this._createdAt = newDate;
-    }
-
-    get author() {
-        return this._author;
-    }
-    set author(newAuthor) {
-        this._author = newAuthor;
-    }
-
-    static validate(tw) {
-        return (
-            tw instanceof Tweet &&
-            tw._id && typeof(tw._id) === 'string' &&
-            (tw.text || tw.text === '') &&
-            typeof(tw.text) === 'string' &&
-            tw.text.length <= 280 &&
-            tw._createdAt &&
-            tw._createdAt instanceof Date &&
-            tw._author !== '' &&
-            typeof(tw._author) === 'string' &&
-            tw.comments &&
-            tw.comments instanceof Array
-        );
-    }
-
-    toString() {
-        let result = `${this._id}:::${this.text}:::${this._createdAt}:::${this._author}:::`;
-        this.comments.forEach((com) => { result += `${com}` });
-        return result + ';;';
-    }
-}
-
-class Comment {
-    _id;
-    _createdAt;
-    _author;
-
-    constructor(id, text, date, author) {
-        this._id = id;
-        this.text = text;
-        this._createdAt = date;
-        this.author = author;
-    }
-
-    get id() {
-        return this._id;
-    }
-    set id(newId) {
-        this._id = newId;
-    }
-
-    get date() {
-        return this._createdAt;
-    }
-    set date(newDate) {
-        this._createdAt = newDate;
-    }
-
-    get author() {
-        return this._author;
-    }
-    set author(newAuthor) {
-        this._author = newAuthor;
-    }
-
-    static validate(com) {
-        return (
-            com instanceof Comment &&
-            com._id &&
-            typeof(com._id) === 'string' &&
-            (com.text || com.text === '') &&
-            typeof(com.text) === 'string' &&
-            com.text.length <= 280 &&
-            com._createdAt &&
-            com._createdAt instanceof Date &&
-            com._author !== '' &&
-            typeof(com._author) === 'string'
-        );
-    }
-
-    toString() {
-        return `${this._id}::${this.text}::${this._createdAt}::${this.author}++`;
-    }
-}
-
-class TweetFeed {
-    _tweets;
-
-    constructor() {
-        this.restore();
-    }
-
-    addAll(tws) {
-        const toReturn = [];
-        for (let i = 0; i < tws.length; i++) {
-            const currTweet = tws[i];
-            Tweet.validate(currTweet) ? this._tweets.push(currTweet) : toReturn.push(currTweet);
-        }
-        this.save();
-        return toReturn;
-    }
-
-    clear() {
-        this._tweets = [];
-        this.save();
-    }
-
-    getPage(skip = 0, top = 10, filterConfig) {
-        let result = this._tweets.slice();
-        if (filterConfig) {
-            if (filterConfig.author) result = result.filter((tweet) => filterConfig.author.split(' ').some((auth) => tweet.author.includes(auth)));
-            if (filterConfig.dateFrom) result = result.filter((tweet) => tweet.date >= filterConfig.dateFrom);
-            if (filterConfig.dateTo) result = result.filter((tweet) => tweet.date <= filterConfig.dateTo);
-            if (filterConfig.hashtags) {
-                result = result.filter((tweet) => filterConfig.hashtags.every((hashtag) => {
-                    const hashtagStart = tweet.text.indexOf(hashtag);
-                    if (hashtagStart === -1) return false; // хэштег не был найден
-                    const hashtagEnd = hashtagStart + hashtag.length - 1;
-                    if (hashtagEnd === tweet.text.length - 1) return true; // хэштегом заканчивается текст твита
-                    const nextCharCode = tweet.text.charCodeAt(hashtagEnd + 1);
-                    if ((nextCharCode >= englishAlphabetLeftBound && nextCharCode <= englishAlphabetRightBound) ||
-                    (nextCharCode >= russianAlphabetLeftBound && nextCharCode <= russianAlpahbetRightBound)) return false; // после хэштега идёт буквенный символ, т.е. хэштег продолжается
-                    return true;
-                }));
-            };
-            if (filterConfig.text || filterConfig.text === '') result = result.filter((tweet) => tweet.text.includes(filterConfig.text));
-        }
-        result.sort((tweet1, tweet2) => tweet1.date > tweet2.date ? -1 : 1);
-        return result.slice(skip, skip + top);
-    }
-
-    get(id) {
-        return this._tweets.find((tw) => tw.id === id);
-    }
-
-    add(text) {
-        const newTweet = new Tweet(this._generateTweetId(), text, new Date(), this._user, []);
-        if (Tweet.validate(newTweet)) {
-            this._tweets.push(newTweet);
-            this.save();
-            return true;
-        }
-        return false;
-    }
-
-    edit(id, text) {
-        const tweet = this.get(id);
-        if (tweet.author !== this._user) return false;
-        const snapshot = tweet.text;
-        tweet.text = text;
-        if (Tweet.validate(tweet)) 
-        {
-            this.save();
-            return true;
-        }
-        tweet.text = snapshot;
-        return false;
-    }
-
-    remove(id) {
-        const tweetIndex = this._tweets.findIndex((tw) => tw.id === id);
-        if (tweetIndex === -1 || this._tweets[tweetIndex].author !== this._user) return false;
-        this._tweets.splice(tweetIndex, 1);
-        this.save();
-        return true;
-    }
-
-    addComment(id, text) {
-        const tweet = this.get(id);
-        if (!tweet) return false;
-        const comment = new Comment(this._generateCommentId(), text, new Date(), this._user);
-        if(!Comment.validate(comment)) return false;
-        tweet.comments.push(comment);
-        this.save();
-        return true;
-    }
-
-    _generateTweetId() {
-        return String(Number(this._tweets[this._tweets.length - 1].id) + 1);
-    }
-
-    _generateCommentId() {
-        return ('c' + String(this._tweets.reduce((oldestCommentId, tweet) => {
-            const currTweetOldestCommentId = tweet.comments.reduce((r, comment) => {
-                const currCommentId = Number(comment.id.slice(1, comment.id.length));
-                return currCommentId > r ? currCommentId : r;
-            }, 0);
-            return currTweetOldestCommentId > oldestCommentId ? currTweetOldestCommentId : oldestCommentId;
-        }, 0) + 1));
-    }
-
-    get user() {
-        return this._user;
-    }
-    set user(newUser) {
-        this._user = newUser;
-    }
-
-    get length() {
-        return this._tweets.length;
-    }
-
-    save() {
-        window.localStorage.tweets = JSON.stringify(this._tweets);
-    }
-
-    restore() {
-        this._tweets = JSON.parse(window.localStorage.tweets).map((tweet) => new Tweet(
-            tweet._id, 
-            tweet.text, 
-            new Date(tweet._createdAt), 
-            tweet._author,
-            tweet.comments.map((com) => new Comment(
-                com._id,
-                com.text,
-                new Date(com._createdAt),
-                com._author
-            ))));
-
-        this._user = window.localStorage.lastUser;
-    }
-}
-
 class HeaderView {
     _container;
 
@@ -291,9 +38,10 @@ class ViewUtils {
     static getDateNumbers(date) {
         const day = Math.floor(date.getDate() / 10) === 0 ? `0${date.getDate()}` : date.getDate();
         const month = Math.floor(date.getMonth() / 10) === 0 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+        const year = date.getFullYear();
         const hours = Math.floor(date.getHours() / 10) === 0 ? `0${date.getHours()}` : date.getHours();
         const minutes = Math.floor(date.getMinutes() / 10) === 0 ? `0${date.getMinutes()}` : date.getMinutes();
-        return {day, month, hours, minutes};
+        return {day, month, year, hours, minutes};
     }
     
     static wrapHashtags(text) {
@@ -344,7 +92,7 @@ class TweetFeedView {
             const isOwn = own[index];
             const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : newTweet;
 
-            const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+            const dateNumbers = ViewUtils.getDateNumbers(new Date(tweet.createdAt));
             authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             if(isOwn) { 
                 const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
@@ -372,12 +120,16 @@ class TweetFeedView {
     _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
         parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
         const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
-        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'author1 author2 ...', id: 'author-name-filter'});
+        const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to author filter list', id: 'author-name-filter'});
         authorNameTextarea.value = filterValues.author || '';
+        const selectedAuthorsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
+        selectedAuthorsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-authors-list' }));
         const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter'});
         tweetTextTextarea.value = filterValues.text || '';
-        const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: '#hashtag1 #hashtag2 ...', id: 'hashtags-filter' });
+        const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to hashtag filter list', id: 'hashtags-filter' });
         hashtagsTextarea.value = filterValues.hashtags ? filterValues.hashtags.join(' ') : ''; 
+        const selectedHashtagsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
+        selectedHashtagsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-hashtags-list' }));
 
         const dateFilterBlock = ViewUtils.newTag('div', { class: 'filter', id: 'date-filter' });
         const dateFilterBlockFrom = ViewUtils.newTag('div', { class: 'date-filter-block from' });
@@ -396,9 +148,11 @@ class TweetFeedView {
         dateFilterBlock.appendChild(dateFilterBlockTo);
 
         filterBlock.appendChild(authorNameTextarea);
+        filterBlock.appendChild(selectedAuthorsContainer);
         filterBlock.appendChild(dateFilterBlock);
         filterBlock.appendChild(tweetTextTextarea);
         filterBlock.appendChild(hashtagsTextarea);
+        filterBlock.appendChild(selectedHashtagsContainer);
         filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Filter'));
         filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
 
@@ -421,6 +175,11 @@ class FilterView {
 
     constructor(containerId) {
         this._container = document.getElementById(containerId);
+        window.addEventListener('resize', () => {
+            if(window.innerWidth >= 1300) {
+                this.display();
+            }
+        });
     }
 
     display() {
@@ -428,7 +187,7 @@ class FilterView {
     }
 
     hide() {
-        this._container.style.left = 'calc(-100% - 2rem)';
+        this._container.style.left = 'calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding))';
     }
 }
 
@@ -444,7 +203,7 @@ class TweetView {
         const tweetContainer = ViewUtils.newTag('section', { class: 'tweet', 'data-id': tweet.id });
         const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : tweetContainer;
 
-        const dateNumbers = ViewUtils.getDateNumbers(tweet.date);
+        const dateNumbers = ViewUtils.getDateNumbers(new Date(tweet.createdAt));
         authorInfoContainer.appendChild(ViewUtils.newTag('p', { class: 'author-info' }, `Tweet by ${tweet.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
         if(isOwn) { 
             const buttonsContainer = ViewUtils.newTag('div', { class: 'own-tweet-buttons' });
@@ -464,7 +223,7 @@ class TweetView {
         const commentsContainer = ViewUtils.newTag('section', { class: 'comments' });
         tweet.comments.forEach((comment) => {
             const currCommentContainer = ViewUtils.newTag('div', { class: 'comment' });
-            const dateNumbers = ViewUtils.getDateNumbers(comment.date);
+            const dateNumbers = ViewUtils.getDateNumbers(new Date(comment.createdAt));
             currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'author-name' }, `Comment by ${comment.author} on ${dateNumbers.day}.${dateNumbers.month} at ${dateNumbers.hours}:${dateNumbers.minutes}`));
             currCommentContainer.appendChild(ViewUtils.newTag('p', { class: 'comment-text' }, comment.text));
             commentsContainer.appendChild(currCommentContainer);
@@ -483,7 +242,9 @@ class TweetView {
 }
 
 class Controller {
-    _feed;
+    _user;
+    _token;
+    _currFeed;
     _headerView;
     _tweetFeedView;
     _filterView;
@@ -491,94 +252,279 @@ class Controller {
 
     _filtersDisplayed = false;
     _currShownTweets;
-    _currFilterConfig;
+    _currFilterConfig = {
+        author: '',
+        dateFrom: null,
+        dateTo: null,
+        text: '',
+        hashtags: [],
+    };
+
+    _shortPollingIntervalId;
 
     constructor() {
-        this._feed = new TweetFeed();
-        this._headerView = new HeaderView('username');
-        this._addHeaderEventListeners();
-        this._tweetFeedView = new TweetFeedView('main-container');
-        this._initFeed();
-        this._filterView = new FilterView('filter-block');
-        this._addTweetFeedEventListeners();
-        this._addFilterEventListeners();
-        this._tweetView = new TweetView('main-container');
-    }
-
-    setCurrentUser(user) {
-        this._feed.user = user;
-        window.localStorage.lastUser = user;
-        this._headerView.display(user, false);
-        this.getFeed(0, this._currShownTweets, this._currFilterConfig);
-        this._addHeaderEventListeners();
-    }
-    
-    addTweet(text) {
-        if(this._feed.add(text)) {
-            this._currShownTweets++;
-            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
-        }
-    }
-    
-    editTweet(id, text) {
-        if(this._feed.edit(id, text)) {
-            this._currShownTweets++;
-            if(document.getElementById('new-comment-textarea')) {
-                this.showTweet(document.getElementsByClassName('tweet')[0].dataset.id);
+        return (async () => {
+            try {
+                await this._restoreUser();
+                this._headerView = new HeaderView('username');
+                this._headerView.display(this._user, false);
+                this._addHeaderEventListeners();
+                this._tweetFeedView = new TweetFeedView('main-container');
+                await this._initFeed();
+                this._filterView = new FilterView('filter-block');
+                if(window.innerWidth >= 1300) this._toggleFilters();
+                this._addTweetFeedEventListeners();
+                this._addFilterEventListeners();
+                this._tweetView = new TweetView('main-container');
             }
-            else this.getFeed(0, this._currShownTweets, this._currFilterConfig);
-        }
-    }
-    
-    removeTweet(id) {
-        if(this._feed.remove(id)) {
-            this._currShownTweets++;
-            this.getFeed(0, this._currShownTweets, this._currFilterConfig);
-        }
+            catch(e) {
+                this._displayErrorPage();
+            }
+        })();
     }
 
-    _initFeed() {
-        const tweets = this._feed.getPage();
-        const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
-        this._tweetFeedView.display(true, tweets, own);
-        this._currShownTweets = 10;
-        const user = this._feed.user;
-        this._headerView.display(user, user ? true : false);
+    _setCurrentUser(user) {
+        this._user = user;
+        if(!user) this._token = '';
+        this._headerView.display(user, false);
+        this._getFeed();
     }
     
-    getFeed(skip, top, filterConfig) {
-        const tweets = this._feed.getPage(skip, top, filterConfig);
-        if(tweets.length === 0) {
-            this._tweetFeedView.display(false);
-            this._headerView.display(this._feed.user, true);
-            const self = this;
-            document.getElementById('not-found-link').addEventListener('click', () => {
-                self.getFeed();
-            });
+    async _addTweet(text) {
+        if(text.length > 280) {
+            alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
             return;
         }
-        else {
-            const own = this._feed.user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
-            const tweetsLeft = this._feed.getPage(skip, this._feed.length, filterConfig).length - tweets.length;
-            this._tweetFeedView.display(true, tweets, own, tweetsLeft === 0, this._currFilterConfig);
-            this._headerView.display(this._feed.user, false);
+        try {
+            const response = await (await api.addTweet(this._token, text)).json();
+            if(response.id) {
+                document.getElementById('new-tweet').value = '';
+                this._getFeed();
+            }
+            else if(response.statusCode === 401) {
+                this._showLoginForm();
+            }
         }
-        this._filterView = new FilterView('filter-block');
-        this._addTweetFeedEventListeners();
-        this._addFilterEventListeners();
-        this._currShownTweets = tweets.length;
+        catch(e) {
+            this._displayErrorPage();
+        }
     }
     
-    showTweet(id) {
-        const tweet = this._feed.get(id);
-        if(tweet) this._tweetView.display(tweet, tweet.author === this._feed.user);
-        this._addTweetEventListeners();
-        this._currShownTweets = 0;
-        this._currFilterConfig = {};
-        this._headerView.display(this._feed.user, true);
+    async _editTweet(id, text) {
+        const response = await (await api.editTweet(id, this._token, text)).json();
+        try {
+            if(response.id) {
+                if(document.getElementsByClassName('tweets')[0]) this._getFeed();
+                else {
+                    this._currFeed.unshift({ 
+                        id: response.id,
+                        author: response.author,
+                        createdAt: response.createdAt,
+                        text: response.text,
+                        comments: response.comments.slice() 
+                    });
+                    this._showTweet(response.id);
+                }
+            }
+            else if(response.statusCode === 401) {
+                this._showLoginForm();
+            }
+            else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
+        }
+        catch(e) {
+            this._displayErrorPage();
+        }
+    }
+    
+    async _removeTweet(id) {
+        const response = await api.removeTweet(id, this._token);
+        try {
+            if(response.ok) {
+                this._getFeed();
+            }
+            else if(response.statusCode === 401) {
+                this._showLoginForm();
+            }
+            else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
+        }
+        catch(e) {
+            this._displayErrorPage();
+        }
     }
 
-    toggleFilters() {
+    async _initFeed() {
+        const response = await (await api.getTweets()).json();
+        try {
+            const tweets = [...response];
+            const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
+            this._tweetFeedView.display(true, tweets, own);
+            this._currShownTweets = 10;
+            this._currFeed = tweets.slice();
+            const user = this._user;
+            this._headerView.display(user, false);
+            clearInterval(this._shortPollingIntervalId);
+            this._createNewShortPollingInterval();
+        }
+        catch(e) {
+            this._displayErrorPage();
+        }
+    }
+    
+    async _getFeed(skip = 0, top = 10, filterConfig = this._currFilterConfig) {
+        const self = this;
+        let hashtagsStr;
+        if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
+
+        const newTweetText = this._getValueToSave(document.getElementById('new-tweet'), 'value');
+        const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
+        const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
+        const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
+        const dateFrom = this._getValueToSave(document.getElementById('date-from'), 'valueAsDate');
+        const dateTo = this._getValueToSave(document.getElementById('date-to'), 'valueAsDate');
+
+        const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedAuthorsStr = selectedAuthorsList ? [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
+        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+        const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
+
+        try {
+            const authors = filterConfig.author.split(',');
+            let tweets = [];
+            await new Promise(async function(resolve, reject) {
+                for(let i = 0; i < authors.length; i++) {
+                    const response = await (await api.getTweets(
+                        authors[i],
+                        filterConfig.text,
+                        filterConfig.dateFrom,
+                        filterConfig.dateTo,
+                        skip,
+                        top,
+                        hashtagsStr,
+                    )).json();
+                    tweets = tweets.concat(response);
+                }
+                resolve();
+            });
+            if(tweets.length === 0) {
+                clearInterval(self._shortPollingIntervalId);
+                self._currFilterConfig = {
+                    author: '',
+                    dateFrom: null,
+                    dateTo: null,
+                    text: '',
+                    hashtags: [],
+                };
+                self._tweetFeedView.display(false);
+                self._headerView.display(self._user, true);
+                document.getElementById('not-found-link').addEventListener('click', () => {
+                    self._getFeed();
+                    clearInterval(self._shortPollingIntervalId);
+                    self._createNewShortPollingInterval();
+                });
+            }
+            else {
+                let tweetsTopPlusOne = [];
+                await new Promise(async function (resolve, reject) {
+                    for(let i = 0; i < authors.length; i++) {
+                        const response = await (await api.getTweets(
+                            authors[i],
+                            filterConfig.text,
+                            filterConfig.dateFrom,
+                            filterConfig.dateTo,
+                            skip,
+                            top + 1,
+                            hashtagsStr,
+                        )).json();
+                        tweetsTopPlusOne = tweetsTopPlusOne.concat(response);
+                    }
+                    resolve();
+                });
+                const allTweetsShown = tweetsTopPlusOne.length === tweets.length;
+                tweets.sort((tweet1, tweet2) => {
+                    return tweet1.createdAt < tweet2.createdAt ? 1 : -1;
+                });
+                const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
+                self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
+                self._headerView.display(self._user, false);
+                self._filterView = new FilterView('filter-block');
+                self._addTweetFeedEventListeners();
+                self._addFilterEventListeners();
+                self._currShownTweets = tweets.length;
+                self._currFeed = tweets.slice();
+                self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
+                if(window.innerWidth >= 1300) { 
+                    // если на десктопе - показываем фильтры в любом случае
+
+                    this._filterView.display();
+                    this._filtersDisplayed = true;
+                }
+                else {
+                    // если на мобильной версии - показываем то, что было
+
+                    // насильно переключил фильтры в противоположное
+                    // состояние, чтобы ненасильно переключить их в то 
+                    // состояние, в котором они были до загрузки ленты
+
+                    self._filtersDisplayed = !self._filtersDisplayed;
+                    self._toggleFilters();
+                }
+            }
+        }
+        catch(e) {
+            this._displayErrorPage();
+        }
+    }
+
+    _getValueToSave(element, field, defaultValue = '') {
+        return element ? element[field] : defaultValue;
+    }
+
+    _restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText) {
+        document.getElementById('new-tweet').value = newTweetText;
+        document.getElementById('author-name-filter').value = authorTextareaText;
+        document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
+        document.getElementById('hashtags-filter').value = hashtagsTextareaText;
+
+        if(this._currFilterConfig.author) {
+            const selectedAuthorsList = document.getElementById('selected-authors-list');
+            selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
+            this._currFilterConfig.author.split(' ').forEach((author) => {
+                selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
+            })
+        }
+        if(this._currFilterConfig.hashtags.length > 0) {
+            const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+            selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
+            this._currFilterConfig.hashtags.forEach((hashtag) => {
+                selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
+            })
+        }
+
+        if(this._currFilterConfig.dateFrom) {
+            const dateFromNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateFrom);
+            document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
+        }
+        if(this._currFilterConfig.dateTo) {
+            const dateToNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateTo);
+            document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
+        }
+    }
+    
+    _showTweet(id) {
+        clearInterval(this._shortPollingIntervalId);
+        const tweet = this._currFeed.find((tweet) => tweet.id === id);
+        if(tweet) {
+            this._tweetView.display(tweet, tweet.author === this._user);
+            this._addTweetEventListeners();
+            this._currShownTweets = 0;
+            this._headerView.display(this._user, true);
+        }
+        else {
+            this._displayErrorPage();
+        }
+    }
+
+    _toggleFilters() {
         if(this._filtersDisplayed) {
             this._filterView.hide();
             this._filtersDisplayed = false;
@@ -589,41 +535,52 @@ class Controller {
         }
     }
 
-    showLoginForm() {
+    _showLoginForm() {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), true);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault(); // чтобы не переходило на страницу с твитами само по себе
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
-            const possibleUser = { username, password };
-            if(userList.has(possibleUser)) {
-                self.setCurrentUser(username);
+            try {
+                const token = (await (await api.login(username, password)).json()).token;
+                if(token) {
+                    self._setCurrentUser(username);
+                    self._token = token;
+                    window.localStorage.lastUser = username;
+                    window.localStorage.lastUserPassword = password;
+                }
+                else {
+                    alert('Incorrect username or password.');
+                }
             }
-            else {
-                alert('Such a user doesn\'t exist or you have misspelled something.');
+            catch(e) {
+                self._displayErrorPage();
             }
         });
 
         document.getElementById('signup-link').addEventListener('click', () => {
-            self.showSignupForm();
+            clearInterval(this._shortPollingIntervalId);
+            self._showSignupForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self.getFeed();
+            self._getFeed();
+            clearInterval(this._shortPollingIntervalId);
+            this._createNewShortPollingInterval();
         });
     }
 
-    showSignupForm() {
+    _showSignupForm() {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), false);
 
         const form = document.getElementsByClassName('auth-window-form')[0];
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
@@ -632,17 +589,29 @@ class Controller {
                 alert('The passwords don\'t match up. Make sure they are identical.');
                 return;
             }
-            const newUser = { username, password };
-            if(!userList.has(newUser)) userList.addUser(newUser);
-            self.getFeed();
+            try {
+                const response = await api.register(username, password);
+                if(response.ok) {
+                    alert('Registered successfully!');
+                    self._showLoginForm();
+                }
+                else if(response.status === 409) {
+                    alert('Such a user already exists.');
+                }
+            }
+            catch(e) {
+                self._displayErrorPage();
+            }
         });
 
         document.getElementById('login-link').addEventListener('click', () => {
-            self.showLoginForm();
+            self._showLoginForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self.getFeed();
+            self._getFeed();
+            clearInterval(this._shortPollingIntervalId);
+            this._createNewShortPollingInterval();
         });
     }
 
@@ -650,74 +619,65 @@ class Controller {
         const self = this;
 
         document.getElementById('header-home-button').addEventListener('click', () => {
-            self.getFeed();
+            self._getFeed();
+            self._createNewShortPollingInterval();
         });
 
-        // как я понял, при логауте и перерисовке хидера кнопка
-        // логина успевает перерисоваться и подцепить себе
-        // event listener ещё до того, как событие click
-        // считается закончившимся, и в итоге происходит как будто
-        // двойное нажатие на кнопку, первое из которых было
-        // по кнопке log out, а второе - уже по log in, и вместо
-        // главной страницы при нажатии на log out пользователя
-        // переносит на форму авторизации. поэтому цепляем event listener
-        // на кнопку логина только тогда, когда страница прогрузилась
-
-        window.addEventListener('load', () => { 
-            document.getElementById('header-login-button').addEventListener('click', (e) => {
-                if(!self._feed.user) {
-                    self.showLoginForm();
-                }
-                else {
-                    self.setCurrentUser('');
-                }
-            });
-        })
+        document.getElementById('header-login-button').addEventListener('click', (e) => {
+            clearInterval(this._shortPollingIntervalId);
+            if(!self._user) {
+                self._showLoginForm();
+            }
+            else {
+                self._setCurrentUser('');
+                window.localStorage.lastUser = '';
+                window.localStorage.lastUserPassword = '';
+            }
+        });
     }
 
     _addTweetFeedEventListeners() {
         const self = this;
 
         document.getElementsByClassName('filters-button')[0].addEventListener('click', () => {
-            self.toggleFilters();
+            self._toggleFilters();
         });
         
-        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+        const tweetsSection = document.getElementsByClassName('tweets')[0];
+
+        tweetsSection.addEventListener('click', (e) => {
             let target = e.target;
-            if(target.tagName === 'BUTTON' ||
-            target.tagName === 'I' ||
-            target.tagName === 'SELECT' ||
-            target.tagName === 'OPTION' ||
-            target.tagName === 'TEXTAREA') return;    
+            if(target.tagName !== 'DIV' &&
+            target.tagName !== 'P') return;    
             while(!target.classList.contains('tweet')) target = target.parentElement;
-            self.showTweet(target.dataset.id);
+            self._showTweet(target.dataset.id);
         });
 
         const loadMoreButton = document.getElementsByClassName('load-more')[0];
         if(loadMoreButton) {
             loadMoreButton.addEventListener('click', () => {
-                self.getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
+                self._getFeed(0, self._currShownTweets + 10, self._currFilterConfig);
             });
         }  
 
         // this внутри ивента ссылается не на контроллер, поэтому bind
-        document.getElementsByClassName('tweets')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
+        tweetsSection.addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         
-        document.getElementsByClassName('tweets')[0].addEventListener('click', (e) => {
+        tweetsSection.addEventListener('click', (e) => {
             const target = e.target
             if(target.tagName !== 'SPAN') return;
             self._currFilterConfig = {
                 author: '',
-                dateFrom: new Date(0),
-                dateTo: new Date(),
+                dateFrom: null,
+                dateTo: null,
                 text: '',
                 hashtags: [ target.innerHTML ]
             }
-            self.getFeed(0, 10, self._currFilterConfig);
+            self._getFeed();
         });
 
         document.getElementById('new-tweet-button').addEventListener('click', () => {
-            self.addTweet(document.getElementById('new-tweet').value);
+            self._addTweet(document.getElementById('new-tweet').value);
         });
     }
 
@@ -729,9 +689,72 @@ class Controller {
         const tweetTextTextarea = document.getElementById('tweet-text-filter');
         const hashtagsTextarea = document.getElementById('hashtags-filter');
 
+        const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+
+        authorTextarea.addEventListener('keydown', (e) => {
+            if(e.keyCode === 13) e.preventDefault();
+        });
+
+        hashtagsTextarea.addEventListener('keydown', (e) => {
+            if(e.keyCode === 13) e.preventDefault();
+        });
+
+        const forbiddenSymbols = [ ' ', ',', '.', ';', '\n' ];
+
+        authorTextarea.addEventListener('keyup', (e) => {
+            if(e.keyCode !== 13) return;
+            if(selectedAuthorsList.children.length === 0) {
+                selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
+            }
+            selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, authorTextarea.value));
+            authorTextarea.value = '';
+        });
+
+        hashtagsTextarea.addEventListener('keyup', (e) => {
+            if(e.keyCode !== 13) return;
+            if(hashtagsTextarea.value[0] !== '#') {
+                alert('The first symbol of this textarea must be a hashtag (#).');
+                return;
+            }
+            if(forbiddenSymbols.some((sym) => hashtagsTextarea.value.includes(sym))) {
+                alert('Your hashtag contains a prohibited symbol.');
+                return;
+            }
+            if(selectedHashtagsList.children.length === 0) {
+                selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
+            }
+            selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtagsTextarea.value));
+            hashtagsTextarea.value = '';
+        });
+
+        selectedAuthorsList.addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'LI') return;
+            target.parentNode.removeChild(target);
+            if(selectedAuthorsList.children.length === 0) {
+                selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
+                if(selectedAuthorsList.children.length === 0) {
+                    selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
+                }
+            }
+        });
+
+        selectedHashtagsList.addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'LI') return;
+            target.parentNode.removeChild(target);
+            if(selectedHashtagsList.children.length === 0) {
+                selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
+                if(selectedHashtagsList.children.length === 0) {
+                    selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
+                }
+            }
+        });
+
         document.getElementById('filter-submit').addEventListener('click', () => {
-            self._createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea);
-            self.getFeed(0, 10, self._currFilterConfig);
+            self._createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList);
+            self._getFeed();
         });
 
         document.getElementById('filter-clear').addEventListener('click', () => {
@@ -740,6 +763,12 @@ class Controller {
             dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0].children[0].value = '';
             tweetTextTextarea.value = '';
             hashtagsTextarea.value = '';
+            selectedAuthorsList.textContent = '';
+            selectedHashtagsList.textContent = '';
+            const authorsHintText = document.getElementById('selected-authors-list-hint-text');
+            if(authorsHintText) selectedAuthorsList.parentNode.removeChild(authorsHintText);
+            const hashtagsHintText = document.getElementById('selected-hashtags-list-hint-text');
+            if(hashtagsHintText) selectedHashtagsList.parentNode.removeChild(hashtagsHintText);
         });
     }
 
@@ -747,26 +776,72 @@ class Controller {
         const self = this;
 
         const newCommentTextarea = document.getElementById('new-comment-textarea');
-        document.getElementById('new-comment-submit').addEventListener('click', () => {
+        document.getElementById('new-comment-submit').addEventListener('click', async function() {
             const tweetId = document.getElementsByClassName('tweet')[0].dataset.id;
-            if(!self._feed.addComment(tweetId, newCommentTextarea.value)) return;
-            self.showTweet(tweetId);
-        });
+            const commentText = newCommentTextarea.value;
+            if(commentText.length > 280) {
+                alert('There is something wrong with your comment. Make sure it has no more than 280 symbols long.');
+                return;
+            }
+            try {
+                const response = await api.addComment(tweetId, self._token, commentText);
+                if(response.ok) 
+                {
+                    await self._getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+                    self._showTweet(tweetId);
+                }
+                else {
+                    // по какой бы то ни было причине, сервер возвращает 
+                    // ошибку 500, если человек не залогинен, хотя должен
+                    // возвращать 401. на сваггере тоже проверял, дело, как
+                    // я понимаю, не в неправильном запросе, да и при попытке
+                    // написать твит, будучи незалогиненным, всё работает, как
+                    // нужно, хотя там та же логика, но сервер в случае чего 
+                    // возвращает 401 (строка 284)
 
-        document.getElementsByClassName('tweet')[0].addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
+                    if(response.status === 500) self._showLoginForm();
+                    else self._displayErrorPage();
+                }
+            }
+            catch(e) {
+                self._displayErrorPage();
+            }
+        });
+        
+        const tweet = document.getElementsByClassName('tweet')[0];
+
+        tweet.addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
+        tweet.addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.tagName !== 'SPAN') return;
+            self._currFilterConfig = {
+                author: '',
+                dateFrom: null,
+                dateTo: null,
+                text: '',
+                hashtags: [ target.innerHTML ],
+            };
+            clearInterval(self._shortPollingIntervalId);
+            self._createNewShortPollingInterval();
+            self._getFeed();
+        });
     }
 
-    _createFilterConfig(authorTextarea, dateFilterBlock, tweetTextTextarea, hashtagsTextarea) {
+    _createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList) {
         const from = dateFilterBlock.getElementsByClassName('from')[0].getElementsByClassName('date-filter-lists')[0];
         const dateFrom = from.children[0].valueAsDate;
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
         const dateTo = to.children[0].valueAsDate;
+
+        const authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(',');
+        const hashtagsArr = [...selectedHashtagsList.children].map((li) => li.childNodes[0].data);
+
         this._currFilterConfig = {
-            'author': authorTextarea.value,
+            'author': authorStr,
             'dateFrom': dateFrom,
             'dateTo': dateTo,
             'text': tweetTextTextarea.value,
-            'hashtags': hashtagsTextarea.value ? hashtagsTextarea.value.split(' ').filter((hashtag) => hashtag[0] === '#') : [],
+            'hashtags': hashtagsArr,
         };
     }
 
@@ -779,7 +854,7 @@ class Controller {
         if(target.classList.contains('edit')) {
             const tweetEditTextareaContainer = ViewUtils.newTag('div', { id: 'tweet-edit-textarea-container' });
             const tweetEditTextarea = ViewUtils.newTag('textarea', { id: 'tweet-edit-textarea' });
-            tweetEditTextarea.value = this._feed.get(tweetId).text;
+            tweetEditTextarea.value = this._currFeed.find((tweet) => tweet.id === tweetId).text;
             tweetEditTextareaContainer.appendChild(tweetEditTextarea);
             const doneButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-done' }, 'Done');
             const cancelButton = ViewUtils.newTag('button', { class: 'tweet-active-edit-button', id: 'tweet-edit-cancel' }, 'Cancel');
@@ -790,7 +865,7 @@ class Controller {
             const body = document.body;
             body.appendChild(tweetEditTextareaContainer);
             document.getElementById('tweet-edit-done').addEventListener('click', () => {
-                this.editTweet(tweetId, tweetEditTextarea.value);
+                this._editTweet(tweetId, tweetEditTextarea.value);
                 body.removeChild(tweetEditTextareaContainer);
             });
             document.getElementById('tweet-edit-cancel').addEventListener('click', () => {
@@ -800,8 +875,8 @@ class Controller {
         if(target.classList.contains('delete')) {
             const choice = confirm('Are you sure?');
             if(choice) {
-                this.removeTweet(tweetId);
-                this.getFeed(0, this._currShownTweets - 1, this._currFilterConfig);
+                this._removeTweet(tweetId);
+                this._getFeed(0, this._currShownTweets - 1);
             }
         }
     }
@@ -843,262 +918,127 @@ class Controller {
     }
 
     _getOwn(tweets) {
-        return tweets.map((tweet) => tweet.author === this._feed.user ? true : false);
+        return tweets.map((tweet) => tweet.author === this._user);
+    }
+
+    _displayErrorPage() {
+        clearInterval(this._shortPollingIntervalId);
+
+        const mainContainer = document.getElementById('main-container')
+        mainContainer.innerHTML = '';
+        mainContainer.appendChild(ViewUtils.newTag('p', { class: 'error' }, 'Oh no! An error seems to have occurred.'));
+        const linkToMainPage = ViewUtils.newTag('a', { class: 'not-found link', id: 'not-found-link' }, 'Return to main page');
+        const self = this;
+        linkToMainPage.addEventListener('click', () => {
+            self._getFeed();
+        });
+        mainContainer.appendChild(linkToMainPage);
+    }
+
+    async _restoreUser() {
+        const lastUser = window.localStorage.lastUser;
+        const lastUserPassword = window.localStorage.lastUserPassword;
+        try {
+            const token = (await (await api.login(lastUser, lastUserPassword)).json()).token;
+            if(token) {
+                this._user = lastUser;
+                this._token = token;
+            }
+            else {
+                this._user = '';
+                this._token = '';
+            }
+            return Promise.resolve();
+        }
+        catch(e) {
+            this._displayErrorPage();
+        }
+    }
+
+    _createNewShortPollingInterval() {
+        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 15000);
     }
 }
 
-class UserList {
-    _users = [];
+class TweetFeedApiService {
+    _serverAddress;
+    _defaultHeaders = {
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+    };
 
-    constructor() {
-        this.restore();
+    constructor(address) {
+        this._serverAddress = address;
     }
 
-    addUser(user) {
-        this._users.push(user);
-        this.save();
+    login(login, password) {
+        return this._createRequest('/login', 'POST', {}, {
+            login,
+            password,
+        })
     }
 
-    has(user) {
-        return this._users.some((el) => el.username === user.username && el.password === user.password);
+    register(login, password) {
+        return this._createRequest('/registration', 'POST', {}, {
+            login,
+            password,
+        });
     }
 
-    save() {
-        window.localStorage.users = JSON.stringify(this._users);
+    getTweets(author, text, dateFrom, dateTo, from = 0, count = 10, hashtags) {
+        let url = new URL(this._serverAddress + '/tweet');
+        const filters = {};
+        if(author) filters['author'] = author;
+        if(text) filters['text'] = text;
+        filters['dateFrom'] = (dateFrom || new Date(0)).toISOString();
+        filters['dateTo'] = (dateTo || new Date()).toISOString();
+        filters['from'] = from;
+        filters['count'] = count;
+        if(hashtags) filters['hashtags'] = hashtags;
+        url.search = new URLSearchParams(filters).toString();
+        return fetch(url);
     }
 
-    restore() {
-        this._users = JSON.parse(window.localStorage.users);
+    addTweet(auth, text) {
+        return this._createRequest('/tweet', 'POST', { 'Authorization': 'Bearer ' + auth }, { text });
+    } 
+
+    editTweet(id, auth, text) {
+        return this._createRequest(`/tweet/${id}`, 'PUT', { 'Authorization': 'Bearer ' + auth }, { text });
+    }
+
+    removeTweet(id, auth) {
+        return this._createRequest(`/tweet/${id}`, 'DELETE', { 'Authorization': 'Bearer ' + auth });
+    }
+
+    addComment(tweetId, auth, text) {
+        return this._createRequest(`/tweet/${tweetId}/comment`, 'POST', { 'Authorization': 'Bearer ' + auth }, { text }); 
+    }
+
+    editComment(tweetId, id, auth, text) {
+        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'PUT', { 'Authorization': 'Bearer ' + auth }, { text });
+    }
+
+    removeComment(tweetId, id, auth) {
+        return this._createRequest(`/tweet/${tweetId}/comment/${id}`, 'DELETE', { 'Authorization': 'Bearer ' + auth })
+    }
+
+    _createRequest(path, method, extraHeaders = {}, bodyobj = {}) {
+        const headers = {};
+        for(let header in this._defaultHeaders) headers[header] = this._defaultHeaders[header];
+        for(let header in extraHeaders) headers[header] = extraHeaders[header];
+        return fetch(this._serverAddress + path, {
+            method,
+            headers,
+            body: method !== 'GET' ? JSON.stringify(bodyobj) : undefined,
+        })
     }
 }
 
-function initLocalStorage(usersstr, tweetsstr) {
-    window.localStorage.setItem('users', usersstr);
-    window.localStorage.setItem('tweets', tweetsstr);
-    window.localStorage.setItem('lastUser', '');
+if(window.localStorage.lastUser === undefined) {
+    window.localStorage.lastUser = '';
+    window.localStorage.lastUserPassword = '';
 }
 
-
-const tweets = [
-    new Tweet(
-        '1',
-        'Some text here',
-        new Date('2022-03-09T22:22:22'),
-        'Alice',
-        [],
-    ),
-
-    new Tweet(
-        '2',
-        'Some other text here',
-        new Date('2022-03-09T23:22:00'),
-        'Bob',
-        [],
-    ),
-
-    new Tweet(
-        '3',
-        'Text with a #hashtag here',
-        new Date('2022-03-10T20:20:00'),
-        'Charlie',
-        [],
-    ),
-
-    new Tweet(
-        '4',
-        'Another #text with a #hashtag here',
-        new Date('2022-03-11T12:03:05'),
-        'Daniel',
-        [],
-    ),
-
-    new Tweet(
-        '5',
-        'Text is what this is',
-        new Date('2022-03-11T13:05:01'),
-        'Ethan',
-        [],
-    ),
-
-    new Tweet(
-        '6',
-        'Let your #imagination run wild, don\'t limit yourself. You can do much better than this.',
-        new Date('2022-03-12T19:25:00'),
-        'Felicia',
-        [
-            new Comment('c42', 'Thanks for the insipiration! I will do my best not to let you down.', new Date('2022-03-12T19:25:25'), 'Konstantin'),
-        ],
-    ),
-
-    new Tweet(
-        '7',
-        'Wow, check out the #tweet below! I would never think it would be this easy to make that guy #write sensible tweets. Cheers, Felix!',
-        new Date('2022-03-12T19:30:42'),
-        'George',
-        [
-            new Comment('c43', 'And I took that personally. Sheesh. You didn\'t even #try talking to me to think that it would be difficult. Oh well.', new Date('2022-03-12T19:30:50'), 'Konstantin'),
-        ],
-    ),
-
-    new Tweet(
-        '8',
-        'Ahem... With that out of the way, let\'s get into the #tweets. Eight done, twelve more to go. Just going to get myself a cup of #tea and I\'ll get right into it.',
-        new Date('2022-03-12T19:32:21'),
-        'Konstantin',
-        [],
-    ),
-
-    new Tweet(
-        '9',
-        'Guys, anyone #online?',
-        new Date('2022-03-12T19:33:33'),
-        'Leonard',
-        [],
-    ),
-
-    new Tweet(
-        '10',
-        'Yeah, I am, what is it?',
-        new Date('2022-03-12T19:33:50'),
-        'Miranda',
-        [
-            new Comment('c44', 'FYI, there is a comment section under each tweet. Oh well. A friend of mine will continue my thought in the text tweet.', new Date('2022-03-12T19:34:24'), 'Leonard'),
-        ],
-    ),
-
-    new Tweet(
-        '11',
-        'Hey everyone! Leonard and I wish to write the remaining nine #tweets so this Konstantin guy doesn\'t need to.',
-        new Date('2022-03-12T19:35:00'),
-        'Natalie',
-        [],
-    ),
-
-    new Tweet(
-        '12',
-        'What an #idea! I\'m in.',
-        new Date('2022-03-12T19:35:50'),
-        'Olivia',
-        [],
-    ),
-
-    new Tweet(
-        '13',
-        'I\'d like to #join too!',
-        new Date('2022-03-12T19:36:14'),
-        'Patrick',
-        [],
-    ),
-
-    new Tweet(
-        '14',
-        'Wow, that a #community! I want to be a part of it too! And screw the #comments - write as much #tweets as you can!',
-        new Date('2022-03-12T19:36:42'),
-        'Quentin',
-        [
-            new Comment('c45', 'Come on now. He needs to have comments or his mentors won\'t be happy. Did you even read the homework task? Duh.', new Date('2022-03-12T19:37:03'), 'Leonard'),
-            new Comment('c46', 'Oh, right, right, sorry. And some comments too.', new Date('2022-03-12T19:37:30'), 'Quentin'),
-        ],
-    ),
-
-    new Tweet(
-        '15',
-        'I don\'t have the slightest #idea why we are doing this, but I guess we are!',
-        new Date('2022-03-12T19:37:54'),
-        'Rose',
-        [],
-    ),
-
-    new Tweet(
-        '16',
-        'Almost there, guys, keep it up! Post those #tweets like there\'s no tomorrow!',
-        new Date('2022-03-12T19:38:22'),
-        'Simon',
-        [],
-    ),
-
-    new Tweet(
-        '17',
-        'Has anyone noticed that the names of #tweets posters are in alphabetic order yet?',
-        new Date('2022-03-12T19:38:51'),
-        'Timothy',
-        [
-            new Comment('c47', 'No.', new Date('2022-03-12T19:39:10'), 'Anonymous'),
-        ],
-    ),
-
-    new Tweet(
-        '18',
-        'Wow, Timothy\'s right! We must keep it going like this! Everyone, quick, think of a #friend whose name starts with letters after U!',
-        new Date('2022-03-12T19:39:33'),
-        'Ulrich',
-        [
-            new Comment('c48', 'Do acquaintances count?', new Date('2022-03-12T19:39:55'), 'Victoria'),
-            new Comment('c49', 'Think later, you have the next letter! Quick, make a tweet before someone ruins it!', new Date('2022-03-12T19:40:12'), 'Ulrich'),
-            new Comment('c50', 'Oh god... I\'m late, aren\'t I?', new Date('2022-03-12T19:44:42'), 'Victoria'),
-            new Comment('c51', 'No you aren\'t! Yet!', new Date('2022-03-12T19:44:50'), 'Ulrich'),
-            new Comment('c52', 'You sure? I\'m pretty certain someone has already posted a tweet.', new Date('2022-03-12T19:45:13'), 'Victoria'),
-            new Comment('c53', 'JUST POST THE DAMN TWEET!', new Date('2022-03-12T19:45:20'), 'Ulrich'),
-        ],
-    ),
-
-    new Tweet(
-        '19',
-        'Okay, okay, I posted a #tweet. Jeez.',
-        new Date('2022-03-12T19:45:44'),
-        'Victoria',
-        [
-            new Comment('c54', 'Could you have waited a little longer?', new Date('2022-03-12T19:45:53'), 'Ulrich'),
-        ],
-    ),
-
-    new Tweet(
-        '20',
-        'Okay, even though there were some issues back there, I hereby declare our #feat accomplished. WITH the alphabetical order kept.',
-        new Date('2022-03-12T19:46:22'),
-        'Wendy',
-        [],
-    ),
-
-    new Tweet(
-        '21',
-        'Wow, now that\'s a \'good morning\'. That was quite a ride. Too bad I wasn\'t here then.',
-        new Date('2022-03-13T08:46:31'),
-        'Xavier',
-        [],
-    ),
-
-    new Tweet(
-        '22',
-        'Just who do you think you are? He was supposed to do it by himself!',
-        new Date('2022-03-13T13:43:21'),
-        'Yana',
-        [
-            new Comment('c55', 'I\'m more concerned by the fact that it takes him more than a day to get a cup of tea...', new Date('2022-03-13T21:28:03'), 'Leonard'),
-        ],
-    ),
-
-    new Tweet(
-        '23',
-        'I don\'t think he\'s coming back... You did well, guys. Go do #something else.',
-        new Date('2022-03-14T22:26:01'),
-        'Zoe',
-        [],
-    ),
-
-    new Tweet(
-        '24',
-        'Uh, hey, everyone! Sorry for the late arrival! Uhm... I have uh... Another task I need to do... Does anyone want to #help me out?',
-        new Date('2022-03-19T22:22:22'),
-        'Konstantin',
-        [],
-    ),
-];
-
-const usersstr = '[{"username":"Zoe","password":"pass"},{"username":"Ulrich","password":"pass"}]';
-const tweetsstr = JSON.stringify(tweets);
-
-if(!window.localStorage.users || !window.localStorage.tweets || window.localStorage.lastUser === undefined) initLocalStorage(usersstr, tweetsstr);
-
-const userList = new UserList();
-const controller = new Controller(tweets);
+const api = new TweetFeedApiService('https://jslabapi.datamola.com');
+const controller = new Controller();
