@@ -918,7 +918,7 @@ class Controller {
     }
 
     _getOwn(tweets) {
-        return tweets.map((tweet) => tweet.author === this._user ? true : false);
+        return tweets.map((tweet) => tweet.author === this._user);
     }
 
     _displayErrorPage() {
