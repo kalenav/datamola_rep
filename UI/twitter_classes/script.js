@@ -937,12 +937,14 @@ class Controller {
         const lastUser = window.localStorage.lastUser;
         let token = window.localStorage.token;
         try {
+            // тестовый твит, проверить, всё ещё валиден ли токен
             const response = await this._getResponseJSON(api.addTweet(token, '123'));
             if(response.statusCode === 401) {
                 this._user = '';
                 this._token = '';
             }
             else {
+                await api.removeTweet(response.id, token);
                 this._user = lastUser;
                 this._token = token;
             }
