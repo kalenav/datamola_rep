@@ -373,13 +373,13 @@ class Controller {
         const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
         const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
         const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
-        const dateFrom = this._getValueToSave(document.getElementById('date-from'), 'valueAsDate');
-        const dateTo = this._getValueToSave(document.getElementById('date-to'), 'valueAsDate');
+        // const dateFrom = this._getValueToSave(document.getElementById('date-from'), 'valueAsDate');
+        // const dateTo = this._getValueToSave(document.getElementById('date-to'), 'valueAsDate');
 
-        const selectedAuthorsList = document.getElementById('selected-authors-list');
-        const selectedAuthorsStr = selectedAuthorsList ? [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
-        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
-        const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
+        // const selectedAuthorsList = document.getElementById('selected-authors-list');
+        // const selectedAuthorsStr = selectedAuthorsList ? [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
+        // const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+        // const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
 
         try {
             const authors = filterConfig.author.split(',');
@@ -746,6 +746,8 @@ class Controller {
             if(authorsHintText) selectedAuthorsList.parentNode.removeChild(authorsHintText);
             const hashtagsHintText = document.getElementById('selected-hashtags-list-hint-text');
             if(hashtagsHintText) selectedHashtagsList.parentNode.removeChild(hashtagsHintText);
+            self._resetFilterConfig();
+            self._getFeed();
         });
     }
 
@@ -814,12 +816,22 @@ class Controller {
         const hashtagsArr = [...selectedHashtagsList.children].map((li) => li.childNodes[0].data);
 
         this._currFilterConfig = {
-            'author': authorStr,
-            'dateFrom': dateFrom,
-            'dateTo': dateTo,
-            'text': tweetTextTextarea.value,
-            'hashtags': hashtagsArr,
+            author: authorStr,
+            dateFrom: dateFrom,
+            dateTo: dateTo,
+            text: tweetTextTextarea.value,
+            hashtags: hashtagsArr,
         };
+    }
+
+    _resetFilterConfig() {
+        this._currFilterConfig = {
+            author: '',
+            dateFrom: null,
+            dateTo: null,
+            text: '',
+            hashtags: [],
+        }
     }
 
     _setOwnTweetButtonsEventListeners(e) {
