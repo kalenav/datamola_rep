@@ -1030,7 +1030,7 @@ class TweetFeedApiService {
         return fetch(this._serverAddress + path, {
             method,
             headers,
-            body: method !== 'GET' ? JSON.stringify(bodyobj) : undefined,
+            body: method !== 'GET' ? JSON.stringify(bodyobj) : null,
         })
     }
 }
