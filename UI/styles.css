@@ -354,6 +354,7 @@ section.new-comment {
 
 #filter-block {
     position: absolute;
+    left: 0;
     display: flex;
     flex-direction: column;
     height: auto;
@@ -370,6 +371,10 @@ section.new-comment {
 
 #filter-block > * {
     margin-bottom: 1rem;
+}
+
+#filter-block.hidden {
+    left: calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding));
 }
 
 .filter {
@@ -471,6 +476,9 @@ textarea.filter:focus-visible {
     #filter-block {
         top: 1rem;
         width: calc(var(--filter-block-desktop-width) - 2 * var(--filter-block-padding) - var(--filter-block-feed-clearance));
+    }
+
+    #filter-block, #filter-block.hidden {
         left: 0;
     }
 }
@@ -491,7 +499,6 @@ textarea.filter:focus-visible {
     #filter-block {
         top: calc(var(--default-button-height) + 1rem);
         width: 30rem;
-        left: calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding));
         background-color: var(--lightgray);
     }
 }

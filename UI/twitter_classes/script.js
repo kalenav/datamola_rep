@@ -175,19 +175,14 @@ class FilterView {
 
     constructor(containerId) {
         this._container = document.getElementById(containerId);
-        window.addEventListener('resize', () => {
-            if(window.innerWidth >= 1300) {
-                this.display();
-            }
-        });
     }
 
     display() {
-        this._container.style.left = '0';
+        this._container.classList.toggle('hidden');
     }
 
     hide() {
-        this._container.style.left = 'calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding))';
+        this._container.classList.toggle('hidden');
     }
 }
 
@@ -272,7 +267,6 @@ class Controller {
                 this._tweetFeedView = new TweetFeedView('main-container');
                 await this._initFeed();
                 this._filterView = new FilterView('filter-block');
-                if(window.innerWidth >= 1300) this._toggleFilters();
                 this._addTweetFeedEventListeners();
                 this._addFilterEventListeners();
                 this._tweetView = new TweetView('main-container');
@@ -452,22 +446,6 @@ class Controller {
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
                 self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
-                if(window.innerWidth >= 1300) { 
-                    // если на десктопе - показываем фильтры в любом случае
-
-                    this._filterView.display();
-                    this._filtersDisplayed = true;
-                }
-                else {
-                    // если на мобильной версии - показываем то, что было
-
-                    // насильно переключил фильтры в противоположное
-                    // состояние, чтобы ненасильно переключить их в то 
-                    // состояние, в котором они были до загрузки ленты
-
-                    self._filtersDisplayed = !self._filtersDisplayed;
-                    self._toggleFilters();
-                }
             }
         }
         catch(e) {
