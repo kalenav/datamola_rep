@@ -296,7 +296,7 @@ class Controller {
             return;
         }
         try {
-            const response = await (await api.addTweet(this._token, text)).json();
+            const response = await this._getResponseJSON(api.addTweet(this._token, text));
             if(response.id) {
                 document.getElementById('new-tweet').value = '';
                 this._getFeed();
@@ -311,7 +311,7 @@ class Controller {
     }
     
     async _editTweet(id, text) {
-        const response = await (await api.editTweet(id, this._token, text)).json();
+        const response = await this._getResponseJSON(api.editTweet(id, this._token, text));
         try {
             if(response.id) {
                 if(document.getElementsByClassName('tweets')[0]) this._getFeed();
@@ -353,7 +353,7 @@ class Controller {
     }
 
     async _initFeed() {
-        const response = await (await api.getTweets()).json();
+        const response = await this._getResponseJSON(api.getTweets());
         try {
             const tweets = [...response];
             const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
@@ -392,7 +392,7 @@ class Controller {
             let tweets = [];
             await new Promise(async function(resolve, reject) {
                 for(let i = 0; i < authors.length; i++) {
-                    const response = await (await api.getTweets(
+                    const response = await self._getResponseJSON(api.getTweets(
                         authors[i],
                         filterConfig.text,
                         filterConfig.dateFrom,
@@ -400,7 +400,7 @@ class Controller {
                         skip,
                         top,
                         hashtagsStr,
-                    )).json();
+                    ));
                     tweets = tweets.concat(response);
                 }
                 resolve();
@@ -426,7 +426,7 @@ class Controller {
                 let tweetsTopPlusOne = [];
                 await new Promise(async function (resolve, reject) {
                     for(let i = 0; i < authors.length; i++) {
-                        const response = await (await api.getTweets(
+                        const response = await self._getResponseJSON(api.getTweets(
                             authors[i],
                             filterConfig.text,
                             filterConfig.dateFrom,
@@ -434,7 +434,7 @@ class Controller {
                             skip,
                             top + 1,
                             hashtagsStr,
-                        )).json();
+                        ));
                         tweetsTopPlusOne = tweetsTopPlusOne.concat(response);
                     }
                     resolve();
@@ -546,7 +546,7 @@ class Controller {
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
             try {
-                const token = (await (await api.login(username, password)).json()).token;
+                const token = await self._getResponseJSON(api.login(username, password)).token;
                 if(token) {
                     self._setCurrentUser(username);
                     self._token = token;
@@ -846,7 +846,7 @@ class Controller {
 
     _setOwnTweetButtonsEventListeners(e) {
         const target = e.target;
-        if(target.tagName !== 'I') return;
+        if(!target.classList.contains('own-tweet-tool')) return;
         let parentTweet = target;
         while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
         const tweetId = parentTweet.dataset.id;
@@ -942,7 +942,7 @@ class Controller {
         const lastUser = window.localStorage.lastUser;
         const lastUserPassword = window.localStorage.lastUserPassword;
         try {
-            const token = (await (await api.login(lastUser, lastUserPassword)).json()).token;
+            const token = await this._getResponseJSON(api.login(lastUser, lastUserPassword)).token;
             if(token) {
                 this._user = lastUser;
                 this._token = token;
@@ -963,7 +963,7 @@ class Controller {
     }
 
     async _getResponseJSON(request) {
-        return await request.then(response => response.json());
+        return request.then(response => response.json());
     }
 }
 
