@@ -46,7 +46,7 @@ class ViewUtils {
     
     static wrapHashtags(text) {
         let hashtag = "";
-        const limiters = [' ', '.', ',', '!', '?', ';'];
+        const limiters = [' ', '.', ',', '!', '?', ';', '\n'];
         for(let i = 0; i < text.length; i++) {
             if(text[i] === '#') {
                 while(i < text.length && !limiters.includes(text[i])) {
@@ -120,12 +120,16 @@ class TweetFeedView {
     _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
         parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
         const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
+
+        const authorLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Author');
         const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to author filter list', id: 'author-name-filter'});
         authorNameTextarea.value = filterValues.author || '';
         const selectedAuthorsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
         selectedAuthorsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-authors-list' }));
+        const tweetTextLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Tweet text');
         const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter'});
         tweetTextTextarea.value = filterValues.text || '';
+        const hashtagsLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Hashtags');
         const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to hashtag filter list', id: 'hashtags-filter' });
         hashtagsTextarea.value = filterValues.hashtags ? filterValues.hashtags.join(' ') : ''; 
         const selectedHashtagsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
@@ -147,14 +151,19 @@ class TweetFeedView {
         dateFilterBlock.appendChild(dateFilterBlockFrom);
         dateFilterBlock.appendChild(dateFilterBlockTo);
 
+        filterBlock.appendChild(authorLabel);
         filterBlock.appendChild(authorNameTextarea);
         filterBlock.appendChild(selectedAuthorsContainer);
         filterBlock.appendChild(dateFilterBlock);
+        filterBlock.appendChild(tweetTextLabel);
         filterBlock.appendChild(tweetTextTextarea);
+        filterBlock.appendChild(hashtagsLabel);
         filterBlock.appendChild(hashtagsTextarea);
         filterBlock.appendChild(selectedHashtagsContainer);
-        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Filter'));
-        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
+        const filterButtonsContainer = ViewUtils.newTag('div', { id: 'filter-buttons-container' });
+        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Apply filters'));
+        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
+        filterBlock.appendChild(filterButtonsContainer);
 
         parent.appendChild(filterBlock);
     }
@@ -175,19 +184,14 @@ class FilterView {
 
     constructor(containerId) {
         this._container = document.getElementById(containerId);
-        window.addEventListener('resize', () => {
-            if(window.innerWidth >= 1300) {
-                this.display();
-            }
-        });
     }
 
     display() {
-        this._container.style.left = '0';
+        this._container.classList.toggle('hidden');
     }
 
     hide() {
-        this._container.style.left = 'calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding))';
+        this._container.classList.toggle('hidden');
     }
 }
 
@@ -259,6 +263,12 @@ class Controller {
         text: '',
         hashtags: [],
     };
+    _filterRestoreBuffer = {
+        authors: [],
+        hashtags: [],
+        dateFrom: null,
+        dateTo: null,
+    }
 
     _shortPollingIntervalId;
 
@@ -272,7 +282,6 @@ class Controller {
                 this._tweetFeedView = new TweetFeedView('main-container');
                 await this._initFeed();
                 this._filterView = new FilterView('filter-block');
-                if(window.innerWidth >= 1300) this._toggleFilters();
                 this._addTweetFeedEventListeners();
                 this._addFilterEventListeners();
                 this._tweetView = new TweetView('main-container');
@@ -295,8 +304,13 @@ class Controller {
             alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
             return;
         }
+        const emptySymbols = [' ', '\n'];
+        if(!text.split('').some(symbol => !emptySymbols.includes(symbol))) {
+            alert('Your tweet can\'t be empty.');
+            return;
+        }
         try {
-            const response = await (await api.addTweet(this._token, text)).json();
+            const response = await this._getResponseJSON(api.addTweet(this._token, text));
             if(response.id) {
                 document.getElementById('new-tweet').value = '';
                 this._getFeed();
@@ -311,7 +325,7 @@ class Controller {
     }
     
     async _editTweet(id, text) {
-        const response = await (await api.editTweet(id, this._token, text)).json();
+        const response = await this._getResponseJSON(api.editTweet(id, this._token, text));
         try {
             if(response.id) {
                 if(document.getElementsByClassName('tweets')[0]) this._getFeed();
@@ -353,7 +367,7 @@ class Controller {
     }
 
     async _initFeed() {
-        const response = await (await api.getTweets()).json();
+        const response = await this._getResponseJSON(api.getTweets());
         try {
             const tweets = [...response];
             const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
@@ -379,20 +393,20 @@ class Controller {
         const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
         const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
         const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
-        const dateFrom = this._getValueToSave(document.getElementById('date-from'), 'valueAsDate');
-        const dateTo = this._getValueToSave(document.getElementById('date-to'), 'valueAsDate');
+        // const dateFrom = this._getValueToSave(document.getElementById('date-from'), 'valueAsDate');
+        // const dateTo = this._getValueToSave(document.getElementById('date-to'), 'valueAsDate');
 
-        const selectedAuthorsList = document.getElementById('selected-authors-list');
-        const selectedAuthorsStr = selectedAuthorsList ? [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
-        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
-        const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
+        // const selectedAuthorsList = document.getElementById('selected-authors-list');
+        // const selectedAuthorsStr = selectedAuthorsList ? [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
+        // const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+        // const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
 
         try {
             const authors = filterConfig.author.split(',');
             let tweets = [];
             await new Promise(async function(resolve, reject) {
                 for(let i = 0; i < authors.length; i++) {
-                    const response = await (await api.getTweets(
+                    const response = await self._getResponseJSON(api.getTweets(
                         authors[i],
                         filterConfig.text,
                         filterConfig.dateFrom,
@@ -400,7 +414,7 @@ class Controller {
                         skip,
                         top,
                         hashtagsStr,
-                    )).json();
+                    ));
                     tweets = tweets.concat(response);
                 }
                 resolve();
@@ -426,7 +440,7 @@ class Controller {
                 let tweetsTopPlusOne = [];
                 await new Promise(async function (resolve, reject) {
                     for(let i = 0; i < authors.length; i++) {
-                        const response = await (await api.getTweets(
+                        const response = await self._getResponseJSON(api.getTweets(
                             authors[i],
                             filterConfig.text,
                             filterConfig.dateFrom,
@@ -434,7 +448,7 @@ class Controller {
                             skip,
                             top + 1,
                             hashtagsStr,
-                        )).json();
+                        ));
                         tweetsTopPlusOne = tweetsTopPlusOne.concat(response);
                     }
                     resolve();
@@ -452,22 +466,9 @@ class Controller {
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
                 self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
-                if(window.innerWidth >= 1300) { 
-                    // если на десктопе - показываем фильтры в любом случае
-
-                    this._filterView.display();
-                    this._filtersDisplayed = true;
-                }
-                else {
-                    // если на мобильной версии - показываем то, что было
-
-                    // насильно переключил фильтры в противоположное
-                    // состояние, чтобы ненасильно переключить их в то 
-                    // состояние, в котором они были до загрузки ленты
-
-                    self._filtersDisplayed = !self._filtersDisplayed;
-                    self._toggleFilters();
-                }
+                self._resetFilterRestoreBuffer();
+                clearInterval(self._shortPollingIntervalId);
+                self._createNewShortPollingInterval();
             }
         }
         catch(e) {
@@ -485,26 +486,61 @@ class Controller {
         document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
         document.getElementById('hashtags-filter').value = hashtagsTextareaText;
 
-        if(this._currFilterConfig.author) {
-            const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+        let authorsHintTextDisplayed = false;
+        let hashtagsHintTextDisplayed = false;
+
+        function addAuthorsHintText() {
             selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
-            this._currFilterConfig.author.split(' ').forEach((author) => {
+        }
+
+        function addHashtagsHintText() {
+            selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
+        }
+
+        if(this._currFilterConfig.author) {
+            authorsHintTextDisplayed = true;
+            addAuthorsHintText();
+            this._currFilterConfig.author.split(',').forEach((author) => {
                 selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
             })
         }
+        if(this._filterRestoreBuffer.authors.length > 0) {
+            if(!authorsHintTextDisplayed) addAuthorsHintText();
+            this._filterRestoreBuffer.authors.forEach((author) => {
+                selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
+            })
+        }
+
         if(this._currFilterConfig.hashtags.length > 0) {
-            const selectedHashtagsList = document.getElementById('selected-hashtags-list');
-            selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
+            hashtagsHintTextDisplayed = true;
+            addHashtagsHintText();
             this._currFilterConfig.hashtags.forEach((hashtag) => {
                 selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
             })
         }
+        if(this._filterRestoreBuffer.hashtags.length > 0) {
+            if(!hashtagsHintTextDisplayed) addHashtagsHintText();
+            this._filterRestoreBuffer.hashtags.forEach((hashtag) => {
+                selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
+            })
+        }
 
-        if(this._currFilterConfig.dateFrom) {
+        if(this._filterRestoreBuffer.dateFrom) {
+            const dateFromNumbers = ViewUtils.getDateNumbers(this._filterRestoreBuffer.dateFrom);
+            document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
+        }
+        else if(this._currFilterConfig.dateFrom) {
             const dateFromNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateFrom);
             document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
         }
-        if(this._currFilterConfig.dateTo) {
+
+        if(this._filterRestoreBuffer.dateTo) {
+            const dateToNumbers = ViewUtils.getDateNumbers(this._filterRestoreBuffer.dateTo);
+            document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
+        }
+        else if(this._currFilterConfig.dateTo) {
             const dateToNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateTo);
             document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
         }
@@ -546,12 +582,12 @@ class Controller {
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
             try {
-                const token = (await (await api.login(username, password)).json()).token;
+                const token = (await self._getResponseJSON(api.login(username, password))).token;
                 if(token) {
                     self._setCurrentUser(username);
                     self._token = token;
                     window.localStorage.lastUser = username;
-                    window.localStorage.lastUserPassword = password;
+                    window.localStorage.token = token;
                 }
                 else {
                     alert('Incorrect username or password.');
@@ -562,15 +598,16 @@ class Controller {
             }
         });
 
+        document.getElementById('view-password').addEventListener('click', () => {
+            document.getElementsByClassName('auth-window-textarea')[1].classList.toggle('password');
+        });
+
         document.getElementById('signup-link').addEventListener('click', () => {
-            clearInterval(this._shortPollingIntervalId);
             self._showSignupForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self._getFeed();
-            clearInterval(this._shortPollingIntervalId);
-            this._createNewShortPollingInterval();
+            this._getFeed();
         });
     }
 
@@ -604,14 +641,20 @@ class Controller {
             }
         });
 
+        document.getElementById('view-password').addEventListener('click', () => {
+            document.getElementsByClassName('auth-window-textarea')[1].classList.toggle('password');
+        });
+
+        document.getElementById('view-password-confirm').addEventListener('click', () => {
+            document.getElementsByClassName('auth-window-textarea')[2].classList.toggle('password');
+        });
+
         document.getElementById('login-link').addEventListener('click', () => {
             self._showLoginForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self._getFeed();
-            clearInterval(this._shortPollingIntervalId);
-            this._createNewShortPollingInterval();
+            this._getFeed();
         });
     }
 
@@ -647,9 +690,8 @@ class Controller {
 
         tweetsSection.addEventListener('click', (e) => {
             let target = e.target;
-            if(target.tagName !== 'DIV' &&
-            target.tagName !== 'P') return;    
-            while(!target.classList.contains('tweet')) target = target.parentElement;
+            if(!self._isTweet(target)) target = target.parentElement;
+            if(!self._isTweet(target)) return;
             self._showTweet(target.dataset.id);
         });
 
@@ -665,7 +707,7 @@ class Controller {
         
         tweetsSection.addEventListener('click', (e) => {
             const target = e.target
-            if(target.tagName !== 'SPAN') return;
+            if(!target.classList.contains('hashtag')) return;
             self._currFilterConfig = {
                 author: '',
                 dateFrom: null,
@@ -708,6 +750,7 @@ class Controller {
                 selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             }
             selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, authorTextarea.value));
+            self._filterRestoreBuffer.authors.push(authorTextarea.value);
             authorTextarea.value = '';
         });
 
@@ -725,6 +768,7 @@ class Controller {
                 selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
             }
             selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtagsTextarea.value));
+            self._filterRestoreBuffer.hashtags.push(hashtagsTextarea.value);
             hashtagsTextarea.value = '';
         });
 
@@ -752,8 +796,19 @@ class Controller {
             }
         });
 
+        const dateFromInput = document.getElementById('date-from');
+        dateFromInput.addEventListener('input', () => {
+            this._filterRestoreBuffer.dateFrom = dateFromInput.valueAsDate;
+        });
+
+        const dateToInput = document.getElementById('date-to');
+        dateToInput.addEventListener('input', () => {
+            this._filterRestoreBuffer.dateTo = dateToInput.valueAsDate;
+        });
+
         document.getElementById('filter-submit').addEventListener('click', () => {
             self._createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList);
+            self._resetFilterRestoreBuffer();
             self._getFeed();
         });
 
@@ -769,6 +824,8 @@ class Controller {
             if(authorsHintText) selectedAuthorsList.parentNode.removeChild(authorsHintText);
             const hashtagsHintText = document.getElementById('selected-hashtags-list-hint-text');
             if(hashtagsHintText) selectedHashtagsList.parentNode.removeChild(hashtagsHintText);
+            self._resetFilterConfig();
+            self._getFeed();
         });
     }
 
@@ -813,7 +870,7 @@ class Controller {
         tweet.addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         tweet.addEventListener('click', (e) => {
             const target = e.target;
-            if(target.tagName !== 'SPAN') return;
+            if(!target.classList.contains('hashtag')) return;
             self._currFilterConfig = {
                 author: '',
                 dateFrom: null,
@@ -833,21 +890,42 @@ class Controller {
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
         const dateTo = to.children[0].valueAsDate;
 
-        const authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(',');
+        let authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).filter(author => author !== '').join(',');
+        const authorTextarea = document.getElementById('author-name-filter');
+        if(authorTextarea.value) authorStr += `${authorStr ? ',' : ''}${authorTextarea.value}`; // добавляю запятую только если есть какие-то другие авторы
         const hashtagsArr = [...selectedHashtagsList.children].map((li) => li.childNodes[0].data);
+        const hashtagsTextarea = document.getElementById('hashtags-filter');
+        if(hashtagsTextarea.value) hashtagsArr.push(hashtagsTextarea.value);
 
         this._currFilterConfig = {
-            'author': authorStr,
-            'dateFrom': dateFrom,
-            'dateTo': dateTo,
-            'text': tweetTextTextarea.value,
-            'hashtags': hashtagsArr,
+            author: authorStr,
+            dateFrom: dateFrom,
+            dateTo: dateTo,
+            text: tweetTextTextarea.value,
+            hashtags: hashtagsArr,
         };
+    }
+
+    _resetFilterConfig() {
+        this._currFilterConfig = {
+            author: '',
+            dateFrom: null,
+            dateTo: null,
+            text: '',
+            hashtags: [],
+        }
+    }
+
+    _resetFilterRestoreBuffer() {
+        this._filterRestoreBuffer = {
+            authors: [],
+            hashtags: [],
+        }
     }
 
     _setOwnTweetButtonsEventListeners(e) {
         const target = e.target;
-        if(target.tagName !== 'I') return;
+        if(!target.classList.contains('own-tweet-tool')) return;
         let parentTweet = target;
         while(!parentTweet.classList.contains('tweet')) parentTweet = parentTweet.parentElement; 
         const tweetId = parentTweet.dataset.id;
@@ -891,8 +969,16 @@ class Controller {
         
         const form = ViewUtils.newTag('form', { class: 'auth-window-form' });
         form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea username', required: '', placeholder: 'Input username' }));
-        form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
-        if(!isLogin) form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
+        const passwordTextareaContainer = ViewUtils.newTag('div', { class: 'auth-window-textarea-container' });
+        passwordTextareaContainer.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
+        passwordTextareaContainer.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-eye auth-window-textarea-icon', id: 'view-password' }));
+        form.appendChild(passwordTextareaContainer);
+        if(!isLogin) {
+            const passwordConfirmTextareaContainer = ViewUtils.newTag('div', { class: 'auth-window-textarea-container' });
+            passwordConfirmTextareaContainer.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
+            passwordConfirmTextareaContainer.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-eye auth-window-textarea-icon', id: 'view-password-confirm' }));
+            form.appendChild(passwordConfirmTextareaContainer);
+        }
         form.appendChild(ViewUtils.newTag('button', { id: 'auth-window-button' }, isLogin ? 'Log in' : 'Sign up'));
 
         let otherActionText;
@@ -935,18 +1021,24 @@ class Controller {
         mainContainer.appendChild(linkToMainPage);
     }
 
+    _isTweet(elem) {
+        return elem.classList.contains('tweet');
+    }
+
     async _restoreUser() {
         const lastUser = window.localStorage.lastUser;
-        const lastUserPassword = window.localStorage.lastUserPassword;
+        let token = window.localStorage.token;
         try {
-            const token = (await (await api.login(lastUser, lastUserPassword)).json()).token;
-            if(token) {
-                this._user = lastUser;
-                this._token = token;
-            }
-            else {
+            // тестовый твит, проверить, всё ещё валиден ли токен
+            const response = await this._getResponseJSON(api.addTweet(token, '123'));
+            if(response.statusCode === 401) {
                 this._user = '';
                 this._token = '';
+            }
+            else {
+                await api.removeTweet(response.id, token);
+                this._user = lastUser;
+                this._token = token;
             }
             return Promise.resolve();
         }
@@ -957,6 +1049,10 @@ class Controller {
 
     _createNewShortPollingInterval() {
         this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 15000);
+    }
+
+    async _getResponseJSON(request) {
+        return request.then(response => response.json());
     }
 }
 
@@ -1030,14 +1126,14 @@ class TweetFeedApiService {
         return fetch(this._serverAddress + path, {
             method,
             headers,
-            body: method !== 'GET' ? JSON.stringify(bodyobj) : undefined,
+            body: method !== 'GET' ? JSON.stringify(bodyobj) : null,
         })
     }
 }
 
-if(window.localStorage.lastUser === undefined) {
+if(!window.localStorage.lastUser) {
     window.localStorage.lastUser = '';
-    window.localStorage.lastUserPassword = '';
+    window.localStorage.token = '';
 }
 
 const api = new TweetFeedApiService('https://jslabapi.datamola.com');
