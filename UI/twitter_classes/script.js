@@ -397,6 +397,7 @@ class Controller {
         try {
             const authors = filterConfig.author.split(',');
             let tweets = [];
+            let foundTweetsCount = 0;
             await new Promise(async function(resolve, reject) {
                 for(let i = 0; i < authors.length; i++) {
                     const response = await self._getResponseJSON(api.getTweets(
@@ -405,13 +406,15 @@ class Controller {
                         filterConfig.dateFrom,
                         filterConfig.dateTo,
                         skip,
-                        top,
+                        top + 1,
                         hashtagsStr,
                     ));
+                    foundTweetsCount += response.length;
                     tweets = tweets.concat(response);
                 }
                 resolve();
             });
+            tweets = tweets.slice(skip, top);
             if(tweets.length === 0) {
                 clearInterval(self._shortPollingIntervalId);
                 self._currFilterConfig = {
@@ -430,23 +433,7 @@ class Controller {
                 });
             }
             else {
-                let tweetsTopPlusOne = [];
-                await new Promise(async function (resolve, reject) {
-                    for(let i = 0; i < authors.length; i++) {
-                        const response = await self._getResponseJSON(api.getTweets(
-                            authors[i],
-                            filterConfig.text,
-                            filterConfig.dateFrom,
-                            filterConfig.dateTo,
-                            skip,
-                            top + 1,
-                            hashtagsStr,
-                        ));
-                        tweetsTopPlusOne = tweetsTopPlusOne.concat(response);
-                    }
-                    resolve();
-                });
-                const allTweetsShown = tweetsTopPlusOne.length === tweets.length;
+                const allTweetsShown = foundTweetsCount === tweets.length;
                 tweets.sort((tweet1, tweet2) => {
                     return tweet1.createdAt < tweet2.createdAt ? 1 : -1;
                 });
