@@ -456,6 +456,13 @@ textarea.filter:focus-visible {
     margin-bottom: 0.5rem;
 }
 
+#filter-buttons-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
 .not-found, .error {
     font-size: 4rem; 
     margin-top: 10rem; 

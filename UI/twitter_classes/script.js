@@ -153,8 +153,10 @@ class TweetFeedView {
         filterBlock.appendChild(tweetTextTextarea);
         filterBlock.appendChild(hashtagsTextarea);
         filterBlock.appendChild(selectedHashtagsContainer);
-        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Filter'));
-        filterBlock.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
+        const filterButtonsContainer = ViewUtils.newTag('div', { id: 'filter-buttons-container' });
+        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Apply filters'));
+        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
+        filterBlock.appendChild(filterButtonsContainer);
 
         parent.appendChild(filterBlock);
     }
