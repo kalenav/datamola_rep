@@ -647,9 +647,8 @@ class Controller {
 
         tweetsSection.addEventListener('click', (e) => {
             let target = e.target;
-            if(target.tagName !== 'DIV' &&
-            target.tagName !== 'P') return;    
-            while(!target.classList.contains('tweet')) target = target.parentElement;
+            if(!self._isTweet(target)) target = target.parentElement;
+            if(!self._isTweet(target)) return;
             self._showTweet(target.dataset.id);
         });
 
@@ -665,7 +664,7 @@ class Controller {
         
         tweetsSection.addEventListener('click', (e) => {
             const target = e.target
-            if(target.tagName !== 'SPAN') return;
+            if(!target.classList.contains('hashtag')) return;
             self._currFilterConfig = {
                 author: '',
                 dateFrom: null,
@@ -813,7 +812,7 @@ class Controller {
         tweet.addEventListener('click', self._setOwnTweetButtonsEventListeners.bind(self));
         tweet.addEventListener('click', (e) => {
             const target = e.target;
-            if(target.tagName !== 'SPAN') return;
+            if(!target.classList.contains('hashtag')) return;
             self._currFilterConfig = {
                 author: '',
                 dateFrom: null,
@@ -935,6 +934,10 @@ class Controller {
         mainContainer.appendChild(linkToMainPage);
     }
 
+    _isTweet(elem) {
+        return elem.classList.contains('tweet');
+    }
+
     async _restoreUser() {
         const lastUser = window.localStorage.lastUser;
         const lastUserPassword = window.localStorage.lastUserPassword;
@@ -957,6 +960,10 @@ class Controller {
 
     _createNewShortPollingInterval() {
         this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 15000);
+    }
+
+    async _getResponseJSON(request) {
+        return await request.then(response => response.json());
     }
 }
 
