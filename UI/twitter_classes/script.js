@@ -263,6 +263,12 @@ class Controller {
         text: '',
         hashtags: [],
     };
+    _filterRestoreBuffer = {
+        authors: [],
+        hashtags: [],
+        dateFrom: null,
+        dateTo: null,
+    }
 
     _shortPollingIntervalId;
 
@@ -460,6 +466,7 @@ class Controller {
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
                 self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
+                self._resetFilterRestoreBuffer();
                 clearInterval(self._shortPollingIntervalId);
                 self._createNewShortPollingInterval();
             }
@@ -479,26 +486,61 @@ class Controller {
         document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
         document.getElementById('hashtags-filter').value = hashtagsTextareaText;
 
-        if(this._currFilterConfig.author) {
-            const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedAuthorsList = document.getElementById('selected-authors-list');
+        const selectedHashtagsList = document.getElementById('selected-hashtags-list');
+        let authorsHintTextDisplayed = false;
+        let hashtagsHintTextDisplayed = false;
+
+        function addAuthorsHintText() {
             selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
-            this._currFilterConfig.author.split(' ').forEach((author) => {
+        }
+
+        function addHashtagsHintText() {
+            selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
+        }
+
+        if(this._currFilterConfig.author) {
+            authorsHintTextDisplayed = true;
+            addAuthorsHintText();
+            this._currFilterConfig.author.split(',').forEach((author) => {
                 selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
             })
         }
+        if(this._filterRestoreBuffer.authors.length > 0) {
+            if(!authorsHintTextDisplayed) addAuthorsHintText();
+            this._filterRestoreBuffer.authors.forEach((author) => {
+                selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, author));
+            })
+        }
+
         if(this._currFilterConfig.hashtags.length > 0) {
-            const selectedHashtagsList = document.getElementById('selected-hashtags-list');
-            selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { class: 'filter-hint-text', id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
+            hashtagsHintTextDisplayed = true;
+            addHashtagsHintText();
             this._currFilterConfig.hashtags.forEach((hashtag) => {
                 selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
             })
         }
+        if(this._filterRestoreBuffer.hashtags.length > 0) {
+            if(!hashtagsHintTextDisplayed) addHashtagsHintText();
+            this._filterRestoreBuffer.hashtags.forEach((hashtag) => {
+                selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtag));
+            })
+        }
 
-        if(this._currFilterConfig.dateFrom) {
+        if(this._filterRestoreBuffer.dateFrom) {
+            const dateFromNumbers = ViewUtils.getDateNumbers(this._filterRestoreBuffer.dateFrom);
+            document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
+        }
+        else if(this._currFilterConfig.dateFrom) {
             const dateFromNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateFrom);
             document.getElementById('date-from').value = `${dateFromNumbers.year}-${dateFromNumbers.month}-${dateFromNumbers.day}`;
         }
-        if(this._currFilterConfig.dateTo) {
+        
+        if(this._filterRestoreBuffer.dateTo) {
+            const dateToNumbers = ViewUtils.getDateNumbers(this._filterRestoreBuffer.dateTo);
+            document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
+        }
+        else if(this._currFilterConfig.dateTo) {
             const dateToNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateTo);
             document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
         }
@@ -708,6 +750,7 @@ class Controller {
                 selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             }
             selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, authorTextarea.value));
+            self._filterRestoreBuffer.authors.push(authorTextarea.value);
             authorTextarea.value = '';
         });
 
@@ -725,6 +768,7 @@ class Controller {
                 selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
             }
             selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtagsTextarea.value));
+            self._filterRestoreBuffer.hashtags.push(hashtagsTextarea.value);
             hashtagsTextarea.value = '';
         });
 
@@ -752,8 +796,19 @@ class Controller {
             }
         });
 
+        const dateFromInput = document.getElementById('date-from');
+        dateFromInput.addEventListener('input', () => {
+            this._filterRestoreBuffer.dateFrom = dateFromInput.valueAsDate;
+        });
+
+        const dateToInput = document.getElementById('date-to');
+        dateToInput.addEventListener('input', () => {
+            this._filterRestoreBuffer.dateTo = dateToInput.valueAsDate;
+        });
+
         document.getElementById('filter-submit').addEventListener('click', () => {
             self._createFilterConfig(selectedAuthorsList, dateFilterBlock, tweetTextTextarea, selectedHashtagsList);
+            self._resetFilterRestoreBuffer();
             self._getFeed();
         });
 
@@ -853,6 +908,13 @@ class Controller {
             dateFrom: null,
             dateTo: null,
             text: '',
+            hashtags: [],
+        }
+    }
+
+    _resetFilterRestoreBuffer() {
+        this._filterRestoreBuffer = {
+            authors: [],
             hashtags: [],
         }
     }
