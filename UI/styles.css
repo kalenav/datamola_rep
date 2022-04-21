@@ -402,6 +402,10 @@ section.new-comment {
     left: calc(-1 * var(--filter-block-mobile-width) - 2 * var(--filter-block-padding));
 }
 
+.filter-label {
+    margin: 0 auto 0 10%;
+}
+
 .filter {
     resize: none;
     border-radius: 0.5rem;
@@ -433,6 +437,10 @@ textarea.filter:focus-visible {
 
 .filter-hint-text {
     margin: 1rem 0;
+}
+
+#date-filter {
+    margin: 2rem 0;
 }
 
 .date-filter-text {

@@ -120,12 +120,16 @@ class TweetFeedView {
     _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
         parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
         const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
+
+        const authorLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Author');
         const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to author filter list', id: 'author-name-filter'});
         authorNameTextarea.value = filterValues.author || '';
         const selectedAuthorsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
         selectedAuthorsContainer.appendChild(ViewUtils.newTag('ul', { class: 'selected-filters-list', id: 'selected-authors-list' }));
+        const tweetTextLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Tweet text');
         const tweetTextTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Tweet text', id: 'tweet-text-filter'});
         tweetTextTextarea.value = filterValues.text || '';
+        const hashtagsLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Hashtags');
         const hashtagsTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to hashtag filter list', id: 'hashtags-filter' });
         hashtagsTextarea.value = filterValues.hashtags ? filterValues.hashtags.join(' ') : ''; 
         const selectedHashtagsContainer = ViewUtils.newTag('div', { class: 'selected-filters-list-container' });
@@ -147,10 +151,13 @@ class TweetFeedView {
         dateFilterBlock.appendChild(dateFilterBlockFrom);
         dateFilterBlock.appendChild(dateFilterBlockTo);
 
+        filterBlock.appendChild(authorLabel);
         filterBlock.appendChild(authorNameTextarea);
         filterBlock.appendChild(selectedAuthorsContainer);
         filterBlock.appendChild(dateFilterBlock);
+        filterBlock.appendChild(tweetTextLabel);
         filterBlock.appendChild(tweetTextTextarea);
+        filterBlock.appendChild(hashtagsLabel);
         filterBlock.appendChild(hashtagsTextarea);
         filterBlock.appendChild(selectedHashtagsContainer);
         const filterButtonsContainer = ViewUtils.newTag('div', { id: 'filter-buttons-container' });
