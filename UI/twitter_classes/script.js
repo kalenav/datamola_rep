@@ -46,7 +46,7 @@ class ViewUtils {
     
     static wrapHashtags(text) {
         let hashtag = "";
-        const limiters = [' ', '.', ',', '!', '?', ';'];
+        const limiters = [' ', '.', ',', '!', '?', ';', '\n'];
         for(let i = 0; i < text.length; i++) {
             if(text[i] === '#') {
                 while(i < text.length && !limiters.includes(text[i])) {
