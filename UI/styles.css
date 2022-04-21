@@ -423,7 +423,6 @@ textarea.filter:focus-visible {
 }
 
 .date-filter-lists {
-    width: 80%;
     display: flex;
     flex-direction: row;
 }
@@ -484,14 +483,6 @@ textarea.filter:focus-visible {
 }
 
 @media all and (max-width: 1300px) {
-    .date-filter-lists {
-        width: 75%;
-    }
-
-    .date-filter-list {
-        margin-left: 0.2rem;
-    }
-
     button.filters-button {
         display: flex;
     }
