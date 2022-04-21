@@ -460,6 +460,8 @@ class Controller {
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
                 self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
+                clearInterval(self._shortPollingIntervalId);
+                self._createNewShortPollingInterval();
             }
         }
         catch(e) {
@@ -559,14 +561,11 @@ class Controller {
         });
 
         document.getElementById('signup-link').addEventListener('click', () => {
-            clearInterval(this._shortPollingIntervalId);
             self._showSignupForm();
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self._getFeed();
-            clearInterval(this._shortPollingIntervalId);
-            this._createNewShortPollingInterval();
+            this._getFeed();
         });
     }
 
@@ -613,9 +612,7 @@ class Controller {
         });
 
         document.getElementById('main-page-link').addEventListener('click', () => {
-            self._getFeed();
-            clearInterval(this._shortPollingIntervalId);
-            this._createNewShortPollingInterval();
+            this._getFeed();
         });
     }
 
