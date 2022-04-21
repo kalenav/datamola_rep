@@ -119,7 +119,7 @@ class TweetFeedView {
 
     _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
         parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
-        const filterBlock = ViewUtils.newTag('div', { id: 'filter-block' });
+        const filterBlock = ViewUtils.newTag('div', { class: 'hidden', id: 'filter-block' });
 
         const authorLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Author');
         const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to author filter list', id: 'author-name-filter'});
