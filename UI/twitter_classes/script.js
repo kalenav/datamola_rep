@@ -524,7 +524,7 @@ class Controller {
             const username = form.getElementsByClassName('username')[0].value;
             const password = form.getElementsByClassName('password')[0].value;
             try {
-                const token = await self._getResponseJSON(api.login(username, password)).token;
+                const token = (await self._getResponseJSON(api.login(username, password))).token;
                 if(token) {
                     self._setCurrentUser(username);
                     self._token = token;
