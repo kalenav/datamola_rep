@@ -393,13 +393,6 @@ class Controller {
         const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
         const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
         const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
-        // const dateFrom = this._getValueToSave(document.getElementById('date-from'), 'valueAsDate');
-        // const dateTo = this._getValueToSave(document.getElementById('date-to'), 'valueAsDate');
-
-        // const selectedAuthorsList = document.getElementById('selected-authors-list');
-        // const selectedAuthorsStr = selectedAuthorsList ? [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
-        // const selectedHashtagsList = document.getElementById('selected-hashtags-list');
-        // const selectedHashtagsStr = selectedHashtagsList ? [...selectedHashtagsList.children].map((li) => li.childNodes[0].data).join(' ') : '';
 
         try {
             const authors = filterConfig.author.split(',');
