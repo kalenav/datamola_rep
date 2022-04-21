@@ -545,6 +545,10 @@ class Controller {
             }
         });
 
+        document.getElementById('view-password').addEventListener('click', () => {
+            document.getElementsByClassName('auth-window-textarea')[1].classList.toggle('password');
+        });
+
         document.getElementById('signup-link').addEventListener('click', () => {
             clearInterval(this._shortPollingIntervalId);
             self._showSignupForm();
@@ -585,6 +589,14 @@ class Controller {
             catch(e) {
                 self._displayErrorPage();
             }
+        });
+
+        document.getElementById('view-password').addEventListener('click', () => {
+            document.getElementsByClassName('auth-window-textarea')[1].classList.toggle('password');
+        });
+
+        document.getElementById('view-password-confirm').addEventListener('click', () => {
+            document.getElementsByClassName('auth-window-textarea')[2].classList.toggle('password');
         });
 
         document.getElementById('login-link').addEventListener('click', () => {
@@ -885,8 +897,16 @@ class Controller {
         
         const form = ViewUtils.newTag('form', { class: 'auth-window-form' });
         form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea username', required: '', placeholder: 'Input username' }));
-        form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
-        if(!isLogin) form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
+        const passwordTextareaContainer = ViewUtils.newTag('div', { class: 'auth-window-textarea-container' });
+        passwordTextareaContainer.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
+        passwordTextareaContainer.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-eye auth-window-textarea-icon', id: 'view-password' }));
+        form.appendChild(passwordTextareaContainer);
+        if(!isLogin) {
+            const passwordConfirmTextareaContainer = ViewUtils.newTag('div', { class: 'auth-window-textarea-container' });
+            passwordConfirmTextareaContainer.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
+            passwordConfirmTextareaContainer.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-eye auth-window-textarea-icon', id: 'view-password-confirm' }));
+            form.appendChild(passwordConfirmTextareaContainer);
+        }
         form.appendChild(ViewUtils.newTag('button', { id: 'auth-window-button' }, isLogin ? 'Log in' : 'Sign up'));
 
         let otherActionText;
