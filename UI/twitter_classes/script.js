@@ -414,7 +414,7 @@ class Controller {
                 }
                 resolve();
             });
-            tweets = tweets.slice(skip, top);
+            tweets = tweets.slice(0, top);
             if(tweets.length === 0) {
                 clearInterval(self._shortPollingIntervalId);
                 self._currFilterConfig = {
@@ -434,9 +434,7 @@ class Controller {
             }
             else {
                 const allTweetsShown = foundTweetsCount === tweets.length;
-                tweets.sort((tweet1, tweet2) => {
-                    return tweet1.createdAt < tweet2.createdAt ? 1 : -1;
-                });
+                tweets.sort((tweet1, tweet2) => tweet1.createdAt < tweet2.createdAt ? 1 : -1);
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
                 self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
                 self._headerView.display(self._user, false);
