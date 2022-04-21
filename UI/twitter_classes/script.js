@@ -1035,7 +1035,7 @@ class TweetFeedApiService {
     }
 }
 
-if(window.localStorage.lastUser === undefined) {
+if(!window.localStorage.lastUser) {
     window.localStorage.lastUser = '';
     window.localStorage.lastUserPassword = '';
 }
