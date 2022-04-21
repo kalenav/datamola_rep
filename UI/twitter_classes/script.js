@@ -289,6 +289,11 @@ class Controller {
             alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
             return;
         }
+        const emptySymbols = [' ', '\n'];
+        if(!text.split('').some(symbol => !emptySymbols.includes(symbol))) {
+            alert('Your tweet can\'t be empty.');
+            return;
+        }
         try {
             const response = await this._getResponseJSON(api.addTweet(this._token, text));
             if(response.id) {
