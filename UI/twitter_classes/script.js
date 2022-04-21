@@ -534,7 +534,7 @@ class Controller {
                     self._setCurrentUser(username);
                     self._token = token;
                     window.localStorage.lastUser = username;
-                    window.localStorage.lastUserPassword = password;
+                    window.localStorage.token = token;
                 }
                 else {
                     alert('Incorrect username or password.');
@@ -935,16 +935,16 @@ class Controller {
 
     async _restoreUser() {
         const lastUser = window.localStorage.lastUser;
-        const lastUserPassword = window.localStorage.lastUserPassword;
+        let token = window.localStorage.token;
         try {
-            const token = await this._getResponseJSON(api.login(lastUser, lastUserPassword)).token;
-            if(token) {
-                this._user = lastUser;
-                this._token = token;
-            }
-            else {
+            const response = await this._getResponseJSON(api.addTweet(token, '123'));
+            if(response.statusCode === 401) {
                 this._user = '';
                 this._token = '';
+            }
+            else {
+                this._user = lastUser;
+                this._token = token;
             }
             return Promise.resolve();
         }
@@ -1039,7 +1039,7 @@ class TweetFeedApiService {
 
 if(!window.localStorage.lastUser) {
     window.localStorage.lastUser = '';
-    window.localStorage.lastUserPassword = '';
+    window.localStorage.token = '';
 }
 
 const api = new TweetFeedApiService('https://jslabapi.datamola.com');
