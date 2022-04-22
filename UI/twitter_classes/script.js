@@ -397,6 +397,8 @@ class Controller {
         const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
         const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
 
+        const currActiveElementId = document.activeElement.getAttribute('id');
+
         try {
             const authors = filterConfig.author.split(',');
             let tweets = [];
@@ -446,7 +448,7 @@ class Controller {
                 self._addFilterEventListeners();
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
-                self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
+                self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText, currActiveElementId);
                 self._resetFilterRestoreBuffer();
                 clearInterval(self._shortPollingIntervalId);
                 self._createNewShortPollingInterval();
@@ -461,7 +463,7 @@ class Controller {
         return element ? element[field] : defaultValue;
     }
 
-    _restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText) {
+    _restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText, currActiveElementId) {
         document.getElementById('new-tweet').value = newTweetText;
         document.getElementById('author-name-filter').value = authorTextareaText;
         document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
@@ -525,6 +527,8 @@ class Controller {
             const dateToNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateTo);
             document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
         }
+
+        if(currActiveElementId) document.getElementById(currActiveElementId).focus();
     }
     
     _showTweet(id) {
