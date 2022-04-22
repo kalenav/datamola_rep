@@ -318,6 +318,9 @@ class Controller {
             else if(response.statusCode === 401) {
                 this._showLoginForm();
             }
+            else {
+                console.log(response);
+            }
         }
         catch(e) {
             this._displayErrorPage();
@@ -553,6 +556,7 @@ class Controller {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), true);
+        self._preventAuthTextareaLinebreaks();
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', async function(e) {
@@ -593,6 +597,7 @@ class Controller {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), false);
+        self._preventAuthTextareaLinebreaks();
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', async function(e) {
@@ -979,6 +984,14 @@ class Controller {
         authWindow.appendChild(returnToMainPageText);
 
         parent.appendChild(authWindow);
+    }
+
+    _preventAuthTextareaLinebreaks() {
+        [...document.getElementsByClassName('auth-window-textarea')].forEach(textarea => {
+            textarea.addEventListener('keydown', e => {
+                if(e.keyCode === 13) e.preventDefault();
+            });
+        })
     }
 
     _getOwn(tweets) {
