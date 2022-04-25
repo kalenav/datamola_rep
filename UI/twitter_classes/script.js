@@ -398,7 +398,8 @@ class Controller {
         const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
         const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
 
-        const currActiveElementId = document.activeElement.getAttribute('id');
+        const currActiveElement = document.activeElement;
+        const currActiveElementId = currActiveElement.tagName === 'TEXTAREA' ? currActiveElement.getAttribute('id') : '';
 
         try {
             const authors = filterConfig.author.split(',');
