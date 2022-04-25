@@ -433,8 +433,7 @@ class Controller {
                 self._headerView.display(self._user, true);
                 document.getElementById('not-found-link').addEventListener('click', () => {
                     self._getFeed();
-                    clearInterval(self._shortPollingIntervalId);
-                    self._createNewShortPollingInterval();
+                    self._resetShortPollingInterval();
                 });
             }
             else {
@@ -450,8 +449,7 @@ class Controller {
                 self._currFeed = tweets.slice();
                 self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText, currActiveElementId);
                 self._resetFilterRestoreBuffer();
-                clearInterval(self._shortPollingIntervalId);
-                self._createNewShortPollingInterval();
+                self._resetShortPollingInterval();
             }
         }
         catch(e) {
@@ -865,8 +863,7 @@ class Controller {
                 text: '',
                 hashtags: [ target.innerHTML ],
             };
-            clearInterval(self._shortPollingIntervalId);
-            self._createNewShortPollingInterval();
+            self._resetShortPollingInterval();
             self._getFeed();
         });
     }
@@ -1042,7 +1039,8 @@ class Controller {
         }
     }
 
-    _createNewShortPollingInterval() {
+    _resetShortPollingInterval() {
+        clearInterval(this._shortPollingIntervalId);
         this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 15000);
     }
 
