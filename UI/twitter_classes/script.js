@@ -362,7 +362,6 @@ class Controller {
             else if(response.statusCode === 401) {
                 this._showLoginForm();
             }
-            else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
         }
         catch(e) {
             this._displayErrorPage();
