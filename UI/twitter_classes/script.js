@@ -305,8 +305,7 @@ class Controller {
             alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
             return;
         }
-        const emptySymbols = [' ', '\n'];
-        if(!text.split('').some(symbol => !emptySymbols.includes(symbol))) {
+        if(text.trim() === '') {
             alert('Your tweet can\'t be empty.');
             return;
         }
