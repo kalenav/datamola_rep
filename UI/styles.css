@@ -388,6 +388,7 @@ section.new-comment {
     font-size: 1.2rem;
     background-color: white;
     padding: 1rem;
+    border-radius: 0.5rem;
 }
 
 #filter-block * {

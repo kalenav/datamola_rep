@@ -151,6 +151,10 @@ class TweetFeedView {
         dateFilterBlock.appendChild(dateFilterBlockFrom);
         dateFilterBlock.appendChild(dateFilterBlockTo);
 
+        const filterButtonsContainer = ViewUtils.newTag('div', { id: 'filter-buttons-container' });
+        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Apply filters'));
+        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
+
         filterBlock.appendChild(authorLabel);
         filterBlock.appendChild(authorNameTextarea);
         filterBlock.appendChild(selectedAuthorsContainer);
@@ -160,9 +164,6 @@ class TweetFeedView {
         filterBlock.appendChild(hashtagsLabel);
         filterBlock.appendChild(hashtagsTextarea);
         filterBlock.appendChild(selectedHashtagsContainer);
-        const filterButtonsContainer = ViewUtils.newTag('div', { id: 'filter-buttons-container' });
-        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-submit' }, 'Apply filters'));
-        filterButtonsContainer.appendChild(ViewUtils.newTag('button', { id: 'filter-clear' }, 'Clear filters'));
         filterBlock.appendChild(filterButtonsContainer);
 
         parent.appendChild(filterBlock);
@@ -304,8 +305,7 @@ class Controller {
             alert('There\'s something wrong with your tweet. Make sure it\'s no more than 280 symbols long.');
             return;
         }
-        const emptySymbols = [' ', '\n'];
-        if(!text.split('').some(symbol => !emptySymbols.includes(symbol))) {
+        if(text.trim() === '') {
             alert('Your tweet can\'t be empty.');
             return;
         }
@@ -317,6 +317,9 @@ class Controller {
             }
             else if(response.statusCode === 401) {
                 this._showLoginForm();
+            }
+            else {
+                console.log(response);
             }
         }
         catch(e) {
@@ -359,7 +362,6 @@ class Controller {
             else if(response.statusCode === 401) {
                 this._showLoginForm();
             }
-            else alert('There\'s something wrong with your tweet. Make sure it\'s less than 280 symbols long.');
         }
         catch(e) {
             this._displayErrorPage();
@@ -393,6 +395,9 @@ class Controller {
         const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
         const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
         const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
+
+        const currActiveElement = document.activeElement;
+        const currActiveElementId = currActiveElement.tagName === 'TEXTAREA' ? currActiveElement.getAttribute('id') : '';
 
         try {
             const authors = filterConfig.author.split(',');
@@ -428,8 +433,7 @@ class Controller {
                 self._headerView.display(self._user, true);
                 document.getElementById('not-found-link').addEventListener('click', () => {
                     self._getFeed();
-                    clearInterval(self._shortPollingIntervalId);
-                    self._createNewShortPollingInterval();
+                    self._resetShortPollingInterval();
                 });
             }
             else {
@@ -443,10 +447,9 @@ class Controller {
                 self._addFilterEventListeners();
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
-                self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText);
+                self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText, currActiveElementId);
                 self._resetFilterRestoreBuffer();
-                clearInterval(self._shortPollingIntervalId);
-                self._createNewShortPollingInterval();
+                self._resetShortPollingInterval();
             }
         }
         catch(e) {
@@ -458,7 +461,7 @@ class Controller {
         return element ? element[field] : defaultValue;
     }
 
-    _restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText) {
+    _restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText, currActiveElementId) {
         document.getElementById('new-tweet').value = newTweetText;
         document.getElementById('author-name-filter').value = authorTextareaText;
         document.getElementById('tweet-text-filter').value = tweetTextTextareaText;
@@ -522,6 +525,8 @@ class Controller {
             const dateToNumbers = ViewUtils.getDateNumbers(this._currFilterConfig.dateTo);
             document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
         }
+
+        if(currActiveElementId) document.getElementById(currActiveElementId).focus();
     }
     
     _showTweet(id) {
@@ -553,6 +558,7 @@ class Controller {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), true);
+        self._preventAuthTextareaLinebreaks();
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', async function(e) {
@@ -593,6 +599,7 @@ class Controller {
         const self = this;
 
         self._displayAuthWindow(document.getElementById('main-container'), false);
+        self._preventAuthTextareaLinebreaks();
 
         const form = document.getElementsByClassName('auth-window-form')[0];
         form.addEventListener('submit', async function(e) {
@@ -856,8 +863,7 @@ class Controller {
                 text: '',
                 hashtags: [ target.innerHTML ],
             };
-            clearInterval(self._shortPollingIntervalId);
-            self._createNewShortPollingInterval();
+            self._resetShortPollingInterval();
             self._getFeed();
         });
     }
@@ -981,6 +987,14 @@ class Controller {
         parent.appendChild(authWindow);
     }
 
+    _preventAuthTextareaLinebreaks() {
+        [...document.getElementsByClassName('auth-window-textarea')].forEach(textarea => {
+            textarea.addEventListener('keydown', e => {
+                if(e.keyCode === 13) e.preventDefault();
+            });
+        })
+    }
+
     _getOwn(tweets) {
         return tweets.map((tweet) => tweet.author === this._user);
     }
@@ -1025,7 +1039,8 @@ class Controller {
         }
     }
 
-    _createNewShortPollingInterval() {
+    _resetShortPollingInterval() {
+        clearInterval(this._shortPollingIntervalId);
         this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 15000);
     }
 
