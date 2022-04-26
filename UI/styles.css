@@ -418,7 +418,7 @@ section.new-comment {
     margin: 0 auto 0 10%;
 }
 
-.filter {
+.filter:not(input[type=date]) {
     resize: none;
     border-radius: 0.5rem;
     width: 80%;

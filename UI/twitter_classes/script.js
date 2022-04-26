@@ -139,13 +139,13 @@ class TweetFeedView {
         const dateFilterBlockFrom = ViewUtils.newTag('div', { class: 'date-filter-block from' });
         dateFilterBlockFrom.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'From'));
         const dateFromInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
-        dateFromInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-from' }));
+        dateFromInputContainer.appendChild(ViewUtils.newTag('input', { class: 'filter', type: 'date', id: 'date-from' }));
         dateFromInputContainer.value = filterValues.dateFrom;
         dateFilterBlockFrom.appendChild(dateFromInputContainer);
         const dateFilterBlockTo = ViewUtils.newTag('div', { class: 'date-filter-block to' });
         dateFilterBlockTo.appendChild(ViewUtils.newTag('p', { class: 'date-filter-text' }, 'To'));
         const dateToInputContainer = ViewUtils.newTag('div', { class: 'date-filter-lists' });
-        dateToInputContainer.appendChild(ViewUtils.newTag('input', { type: 'date', id: 'date-to' }));
+        dateToInputContainer.appendChild(ViewUtils.newTag('input', { class: 'filter', type: 'date', id: 'date-to' }));
         dateToInputContainer.value = filterValues.dateTo;
         dateFilterBlockTo.appendChild(dateToInputContainer);
         dateFilterBlock.appendChild(dateFilterBlockFrom);
@@ -443,7 +443,7 @@ class Controller {
                 const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
         
                 const currActiveElement = document.activeElement;
-                const currActiveElementId = currActiveElement.tagName === 'TEXTAREA' ? currActiveElement.getAttribute('id') : '';
+                const currActiveElementId = currActiveElement.classList.contains('filter') || currActiveElement.tagName === 'TEXTAREA' ? currActiveElement.getAttribute('id') : '';
 
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
                 self._tweetFeedView.display(true, self._user !== '', tweets, own, allTweetsShown, self._currFilterConfig, self._filtersDisplayed);
@@ -531,7 +531,13 @@ class Controller {
             document.getElementById('date-to').value = `${dateToNumbers.year}-${dateToNumbers.month}-${dateToNumbers.day}`;
         }
 
-        if(currActiveElementId) document.getElementById(currActiveElementId).focus();
+        if(currActiveElementId) {
+            const elemToFocus = document.getElementById(currActiveElementId);
+            document.getElementById(currActiveElementId).focus();
+            if(elemToFocus.getAttribute('type') === 'date') {
+                elemToFocus.showPicker();
+            }
+        }
     }
     
     _showTweet(id) {
@@ -1061,7 +1067,7 @@ class Controller {
 
     _resetShortPollingInterval() {
         clearInterval(this._shortPollingIntervalId);
-        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 3000);
+        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 10000);
     }
 
     async _getResponseJSON(request) {
