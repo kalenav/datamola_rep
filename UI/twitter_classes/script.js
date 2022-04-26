@@ -886,13 +886,17 @@ class Controller {
         const dateFrom = from.children[0].valueAsDate;
         const to = dateFilterBlock.getElementsByClassName('to')[0].getElementsByClassName('date-filter-lists')[0];
         const dateTo = to.children[0].valueAsDate;
-
+        
         let authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).filter(author => author !== '').join(',');
         const authorTextarea = document.getElementById('author-name-filter');
         if(authorTextarea.value) authorStr += `${authorStr ? ',' : ''}${authorTextarea.value}`; // добавляю запятую только если есть какие-то другие авторы
         const hashtagsArr = [...selectedHashtagsList.children].map((li) => li.childNodes[0].data);
         const hashtagsTextarea = document.getElementById('hashtags-filter');
-        if(hashtagsTextarea.value) hashtagsArr.push(hashtagsTextarea.value);
+        let hashtagsTextareaValue = hashtagsTextarea.value;
+        if(hashtagsTextareaValue) {
+            if(hashtagsTextareaValue[0] !== '#') hashtagsTextareaValue = `#${hashtagsTextareaValue}`;
+            hashtagsArr.push(hashtagsTextareaValue);
+        }
 
         this._currFilterConfig = {
             author: authorStr,
