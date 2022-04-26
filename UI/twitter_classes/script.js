@@ -1061,7 +1061,7 @@ class Controller {
 
     _resetShortPollingInterval() {
         clearInterval(this._shortPollingIntervalId);
-        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 10000);
+        this._shortPollingIntervalId = setInterval(() => { this._getFeed(0, this._currShownTweets) }, 3000);
     }
 
     async _getResponseJSON(request) {
