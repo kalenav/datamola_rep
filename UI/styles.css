@@ -137,11 +137,11 @@ section.new-tweet textarea, section.new-comment textarea {
     margin: 1rem 10% 0 0;
 }
 
-#new-tweet-button[disabled] {
+button[disabled] {
     background-color: var(--disabled-button-background-color);
 }
 
-#new-tweet-button[disabled]:hover {
+button[disabled]:hover {
     cursor: default;
     background-color: var(--disabled-button-background-color);
 }

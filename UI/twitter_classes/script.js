@@ -209,7 +209,7 @@ class TweetView {
         this._container = document.getElementById(containerId);
     }
 
-    display(tweet, isOwn) {
+    display(tweet, isOwn, loggedIn) {
         this._container.innerHTML = '';
         const tweetContainer = ViewUtils.newTag('section', { class: 'tweet', 'data-id': tweet.id });
         const authorInfoContainer = isOwn ? ViewUtils.newTag('div', { class: 'author-info-block' }) : tweetContainer;
@@ -243,9 +243,15 @@ class TweetView {
 
         const newCommentContainer = ViewUtils.newTag('section', { class: 'new-comment' });
         newCommentContainer.appendChild(ViewUtils.newTag('p', null, 'Leave a comment'));
-        const commentTextarea = ViewUtils.newTag('textarea', { id: 'new-comment-textarea', placeholder: 'Input comment' });
+        const commentTextareaAttributes = { id: 'new-comment-textarea', placeholder: 'Input comment' };
+        const newCommentButtonAttributes = { id: 'new-comment-submit' };
+        if(!loggedIn) {
+            commentTextareaAttributes.disabled = true;
+            newCommentButtonAttributes.disabled = true;
+        }
+        const commentTextarea = ViewUtils.newTag('textarea', commentTextareaAttributes);
         const newCommentButtonContainer = ViewUtils.newTag('div', { class: 'new-comment-button-container' });
-        newCommentButtonContainer.appendChild(ViewUtils.newTag('button', { id: 'new-comment-submit' }, 'Reply'));
+        newCommentButtonContainer.appendChild(ViewUtils.newTag('button', newCommentButtonAttributes, 'Reply'));
         newCommentContainer.appendChild(commentTextarea);
         newCommentContainer.appendChild(newCommentButtonContainer);
         this._container.appendChild(newCommentContainer);
@@ -896,7 +902,7 @@ class Controller {
         
         let authorStr = [...selectedAuthorsList.children].map((li) => li.childNodes[0].data).filter(author => author !== '').join(',');
         const authorTextarea = document.getElementById('author-name-filter');
-        if(authorTextarea.value) authorStr += `${authorStr ? ',' : ''}${authorTextarea.value}`; // добавляю запятую только если есть какие-то другие авторы
+        if(authorTextarea.value) authorStr += `${authorStr ? ',' : ''}${authorTextarea.value}`; // добавляем запятую только если есть какие-то другие авторы
         const hashtagsArr = [...selectedHashtagsList.children].map((li) => li.childNodes[0].data);
         const hashtagsTextarea = document.getElementById('hashtags-filter');
         let hashtagsTextareaValue = hashtagsTextarea.value;
