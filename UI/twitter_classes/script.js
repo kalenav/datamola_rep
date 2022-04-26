@@ -76,7 +76,7 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(found, tweets, own, all, filterValues) { // tweets: Array<Tweet>, own: Array<Boolean>
+    display(found, tweets, own, all, filterValues, filtersHidden) { // tweets: Array<Tweet>, own: Array<Boolean>
         if(!found) {
             this._container.innerHTML = '';
             this._container.appendChild(ViewUtils.newTag('p', { class: 'not-found' }, 'No such tweets were found.'));
@@ -86,7 +86,7 @@ class TweetFeedView {
         this._container.innerHTML = '';
         this._displayNewTweetSection(this._container);
         const tweetsSection = ViewUtils.newTag('section', { class: 'tweets' });
-        this._appendFilters(tweetsSection, filterValues);
+        this._appendFilters(tweetsSection, filterValues, filtersHidden);
         tweets.forEach((tweet, index) => {
             const newTweet = ViewUtils.newTag('div', { class: 'tweet', 'data-id': tweet.id });
             const isOwn = own[index];
@@ -117,9 +117,9 @@ class TweetFeedView {
         this._container.appendChild(tweetsSection);
     }
 
-    _appendFilters(parent, filterValues = {}) { // filterValues: { author: string, dateFrom: Date, ... }
+    _appendFilters(parent, filterValues = {}, filtersHidden) { // filterValues: { author: string, dateFrom: Date, ... }
         parent.appendChild(ViewUtils.newTag('button', { class: 'filters-button' }, 'Filters'));
-        const filterBlock = ViewUtils.newTag('div', { class: 'hidden', id: 'filter-block' });
+        const filterBlock = ViewUtils.newTag('div', { class: filtersHidden ? 'hidden' : '', id: 'filter-block' });
 
         const authorLabel = ViewUtils.newTag('label', { class: 'filter-label' }, 'Author');
         const authorNameTextarea = ViewUtils.newTag('textarea', { class: 'filter', placeholder: 'Press enter to add to author filter list', id: 'author-name-filter'});
@@ -439,7 +439,7 @@ class Controller {
                 const allTweetsShown = foundTweetsCount === tweets.length;
                 tweets.sort((tweet1, tweet2) => tweet1.createdAt < tweet2.createdAt ? 1 : -1);
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
-                self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig);
+                self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig, self._filtersDisplayed);
                 self._headerView.display(self._user, false);
                 self._filterView = new FilterView('filter-block');
                 self._addTweetFeedEventListeners();
