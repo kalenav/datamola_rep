@@ -76,7 +76,7 @@ class TweetFeedView {
         this._container = document.getElementById(containerId);
     }
 
-    display(found, tweets, own, all, filterValues, filtersHidden) { // tweets: Array<Tweet>, own: Array<Boolean>
+    display(found, loggedIn, tweets, own, all, filterValues, filtersHidden) { // found, loggedIn, all, filtersHidden: Boolean, tweets: Array<Tweet>, own: Array<Boolean>
         if(!found) {
             this._container.innerHTML = '';
             this._container.appendChild(ViewUtils.newTag('p', { class: 'not-found' }, 'No such tweets were found.'));
@@ -84,7 +84,7 @@ class TweetFeedView {
             return;
         }
         this._container.innerHTML = '';
-        this._displayNewTweetSection(this._container);
+        this._displayNewTweetSection(this._container, loggedIn);
         const tweetsSection = ViewUtils.newTag('section', { class: 'tweets' });
         this._appendFilters(tweetsSection, filterValues, filtersHidden);
         tweets.forEach((tweet, index) => {
@@ -169,12 +169,18 @@ class TweetFeedView {
         parent.appendChild(filterBlock);
     }
 
-    _displayNewTweetSection(parent) {
+    _displayNewTweetSection(parent, loggedIn) {
         const newTweetSection = ViewUtils.newTag('section', { class: 'new-tweet' });
         newTweetSection.appendChild(ViewUtils.newTag('p', null, 'New tweet'));
-        newTweetSection.appendChild(ViewUtils.newTag('textarea', { placeholder: 'Input new tweet', id: 'new-tweet' }));
+        const newTweetTextareaAttributes = { placeholder: 'Input new tweet', id: 'new-tweet' };
+        const postButtonAttributes = { id: 'new-tweet-button' };
+        if(!loggedIn) {
+            newTweetTextareaAttributes.disabled = true;
+            postButtonAttributes.disabled = true;
+        }
+        newTweetSection.appendChild(ViewUtils.newTag('textarea', newTweetTextareaAttributes));
         const postButtonContainer = ViewUtils.newTag('div', { class: 'new-tweet-button-container' });
-        postButtonContainer.appendChild(ViewUtils.newTag('button', { id: 'new-tweet-button' }, 'Post'));
+        postButtonContainer.appendChild(ViewUtils.newTag('button', postButtonAttributes, 'Post'));
         newTweetSection.appendChild(postButtonContainer);
         parent.appendChild(newTweetSection);
     }
@@ -373,7 +379,7 @@ class Controller {
         try {
             const tweets = [...response];
             const own = this._user ? this._getOwn(tweets) : new Array(tweets.length).fill(false);
-            this._tweetFeedView.display(true, tweets, own);
+            this._tweetFeedView.display(true, this._user !== '', tweets, own);
             this._currShownTweets = 10;
             this._currFeed = tweets.slice();
             const user = this._user;
@@ -439,7 +445,7 @@ class Controller {
                 const allTweetsShown = foundTweetsCount === tweets.length;
                 tweets.sort((tweet1, tweet2) => tweet1.createdAt < tweet2.createdAt ? 1 : -1);
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
-                self._tweetFeedView.display(true, tweets, own, allTweetsShown, self._currFilterConfig, self._filtersDisplayed);
+                self._tweetFeedView.display(true, self._user !== '', tweets, own, allTweetsShown, self._currFilterConfig, self._filtersDisplayed);
                 self._headerView.display(self._user, false);
                 self._filterView = new FilterView('filter-block');
                 self._addTweetFeedEventListeners();

@@ -16,6 +16,7 @@
     --auth-window-textarea-border-width: 1px;
     --auth-window-textarea-border: solid var(--lightgray-2) var(--auth-window-textarea-border-width);
     --auth-window-textarea-icon-height: 1rem;
+    --disabled-button-background-color: #BADEFC;
 }
 
 * {
@@ -134,6 +135,15 @@ section.new-tweet textarea, section.new-comment textarea {
     flex-direction: row-reverse;
     align-items: center;
     margin: 1rem 10% 0 0;
+}
+
+#new-tweet-button[disabled] {
+    background-color: var(--disabled-button-background-color);
+}
+
+#new-tweet-button[disabled]:hover {
+    cursor: default;
+    background-color: var(--disabled-button-background-color);
 }
 
 section.tweets {
