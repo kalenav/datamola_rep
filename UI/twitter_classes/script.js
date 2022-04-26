@@ -853,7 +853,7 @@ class Controller {
                     // я понимаю, не в неправильном запросе, да и при попытке
                     // написать твит, будучи незалогиненным, всё работает, как
                     // нужно, хотя там та же логика, но сервер в случае чего 
-                    // возвращает 401 (строка 284)
+                    // возвращает 401
 
                     if(response.status === 500) self._showLoginForm();
                     else self._displayErrorPage();
@@ -922,6 +922,8 @@ class Controller {
         this._filterRestoreBuffer = {
             authors: [],
             hashtags: [],
+            dateFrom: null,
+            dateTo: null,
         }
     }
 
