@@ -453,7 +453,6 @@ class Controller {
                 self._currShownTweets = tweets.length;
                 self._currFeed = tweets.slice();
                 self._restoreFeedState(newTweetText, authorTextareaText, tweetTextTextareaText, hashtagsTextareaText, currActiveElementId);
-                self._resetFilterRestoreBuffer();
                 self._resetShortPollingInterval();
             }
         }
@@ -843,7 +842,7 @@ class Controller {
                 const response = await api.addComment(tweetId, self._token, commentText);
                 if(response.ok) 
                 {
-                    await self._getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактирвоал/удалил
+                    await self._getFeed(); // стоит обновить твит, вдруг кто-то написал коммент/отредактировал/удалил
                     self._showTweet(tweetId);
                 }
                 else {
