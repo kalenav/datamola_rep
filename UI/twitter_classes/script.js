@@ -396,14 +396,6 @@ class Controller {
         let hashtagsStr;
         if(filterConfig.hashtags) hashtagsStr = filterConfig.hashtags.map((ht) => ht.slice(1)).join(',');
 
-        const newTweetText = this._getValueToSave(document.getElementById('new-tweet'), 'value');
-        const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
-        const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
-        const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
-
-        const currActiveElement = document.activeElement;
-        const currActiveElementId = currActiveElement.tagName === 'TEXTAREA' ? currActiveElement.getAttribute('id') : '';
-
         try {
             const authors = filterConfig.author.split(',');
             let tweets = [];
@@ -444,6 +436,15 @@ class Controller {
             else {
                 const allTweetsShown = foundTweetsCount === tweets.length;
                 tweets.sort((tweet1, tweet2) => tweet1.createdAt < tweet2.createdAt ? 1 : -1);
+
+                const newTweetText = this._getValueToSave(document.getElementById('new-tweet'), 'value');
+                const authorTextareaText = this._getValueToSave(document.getElementById('author-name-filter'), 'value');
+                const tweetTextTextareaText = this._getValueToSave(document.getElementById('tweet-text-filter'), 'value');
+                const hashtagsTextareaText = this._getValueToSave(document.getElementById('hashtags-filter'), 'value');
+        
+                const currActiveElement = document.activeElement;
+                const currActiveElementId = currActiveElement.tagName === 'TEXTAREA' ? currActiveElement.getAttribute('id') : '';
+
                 const own = self._user ? self._getOwn(tweets) : new Array(tweets.length).fill(false);
                 self._tweetFeedView.display(true, self._user !== '', tweets, own, allTweetsShown, self._currFilterConfig, self._filtersDisplayed);
                 self._headerView.display(self._user, false);
