@@ -953,12 +953,12 @@ class Controller {
         const form = ViewUtils.newTag('form', { class: 'auth-window-form' });
         form.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea username', required: '', placeholder: 'Input username' }));
         const passwordTextareaContainer = ViewUtils.newTag('div', { class: 'auth-window-textarea-container' });
-        passwordTextareaContainer.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
+        passwordTextareaContainer.appendChild(ViewUtils.newTag('input', { type: 'text', class: 'auth-window-textarea password', required: '', placeholder: 'Input password' }));
         passwordTextareaContainer.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-eye auth-window-textarea-icon', id: 'view-password' }));
         form.appendChild(passwordTextareaContainer);
         if(!isLogin) {
             const passwordConfirmTextareaContainer = ViewUtils.newTag('div', { class: 'auth-window-textarea-container' });
-            passwordConfirmTextareaContainer.appendChild(ViewUtils.newTag('textarea', { class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
+            passwordConfirmTextareaContainer.appendChild(ViewUtils.newTag('input', { type: 'text', class: 'auth-window-textarea password confirm', required: '', placeholder: 'Confirm password' }));
             passwordConfirmTextareaContainer.appendChild(ViewUtils.newTag('i', { class: 'fa-solid fa-eye auth-window-textarea-icon', id: 'view-password-confirm' }));
             form.appendChild(passwordConfirmTextareaContainer);
         }

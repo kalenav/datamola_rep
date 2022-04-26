@@ -14,6 +14,7 @@
     --auth-window-textarea-margin: 0.5rem;
     --auth-window-textarea-font-size: 1.3rem;
     --auth-window-textarea-border-width: 1px;
+    --auth-window-textarea-border: solid var(--lightgray-2) var(--auth-window-textarea-border-width);
     --auth-window-textarea-icon-height: 1rem;
 }
 
@@ -330,7 +331,7 @@ section.new-comment {
     width: var(--auth-window-textarea-width);
     margin: var(--auth-window-textarea-margin) 0;
     background-color: var(--lightgray);
-    border-color: var(--lightgray-2);
+    border: var(--auth-window-textarea-border);
     padding: var(--auth-window-textarea-padding);
     transition-duration: 0s;
     font-size: var(--auth-window-textarea-font-size);
