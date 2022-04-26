@@ -674,6 +674,7 @@ class Controller {
 
         tweetsSection.addEventListener('click', (e) => {
             let target = e.target;
+            if(!target) return;
             if(!self._isTweet(target)) target = target.parentElement;
             if(!self._isTweet(target)) return;
             self._showTweet(target.dataset.id);
@@ -730,31 +731,32 @@ class Controller {
 
         authorTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
-            if(authorTextarea.value.trim() === '') return;
+            const value = authorTextarea.value;
+            if(value.trim() === '') return;
+            if(self._filterRestoreBuffer.authors.includes(value)) return;
             if(selectedAuthorsList.children.length === 0) {
                 selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             }
-            selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, authorTextarea.value));
-            self._filterRestoreBuffer.authors.push(authorTextarea.value);
+            selectedAuthorsList.appendChild(ViewUtils.newTag('li', {}, value));
+            self._filterRestoreBuffer.authors.push(value);
             authorTextarea.value = '';
         });
 
         hashtagsTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
-            if(hashtagsTextarea.value[0] !== '#') {
-                alert('The first symbol of this textarea must be a hashtag (#).');
-                return;
-            }
+            let value = hashtagsTextarea.value;
+            if(value[0] !== '#') value = `#${value}`;
             if(forbiddenSymbols.some((sym) => hashtagsTextarea.value.includes(sym))) {
                 alert('Your hashtag contains a prohibited symbol.');
                 return;
             }
-            if(hashtagsTextarea.value.trim() === '') return;
+            if(value.trim() === '') return;
+            if(self._filterRestoreBuffer.hashtags.includes(value)) return;
             if(selectedHashtagsList.children.length === 0) {
                 selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
             }
-            selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, hashtagsTextarea.value));
-            self._filterRestoreBuffer.hashtags.push(hashtagsTextarea.value);
+            selectedHashtagsList.appendChild(ViewUtils.newTag('li', {}, value));
+            self._filterRestoreBuffer.hashtags.push(value);
             hashtagsTextarea.value = '';
         });
 
