@@ -730,6 +730,7 @@ class Controller {
 
         authorTextarea.addEventListener('keyup', (e) => {
             if(e.keyCode !== 13) return;
+            if(authorTextarea.value.trim() === '') return;
             if(selectedAuthorsList.children.length === 0) {
                 selectedAuthorsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-authors-list-hint-text' }, 'Click on an author name to remove it from the filter list!'));
             }
@@ -748,6 +749,7 @@ class Controller {
                 alert('Your hashtag contains a prohibited symbol.');
                 return;
             }
+            if(hashtagsTextarea.value.trim() === '') return;
             if(selectedHashtagsList.children.length === 0) {
                 selectedHashtagsList.parentNode.appendChild(ViewUtils.newTag('p', { id: 'selected-hashtags-list-hint-text' }, 'Click on a hashtag to remove it from the filter list!'));
             }
@@ -760,11 +762,13 @@ class Controller {
             const target = e.target;
             if(target.tagName !== 'LI') return;
             target.parentNode.removeChild(target);
+            const currAuthors = self._filterRestoreBuffer.authors;
+            currAuthors.splice(currAuthors.findIndex(author => author === target.innerHTML), 1);
             if(selectedAuthorsList.children.length === 0) {
                 selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
-                if(selectedAuthorsList.children.length === 0) {
-                    selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
-                }
+                // if(selectedAuthorsList.children.length === 0) {
+                //     selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
+                // }
             }
         });
 
@@ -772,11 +776,13 @@ class Controller {
             const target = e.target;
             if(target.tagName !== 'LI') return;
             target.parentNode.removeChild(target);
+            const currHashtags = self._filterRestoreBuffer.hashtags;
+            currHashtags.splice(currHashtags.findIndex(author => author === target.innerHTML), 1);
             if(selectedHashtagsList.children.length === 0) {
                 selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
-                if(selectedHashtagsList.children.length === 0) {
-                    selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
-                }
+                // if(selectedHashtagsList.children.length === 0) {
+                //     selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
+                // }
             }
         });
 
