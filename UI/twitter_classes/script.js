@@ -823,6 +823,7 @@ class Controller {
             const hashtagsHintText = document.getElementById('selected-hashtags-list-hint-text');
             if(hashtagsHintText) selectedHashtagsList.parentNode.removeChild(hashtagsHintText);
             self._resetFilterConfig();
+            self._resetFilterRestoreBuffer();
             self._getFeed();
         });
     }
