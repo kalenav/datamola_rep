@@ -540,7 +540,6 @@ class Controller {
         if(currActiveElementId) {
             const elemToFocus = document.getElementById(currActiveElementId);
             if(elemToFocus.getAttribute('type') === 'date') {
-                console.log(elemToFocus);
                 elemToFocus.showPicker();
             }
             else {
@@ -789,9 +788,6 @@ class Controller {
             currAuthors.splice(currAuthors.findIndex(author => author === target.innerHTML), 1);
             if(selectedAuthorsList.children.length === 0) {
                 selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
-                // if(selectedAuthorsList.children.length === 0) {
-                //     selectedAuthorsList.parentNode.removeChild(document.getElementById('selected-authors-list-hint-text'));
-                // }
             }
         });
 
@@ -803,9 +799,6 @@ class Controller {
             currHashtags.splice(currHashtags.findIndex(author => author === target.innerHTML), 1);
             if(selectedHashtagsList.children.length === 0) {
                 selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
-                // if(selectedHashtagsList.children.length === 0) {
-                //     selectedHashtagsList.parentNode.removeChild(document.getElementById('selected-hashtags-list-hint-text'));
-                // }
             }
         });
 
