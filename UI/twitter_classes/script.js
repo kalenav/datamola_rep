@@ -539,9 +539,12 @@ class Controller {
 
         if(currActiveElementId) {
             const elemToFocus = document.getElementById(currActiveElementId);
-            document.getElementById(currActiveElementId).focus();
             if(elemToFocus.getAttribute('type') === 'date') {
+                console.log(elemToFocus);
                 elemToFocus.showPicker();
+            }
+            else {
+                elemToFocus.focus();
             }
         }
     }
@@ -1107,7 +1110,7 @@ class TweetFeedApiService {
     }
 
     getTweets(author, text, dateFrom, dateTo, from = 0, count = 10, hashtags) {
-        let url = new URL(this._serverAddress + '/tweet');
+        const url = new URL(this._serverAddress + '/tweet');
         const filters = {};
         if(author) filters['author'] = author;
         if(text) filters['text'] = text;
