@@ -378,8 +378,7 @@ class Controller {
             this._currFeed = tweets.slice();
             const user = this._user;
             this._headerView.display(user, false);
-            clearInterval(this._shortPollingIntervalId);
-            this._createNewShortPollingInterval();
+            this._resetShortPollingInterval();
         }
         catch(e) {
             this._displayErrorPage();
@@ -648,7 +647,7 @@ class Controller {
 
         document.getElementById('header-home-button').addEventListener('click', () => {
             self._getFeed();
-            self._createNewShortPollingInterval();
+            self._resetShortPollingInterval();
         });
 
         document.getElementById('header-login-button').addEventListener('click', (e) => {
